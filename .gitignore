@@ -1,0 +1,10 @@
+
+# exclude .terraform working files
+.terraform/
+*.tfstate*
+
+# exclude Gemfile.lock
+*.lock
+
+# exclude IDE settings
+.idea
