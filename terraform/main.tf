@@ -100,7 +100,7 @@ output "ssh_command_puppetmastered" {
 # create an ansible-managed host
 # @requires module "aws_background"
 module "ansiblelocal" {
-  source = "./ansible"
+  source = "./ansiblelocal"
   host_name = "ansiblelocal"
   # use the main playbook to define the config
   manifest_name = "site.yml"

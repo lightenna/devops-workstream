@@ -30,6 +30,12 @@ resource "aws_instance" "ansible_host" {
   vpc_security_group_ids = ["${var.aws_security_group_id}"]
   subnet_id = "${var.aws_subnet_id}"
 
+  root_block_device {
+    volume_type = "gp2" # general-purpose SSD
+    volume_size = "8" # 8GB, 0.8 * $1.16/month EBS storage cost
+    delete_on_termination = "true"
+  }
+
   # tag for testing purposes
   tags = {
     Name = "${var.host_name}"

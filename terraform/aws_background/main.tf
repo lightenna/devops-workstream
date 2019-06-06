@@ -86,8 +86,10 @@ resource "aws_key_pair" "auth" {
 
 resource "aws_instance" "bastion" {
   connection {
+    type = "ssh"
     # default username for our AMI, connect using local SSH agent
     user = "centos"
+    host = "${self.public_ip}"
   }
 
   # create a tiny instance
@@ -101,6 +103,12 @@ resource "aws_instance" "bastion" {
 
   vpc_security_group_ids = ["${aws_security_group.bastion.id}"]
   subnet_id = "${aws_subnet.default.id}"
+
+  root_block_device {
+    volume_type = "gp2" # general-purpose SSD
+    volume_size = "8" # 8GB, 0.8 * $1.16/month EBS storage cost
+    delete_on_termination = "true"
+  }
 
   # tag for testing purposes
   tags = {
