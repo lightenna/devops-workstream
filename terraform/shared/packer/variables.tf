@@ -2,6 +2,7 @@
 variable "aws_region" {}
 variable "aws_security_group_id" {}
 variable "aws_subnet_id" {}
+variable "aws_vpc_id" {}
 variable "bastion_host" {}
 variable "host_name" {}
 

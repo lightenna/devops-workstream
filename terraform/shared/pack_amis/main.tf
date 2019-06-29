@@ -21,7 +21,7 @@ provider "aws" {
 # build AMI using packer (better done with Terraform Enterprise/Atlas, but this works/cheaper)
 resource "null_resource" "pack_centos_updated" {
   provisioner "local-exec" {
-    command = "packer build ${path.module}/../../packer/centos_updated.json"
+    command = "packer build -var 'aws_vpc_id=${var.aws_vpc_id}' -var 'aws_subnet_id=${var.aws_subnet_id}' ${path.module}/../../../packer/centos_updated.json"
   }
 }
 

@@ -28,7 +28,8 @@
         "workstream-role": "remprov"
       },
       "ami_groups": ["all"],
-      "ami_name": "workstream-remprov"
+      "ami_name": "workstream-remprov",
+      "vpc_id": "{{user `vpc_id`}}"
     }
   ],
   "_comment": "install pre-requisites and transfer bundled repo",

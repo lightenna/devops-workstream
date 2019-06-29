@@ -4,9 +4,26 @@
 # See docs/credits.md for contact/support details; hacked together by Alex Stanhope
 #
 
+# store state locally for shared IAC to avoid bootstrapping
+terraform {
+  backend "local" {
+  }
+}
+
+resource "random_string" "unique_key" {
+  length = 8
+  special = false
+}
+
+locals {
+  # use a unique ID for all resources based on a random string unless one is specified
+  unique_append = "${ var.unique_id == "" ? "-${random_string.unique_key.result}" : "${var.unique_id}"}"
+}
+
 # set up the AWS environment
 module "aws_background" {
-  source = "./aws_background"
+  source = "../shared/aws_background"
+  unique_append = "${local.unique_append}"
   aws_region = "${var.aws_region}"
   key_name = "${var.key_name}"
 }
@@ -18,14 +35,15 @@ module "aws_background" {
 # create an packer-managed host
 # @requires module "aws_background"
 module "packer" {
-  source = "./packer"
-  host_name = "packed"
+  source = "../shared/packer"
+  host_name = "packed${local.unique_append}"
   aws_region = "${var.aws_region}"
   # use the fields passed back from aws_background for guaranteed consistency
   bastion_host = "${module.aws_background.aws_bastion_public_ip}"
   key_name = "${module.aws_background.aws_key_pair_id}"
   aws_security_group_id = "${module.aws_background.aws_security_group_id}"
   aws_subnet_id = "${module.aws_background.aws_subnet_id}"
+  aws_vpc_id = "${module.aws_background.aws_vpc_id}"
 }
 # output command for accessing host by SSH
 output "ssh_command_packed" {
@@ -39,8 +57,8 @@ output "ssh_command_packed" {
 # create a [masterless] puppetted host
 # @requires module "aws_background"
 module "puppetmless" {
-  source = "./puppetmless"
-  host_name = "puppetmless"
+  source = "../shared/puppetmless"
+  host_name = "puppetmless${local.unique_append}"
   manifest_name = "host-puppetmless.pp"
   aws_region = "${var.aws_region}"
   # use the fields passed back from aws_background for guaranteed consistency
@@ -58,8 +76,8 @@ output "ssh_command_puppetmless" {
 # create a puppetmaster (using the same masterless puppet terraform module as above)
 # @requires module "aws_background"
 module "puppetmaster" {
-  source = "./puppetmless"
-  host_name = "puppetmaster"
+  source = "../shared/puppetmless"
+  host_name = "puppetmaster${local.unique_append}"
   # use the puppetmaster manifest to define the config
   manifest_name = "host-puppetmaster.pp"
   aws_region = "${var.aws_region}"
@@ -78,8 +96,8 @@ output "ssh_command_puppetmaster" {
 # create a host puppetted by connecting to puppetmaster
 # @requires module "aws_background"
 module "puppetmastered" {
-  source = "./puppetmastered"
-  host_name = "puppetmastered"
+  source = "../shared/puppetmastered"
+  host_name = "puppetmastered${local.unique_append}"
   aws_region = "${var.aws_region}"
   # use the fields passed back from aws_background for guaranteed consistency
   aws_ami = "${module.aws_background.aws_ami_id}"
@@ -100,8 +118,8 @@ output "ssh_command_puppetmastered" {
 # create an ansible-managed host
 # @requires module "aws_background"
 module "ansiblelocal" {
-  source = "./ansiblelocal"
-  host_name = "ansiblelocal"
+  source = "../shared/ansiblelocal"
+  host_name = "ansiblelocal${local.unique_append}"
   # use the main playbook to define the config
   manifest_name = "site.yml"
   aws_region = "${var.aws_region}"
@@ -117,6 +135,26 @@ output "ssh_command_ansiblelocal" {
   value = "${module.ansiblelocal.instantiated_host_ssh_command}"
 }
 
+# create an ansible-managed host
+# @requires module "aws_background"
+module "ansiblecontrol" {
+  source = "../shared/ansiblecontrol"
+  host_name = "ansiblecontrol${local.unique_append}"
+  # use the main playbook to define the config
+  manifest_name = "site.yml"
+  aws_region = "${var.aws_region}"
+  # use the fields passed back from aws_background for guaranteed consistency
+  aws_ami = "${module.aws_background.aws_ami_id}"
+  bastion_host = "${module.aws_background.aws_bastion_public_ip}"
+  key_name = "${module.aws_background.aws_key_pair_id}"
+  aws_security_group_id = "${module.aws_background.aws_security_group_id}"
+  aws_subnet_id = "${module.aws_background.aws_subnet_id}"
+}
+# output command for accessing host by SSH
+output "ssh_command_ansiblecontrol" {
+  value = "${module.ansiblecontrol.instantiated_host_ssh_command}"
+}
+
 #
 # Example: docker
 #
@@ -124,8 +162,8 @@ output "ssh_command_ansiblelocal" {
 # create a docker host
 # @requires module "aws_background"
 module "dockerhost" {
-  source = "./docker"
-  host_name = "dockerhost"
+  source = "../shared/docker"
+  host_name = "dockerhost${local.unique_append}"
   aws_region = "${var.aws_region}"
   # use the fields passed back from aws_background for guaranteed consistency
   aws_ami = "${module.aws_background.aws_ami_id}"

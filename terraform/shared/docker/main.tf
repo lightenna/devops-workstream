@@ -46,7 +46,7 @@ resource "aws_instance" "docker_host" {
     inline = [
       "sudo yum install -y yum-utils device-mapper-persistent-data lvm2",
       "sudo yum-config-manager --add-repo ${var.docker_yum_repo_url}",
-      "sudo yum update -y",
+      #"sudo yum update -y",
       "sudo yum install -y docker-ce",
       # create a non-root user for docker
       # warning: dockeruser is now effectively also a super-user (only within the container landscape)

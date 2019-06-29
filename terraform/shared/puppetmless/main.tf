@@ -48,7 +48,7 @@ resource "aws_instance" "puppetted_host" {
       "sudo rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm",
       "sudo yum -y install epel-release",
       "sudo yum -y install deltarpm",
-      "sudo yum -y update",
+      #"sudo yum -y update",
       "sudo yum -y install puppet",
       # set the hostname
       "sudo hostnamectl set-hostname ${var.host_name}.${var.local_domain}",
@@ -56,7 +56,8 @@ resource "aws_instance" "puppetted_host" {
   }
   # transfer local puppet manifests to host
   provisioner "file" {
-    source      = "../puppet"
+    # relative path from executing terraform module
+    source      = "../../puppet"
     # transfer to intermediary folder
     destination = "/tmp/puppet-additions"
     # can't go straight to final destination because user doesn't have access

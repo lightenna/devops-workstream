@@ -1,8 +1,10 @@
 {
-  "_comment": "@var aws_access_key, @var aws_secret_key AWS credentials.  No defaults are provided.",
+  "_comment": "@var aws_access_key, @var aws_secret_key from AWS credentials. @var aws_vpc_id passed into -var.  No defaults are provided.",
   "variables": {
     "aws_access_key": "",
-    "aws_secret_key": ""
+    "aws_secret_key": "",
+    "aws_vpc_id": "",
+    "aws_subnet_id": ""
   },
 
   "builders": [{
@@ -21,7 +23,9 @@
     },
     "instance_type": "t2.micro",
     "ssh_username": "centos",
-    "ami_name": "centos-updated-{{timestamp}}"
+    "ami_name": "centos-updated-{{timestamp}}",
+    "vpc_id": "{{user `aws_vpc_id`}}",
+    "subnet_id": "{{user `aws_subnet_id`}}"
   }],
 
   "_comment": "Update to get the latest packages; install puppet and ansible",

@@ -46,7 +46,7 @@ resource "aws_instance" "ansible_host" {
     inline = [
       "sudo yum -y install deltarpm",
       "sudo yum -y install epel-release",
-      "sudo yum -y update",
+      #"sudo yum -y update",
       "sudo yum -y install ansible",
       # set the hostname
       "sudo hostnamectl set-hostname ${var.host_name}.${var.local_domain}",
@@ -54,7 +54,8 @@ resource "aws_instance" "ansible_host" {
   }
   # transfer local ansible playbooks to host
   provisioner "file" {
-    source      = "../ansible"
+    # relative path from executing terraform module
+    source      = "../../ansible"
     # transfer to intermediary folder
     destination = "/tmp/ansible-additions"
     # can't go straight to final destination because user doesn't have access
@@ -69,7 +70,7 @@ resource "aws_instance" "ansible_host" {
   # kick off ansible run on host
   provisioner "remote-exec" {
     inline = [
-      # run ansible locally (on remove machine)
+      # run ansible locally (on remote machine)
       "sudo ansible-playbook /etc/ansible/${var.manifest_name} --connection=local  > /home/centos/ansible_playbook.out 2>&1",
       # pull ansible run output back over terraform console channel
       "sudo tail /home/centos/ansible_playbook.out"

@@ -35,7 +35,7 @@ resource "aws_subnet" "default" {
 
 # Our default security group to access instances over SSH within the subnet
 resource "aws_security_group" "simple" {
-  name        = "devops_secg_simple"
+  name        = "devops_secg_simple${var.unique_append}"
   description = "Enabled inbound SSH from within the subnet only"
   vpc_id      = "${aws_vpc.default.id}"
 
@@ -58,7 +58,7 @@ resource "aws_security_group" "simple" {
 
 # Create a second security group just for the bastion host
 resource "aws_security_group" "bastion" {
-  name        = "devops_secg_bastion"
+  name        = "devops_secg_bastion${var.unique_append}"
   description = "Enabled inbound SSH from anywhere"
   vpc_id      = "${aws_vpc.default.id}"
 
@@ -80,7 +80,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_key_pair" "auth" {
-  key_name   = "${var.key_name}"
+  key_name   = "${var.key_name}${var.unique_append}"
   public_key = "${file(var.public_key_path)}"
 }
 
@@ -112,13 +112,13 @@ resource "aws_instance" "bastion" {
 
   # tag for testing purposes
   tags = {
-    Name = "bastion"
+    Name = "bastion${var.unique_append}"
   }
 
   # update as AMI may be out-of-date
   provisioner "remote-exec" {
     inline = [
-      #"sudo /usr/bin/yum -y update",
+      #"sudo yum -y update",
     ]
   }
 }

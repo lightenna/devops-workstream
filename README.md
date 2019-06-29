@@ -12,14 +12,14 @@ This repo is designed to be a simple starting point for infrastructure-as-code p
 
 * [Getting set up guide [.md]](/docs/getting_set_up.md) - how to set up your environment for instantiating infrastructure using the code in this repo
 
-We use `terragrunt` as an optional wrapper for `terraform`.  The two are used interchangably here.  If you've used the default key name and path (described [above](/docs/getting_set_up.md)), then to see what terraform plans to build out in the default region (eu-west-2):
+If you've used the default key name and path (described [above](/docs/getting_set_up.md)), then to see what terraform plans to build out in the default region (eu-west-2):
 ```
-terragrunt plan
+terraform plan
 ```
 
 If it seems sensible, apply it:
 ```
-terragrunt apply
+terraform apply
 ```
 
 Look at what you've created in the AWS console!
@@ -30,9 +30,9 @@ Shutting down
 
 Most important of all while developing IAC, clear it up afterwards:
 ```
-terragrunt destroy
+terraform destroy
 ```
-Also be aware that while `terragrunt destroy` will remove all the instantiated hosts/security groups/subnets/VPCs etc., it will not remove everything.  You'll need to use the AWS console to manually deregister/delete:
+Also be aware that while `terraform destroy` will remove all the instantiated hosts/security groups/subnets/VPCs etc., it will not remove everything.  You'll need to use the AWS console to manually deregister/delete:
 
 * Volumes belonging to hosts instantiated by Terraform
   * After multiple terraform-plan-apply-destroy cycles, you can easily accumulate a few dozen volumes.  These will persist (at a cost) unless explicitly removed.
@@ -68,13 +68,17 @@ Config management
 
 Provisioning
 
-* [/terraform](/terraform) - a collection of modules to provision machines, linked from single root module [main.tf](/terraform/main.tf). 
-  * [ansible](/terraform/ansible) - a terraform module to set up a generic host and invoke ansible on it locally 
-  * [aws_background](/terraform/aws_background) - a terraform module to set up a basic AWS environment
-  * [pack_amis](/terraform/pack_amis) - a terraform module to invoke packer
-  * [packer](/terraform/packer) - a terraform module to instantiate a host from a packed machine image
-  * [puppetmless](/terraform/puppetmless) - a terraform module to set up a generic host and invoke puppet apply on it locally 
-  * [puppetmastered](/terraform/puppetmastered) - a terraform module to set up a generic host, connect it to a puppetmaster and set up a puppet agent for repeat runs 
+* [/terraform](/terraform) - a collection of terraform root modules to provision machines.
+  * [aws_basic](/terraform/aws_basic) - terraform apply produces a set of resources in AWS
+  * [azure_basic](/terraform/azure_basic) - terraform apply produces a set of resources in Azure
+  * [playspace](/terraform/playspace) - terraform apply produces nothing (as yet).  This is an empty root module for you to experiment with
+  * [shared](/terraform/shared) - a collection of submodules that abstract some of the complexity for different operations 
+      * [ansible](/terraform/ansible) - a terraform module to set up a generic host and invoke ansible on it locally 
+      * [aws_background](/terraform/shared/aws_background) - a terraform module to set up a basic AWS environment
+      * [pack_amis](/terraform/shared/pack_amis) - a terraform module to invoke packer
+      * [packer](/terraform/shared/packer) - a terraform module to instantiate a host from a packed machine image
+      * [puppetmless](/terraform/shared/puppetmless) - a terraform module to set up a generic host and invoke puppet apply on it locally 
+      * [puppetmastered](/terraform/shared/puppetmastered) - a terraform module to set up a generic host, connect it to a puppetmaster and set up a puppet agent for repeat runs 
 
 Testing
 -------

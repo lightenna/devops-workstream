@@ -9,21 +9,35 @@ DESCRIPTION
   default = "~/.ssh/id_rsa_devops_simple_key.pub"
 }
 
+variable "unique_id" {
+  default = ""
+}
+
 variable "key_name" {
   description = "Desired name of AWS key pair"
   default = "devops_simple_key"
 }
 
-variable "aws_region" {
-  description = "AWS region to launch servers."
-  # default to London
-  default     = "eu-west-2"
+variable "project" {
+  default = "wrks"
 }
 
-variable "aws_ami" {
-  # Ubuntu 16.04 LTS
-  # default = "ami-03998867"
-  # CentOS 7
-  default = "ami-c22236a6"
+variable "account" {
+  default = "dvo"
 }
 
+variable "subnet_prepend" {
+  default = "10.0.52"
+}
+
+variable "ssh_additional_port" {
+  default = 443
+}
+
+variable "admin_user" {
+  default = "rootlike"
+}
+
+variable "puppet_environment" {
+  default = ""
+}
