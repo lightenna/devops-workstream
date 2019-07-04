@@ -135,7 +135,6 @@ module "bastion" {
   nsg_id = "${azurerm_network_security_group.nsg_public.id}"
   resource_group_location = "${azurerm_resource_group.rg.location}"
   resource_group_name = "${azurerm_resource_group.rg.name}"
-  puppet_environment = "${var.puppet_environment}"
   # no static private IP
   # bastion-specific additions
   public_ip_address = "${azurerm_public_ip.pubipbst.ip_address}"

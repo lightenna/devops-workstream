@@ -45,7 +45,7 @@ variable "bastion_ssh_port" {
   default = "22"
 }
 variable "puppet_environment" {
-  default = "lightenna"
+  default = "workstream"
 }
 variable "puppet_manifest_name" {
   # empty to evaluate the whole puppet directory

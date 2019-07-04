@@ -4,7 +4,7 @@ locals {
   hostbase = "${var.hostname}-${terraform.workspace}-${var.project}-${var.account}"
   home_directory = "${ var.admin_user == "root" ? "/root" : "/home/${var.admin_user}"}"
   puppet_target_repodir = "/etc/puppetlabs/puppetmless"
-  puppet_source_relative = "/var/www/git/github.com/lightenna-iac/puppet"
+  puppet_source_relative = "${path.module}/../../../puppet"
   puppet_apply = "/opt/puppetlabs/bin/puppet apply -dvt --hiera_config=${local.puppet_target_repodir}/environments/${var.puppet_environment}/hieradata/puppetmless-only/hiera.yaml --modulepath=${local.puppet_target_repodir}/modules ${local.puppet_target_repodir}/environments/${var.puppet_environment}/manifests/${var.puppet_manifest_name}"
   setup_ssh_additional_port = "sudo /usr/sbin/semanage port -m -t ssh_port_t -p tcp ${var.ssh_additional_port} ; sudo sed -i 's/\\#Port 22/Port 22\\nPort ${var.ssh_additional_port}/g' /etc/ssh/sshd_config ; sudo service sshd restart"
   setup_log_analytics_workspace = "sudo sh onboard_agent.sh -w ${var.log_analytics_workspace_id} -s ${var.log_analytics_workspace_key}"

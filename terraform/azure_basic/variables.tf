@@ -37,7 +37,3 @@ variable "ssh_additional_port" {
 variable "admin_user" {
   default = "rootlike"
 }
-
-variable "puppet_environment" {
-  default = ""
-}
