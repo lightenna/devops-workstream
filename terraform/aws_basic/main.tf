@@ -17,7 +17,7 @@ resource "random_string" "unique_key" {
 
 locals {
   # use a unique ID for all resources based on a random string unless one is specified
-  unique_append = "${ var.unique_id == "" ? "-${random_string.unique_key.result}" : "${var.unique_id}"}"
+  unique_append = "${ var.unique_id == "" ? "-${random_string.unique_key.result}" : "-${var.unique_id}"}"
 }
 
 # set up the AWS environment
@@ -37,7 +37,6 @@ module "aws_background" {
 module "puppetmless" {
   source = "../shared/puppetmless"
   host_name = "puppetmless${local.unique_append}"
-  manifest_name = "host-puppetmless.pp"
   aws_region = "${var.aws_region}"
   # use the fields passed back from aws_background for guaranteed consistency
   aws_ami = "${module.aws_background.aws_ami_id}"

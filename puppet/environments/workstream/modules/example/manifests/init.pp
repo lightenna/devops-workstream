@@ -1,4 +1,4 @@
-class java (
+class example (
 
   # class arguments
 
@@ -11,6 +11,6 @@ class java (
 
 ) {
 
-  debug("This is some output from the example 'java' module, visible only with -d or --debug.")
+  debug("This is some output from the 'example' module, visible only with -d or --debug.")
 
 }

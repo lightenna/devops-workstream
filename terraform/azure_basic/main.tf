@@ -19,7 +19,7 @@ resource "random_string" "unique_key" {
 
 locals {
   # use a unique ID for all resources based on a random string unless one is specified
-  unique_append = "${ var.unique_id == "" ? "-${random_string.unique_key.result}" : "${var.unique_id}"}"
+  unique_append = "${ var.unique_id == "" ? "-${random_string.unique_key.result}" : "-${var.unique_id}"}"
   hostbase = "${terraform.workspace}-${var.project}-${var.account}"
 }
 
