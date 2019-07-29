@@ -20,6 +20,6 @@ locals {
 
 # resource group name uses derived (local) unique_append, but region comes from external, default in variables.tf
 resource "azurerm_resource_group" "rg" {
-  name = "rg${local.unique_append}"
+  name     = "rg${local.unique_append}"
   location = "${var.region}"
 }
