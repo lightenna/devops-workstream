@@ -155,15 +155,15 @@ resource "azurerm_public_ip" "pubipbst" {
     environment = "${terraform.workspace}"
   }
 }
-output "host_bastion_vm_name" {
-  value = "${module.bastion.vm_name}"
-}
-output "host_bastion_public_IP" {
-  value = "${module.bastion.public_ip}"
-}
 output "host_bastion_SSH_command" {
-  value = "ssh -A -p ${var.ssh_additional_port} ${var.admin_user}@${module.bastion.public_ip}"
+  value = "ssh -A -p ${var.ssh_additional_port} ${module.bastion.admin_user}@${module.bastion.public_ip}"
 }
 output "host_bastion_admin_password" {
   value = "${module.bastion.admin_password}"
+}
+output "host_bastion_re-send_all_puppet_scripts" {
+  value = "${module.bastion.resend_puppet_scripts}\r\n"
+}
+output "host_bastion_re-puppet_command_on_host" {
+  value = "${module.bastion.repuppet_command}\r\n"
 }

@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+#^syntax detection
+
+forge 'https://forgeapi.puppetlabs.com'
+
+# puppet support
+mod 'puppet-archive'
+mod 'puppet-yum'
+mod 'puppetlabs-yumrepo_core'
+mod 'puppetlabs-apt'
+mod 'darin-zypprepo'
+
+# common and deps
+mod 'puppetlabs-stdlib'
+
+# system
+mod 'puppet-rsyslog'
+mod 'puppet-selinux'
+
+# languages
+mod 'puppetlabs-java'
+mod 'puppetlabs-ruby'
+mod 'puppet-nodejs'
+mod 'puppet-python'
+
+# vcsrepo for git
+mod 'puppetlabs-vcsrepo'
