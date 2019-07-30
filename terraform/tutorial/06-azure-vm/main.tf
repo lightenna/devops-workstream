@@ -24,22 +24,18 @@ resource "azurerm_resource_group" "rg" {
   location = "${var.region}"
 }
 
+# create network resources
 module "net" {
   source = "./azure-network"
   unique_append = "${local.unique_append}"
   region = "${var.region}"
 }
 
-resource "azurerm_public_ip" "pubipbst" {
-  name                         = "pubip-${local.unique_append}"
-  location                     = "${azurerm_resource_group.rg.location}"
-  resource_group_name          = "${azurerm_resource_group.rg.name}"
-  allocation_method = "Static"
-  # public_ip_address_allocation now known as allocation_method
-  tags = {
-    name = "pubip-${local.unique_append}"
-    environment = "${terraform.workspace}"
-  }
+# create VM
+module "vm" {
+  source = "./azure-virtual-machine"
+  unique_append = "${local.unique_append}"
+  hostname = "host1"
+  public_key_path = "~/.ssh/id_rsa_devops_simple_key.pub"
+  region = "${var.region}"
 }
-
-# @todo create VM

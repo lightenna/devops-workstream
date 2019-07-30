@@ -51,3 +51,4 @@ resource "azurerm_network_security_group" "nsg_public" {
     environment = "${terraform.workspace}"
   }
 }
+
