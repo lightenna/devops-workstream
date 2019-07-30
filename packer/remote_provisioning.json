@@ -1,9 +1,15 @@
 {
   "_purpose": "Create a public AMI with Workstream source and pre-requisites all bundled up",
-  "_comment": "@var aws_access_key, @var aws_secret_key AWS credentials.  No defaults are provided.",
+  "_comment": "@var aws_access_key, @var aws_secret_key from AWS credentials. No defaults are provided.",
   "variables": {
     "aws_access_key": "",
-    "aws_secret_key": ""
+    "aws_secret_key": "",
+    "terraform_url": "https://releases.hashicorp.com/terraform/0.12.5/terraform_0.12.5_linux_amd64.zip",
+    "terraform_zip": "terraform_0.12.5_linux_amd64.zip",
+    "packer_url": "https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip",
+    "packer_zip": "packer_1.4.2_linux_amd64.zip",
+    "virtualenv_url": "https://pypi.python.org/packages/source/v/virtualenv/virtualenv-13.1.2.tar.gz",
+    "virtualenv_zip": "virtualenv-13.1.2.tar.gz"
   },
   "builders": [
     {
@@ -28,8 +34,7 @@
         "workstream-role": "remprov"
       },
       "ami_groups": ["all"],
-      "ami_name": "workstream-remprov",
-      "vpc_id": "{{user `vpc_id`}}"
+      "ami_name": "workstream-remprov"
     }
   ],
   "_comment": "install pre-requisites and transfer bundled repo",
@@ -42,32 +47,30 @@
         "sudo yum -y install deltarpm",
         "sudo yum -y install epel-release wget unzip",
         "sudo yum -y install python34",
-        "wget -O ~/virtualenv.tar.gz https://pypi.python.org/packages/source/v/virtualenv/virtualenv-13.1.2.tar.gz",
-        "tar xvfz virtualenv.tar.gz -C ~/",
+        "wget -O {{user `virtualenv_zip`}} {{user `virtualenv_url`}}",
+        "tar xvfz {{user `virtualenv_zip`}} -C ~/",
         "cd ~/virtualenv-13.1.2",
         "sudo /usr/bin/python3.4 setup.py install",
         "cd ~/",
         "virtualenv mave",
         "source ~/mave/bin/activate",
         "pip install --upgrade pip",
-        "pip install awscli --upgrade",
-        "pip install aws-shell",
-        "wget -O terraform_0.11.1_linux_amd64.zip https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip?_ga=2.124076492.730183970.1512483429-1357698916.1512127611",
-        "unzip terraform_0.11.1_linux_amd64.zip",
+        "pip install --upgrade awscli",
+        "pip install --upgrade azure-cli",
+        "pip install --upgrade aws-shell",
+        "wget -O {{user `terraform_zip`}} {{user `terraform_url`}}",
+        "unzip {{user `terraform_zip`}}",
         "sudo mv ./terraform /usr/local/bin ; sudo chown root:root /usr/local/bin/terraform ; sudo chmod 755 /usr/local/bin/terraform",
-        "wget -O packer_1.1.0_linux_amd64.zip https://releases.hashicorp.com/packer/1.1.0/packer_1.1.0_linux_amd64.zip?_ga=2.68251096.896084704.1507823238-2016154149.1507030560",
-        "unzip packer_1.1.0_linux_amd64.zip",
+        "wget -O {{user `packer_zip`}} {{user `packer_url`}}",
+        "unzip {{user `packer_zip`}}",
         "sudo mv ./packer /usr/local/bin ; sudo chown root:root /usr/local/bin/packer ; sudo chmod 755 /usr/local/bin/packer",
-        "sudo rm ~/terraform_0.11.1_linux_amd64.zip ~/packer_1.1.0_linux_amd64.zip ~/virtualenv.tar.gz",
-        "curl -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.14.6/terragrunt_linux_amd64",
-        "chmod a+x terragrunt",
-        "sudo mv terragrunt /usr/local/bin/",
+        "sudo rm ~/{{user `terraform_zip`}} ~/{{user `packer_zip`}} ~/{{user `virtualenv_zip`}}",
         "echo 'final comment, no comma' > /dev/null"
       ]
     },
     {
       "type": "file",
-      "source": "../../workstream",
+      "source": "../../devops-workstream",
       "destination": "~/"
     }
   ]
