@@ -29,20 +29,42 @@ module "net" {
   source = "./azure-network"
   unique_append = "${local.unique_append}"
   region = "${var.region}"
+  # pass in shared resource group
+  resource_group_location = "${azurerm_resource_group.rg.location}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
 }
 
-# create VMs
+# create some VMs
 module "vm1" {
   source = "./azure-virtual-machine"
   unique_append = "${local.unique_append}"
-  hostname = "vm1"
+  hostname = "host1"
   public_key_path = "~/.ssh/id_rsa_devops_simple_key.pub"
   region = "${var.region}"
+  # pass in shared resource group
+  resource_group_location = "${azurerm_resource_group.rg.location}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  # pass in network IDs based on module output to ensure dependency
+  nsg_id = "${module.net.nsg_id}"
+  subnet_id = "${module.net.subnet_id}"
 }
 module "vm2" {
   source = "./azure-virtual-machine"
   unique_append = "${local.unique_append}"
-  hostname = "vm2"
+  hostname = "host2"
   public_key_path = "~/.ssh/id_rsa_devops_simple_key.pub"
   region = "${var.region}"
+  # pass in shared resource group
+  resource_group_location = "${azurerm_resource_group.rg.location}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  # pass in network IDs based on module output to ensure dependency
+  nsg_id = "${module.net.nsg_id}"
+  subnet_id = "${module.net.subnet_id}"
+}
+
+output "host1_ssh" {
+  value = "ssh -A -p 22 ${module.vm1.admin_user}@${module.vm1.ip}"
+}
+output "host2_ssh" {
+  value = "ssh -A -p 22 ${module.vm2.admin_user}@${module.vm2.ip}"
 }

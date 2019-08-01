@@ -8,30 +8,25 @@ terraform {
   }
 }
 
-# refer to external resource group by name
-data "azurerm_resource_group" "rg" {
-  name = "rg${var.unique_append}"
-}
-
 # create a virtual network, subnet and security group to define access policy
 resource "azurerm_virtual_network" "default" {
   name                = "default-network${var.unique_append}"
   address_space       = ["10.0.0.0/16"]
-  location            = "${data.azurerm_resource_group.rg.location}"
-  resource_group_name = "${data.azurerm_resource_group.rg.name}"
+  location            = "${var.resource_group_location}"
+  resource_group_name = "${var.resource_group_name}"
 }
 
 resource "azurerm_subnet" "intnet" {
   name                 = "internal-subnet${var.unique_append}"
-  resource_group_name  = "${data.azurerm_resource_group.rg.name}"
+  resource_group_name  = "${var.resource_group_name}"
   virtual_network_name = "${azurerm_virtual_network.default.name}"
   address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurerm_network_security_group" "nsg_public" {
   name                = "nsgpub${var.unique_append}"
-  location            = "${data.azurerm_resource_group.rg.location}"
-  resource_group_name = "${data.azurerm_resource_group.rg.name}"
+  location            = "${var.resource_group_location}"
+  resource_group_name = "${var.resource_group_name}"
 
   # allow inbound SSH on port 22
   security_rule {

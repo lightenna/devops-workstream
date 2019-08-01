@@ -4,6 +4,13 @@
 variable "unique_append" {}
 variable "public_key_path" {}
 
+# resource group must be passed in to avoid dependency errors
+variable "resource_group_location" {}
+variable "resource_group_name" {}
+# similarly network deps must be passed in
+variable "nsg_id" {}
+variable "subnet_id" {}
+
 variable "region" {
   default = "uksouth"
 }

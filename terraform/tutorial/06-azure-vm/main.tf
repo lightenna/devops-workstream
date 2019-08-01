@@ -29,6 +29,9 @@ module "net" {
   source = "./azure-network"
   unique_append = "${local.unique_append}"
   region = "${var.region}"
+  # pass in shared resource group
+  resource_group_location = "${azurerm_resource_group.rg.location}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
 }
 
 # create VM
@@ -38,4 +41,10 @@ module "vm" {
   hostname = "host1"
   public_key_path = "~/.ssh/id_rsa_devops_simple_key.pub"
   region = "${var.region}"
+  # pass in shared resource group
+  resource_group_location = "${azurerm_resource_group.rg.location}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  # pass in network IDs based on module output to ensure dependency
+  nsg_id = "${module.net.nsg_id}"
+  subnet_id = "${module.net.subnet_id}"
 }
