@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<server address="<%= $::fqdn %>">
+  <service name="<%= $service_name %>">
+    <port number="<%= $appserver::port %>" />
+  </service>
+  <database name="<%= $appserver::database_name %>" username="<%= $appserver::database_user %>" password="<%= $appserver::database_pass %>" />
+</server>

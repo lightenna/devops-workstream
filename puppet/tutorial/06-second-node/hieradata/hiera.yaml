@@ -1,0 +1,17 @@
+#
+# hiera.yaml
+#   referenced by `puppet apply` and `puppet agent` calls
+#   during masterless/mastered puppet run
+#
+---
+version: 5
+hierarchy:
+  - name: "Per-node data"
+    path: "nodes/%{::hostname}.yaml"
+
+  - name: "Common data"
+    path: "common.yaml"
+
+defaults:
+  data_hash: yaml_data
+  datadir: ./

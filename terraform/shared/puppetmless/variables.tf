@@ -18,6 +18,6 @@ variable "key_name" {
 
 variable "manifest_name" {
   description = "Name of the puppet manifest to apply to this host"
-  default = "host-puppetmless.pp"
+  default = "site.pp"
 }
 

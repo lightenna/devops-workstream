@@ -8,3 +8,8 @@
 
 # exclude IDE settings
 .idea
+
+# exclude go's `dep ensure`-built directories
+go/src/terratest/vendor
+go/src/terratest/*_cmd.out
+go/pkg

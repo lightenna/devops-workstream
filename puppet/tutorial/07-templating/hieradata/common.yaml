@@ -1,0 +1,9 @@
+#
+# Common
+#
+---
+appserver::port: "8080"
+appserver::database_name: "m6-prod"
+appserver::database_user: "dbuser-appserv-m6"
+appserver::database_pass: "fdk29Z76whfLs64Dj"
+...
