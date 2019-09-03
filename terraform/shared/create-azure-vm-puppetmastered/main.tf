@@ -1,18 +1,18 @@
 #
-# create-azure-vm
+# create-azure-vm-puppetmastered
 # OS support: CentOS
 #
 
 provider "azurerm" {}
 
 locals {
-  # standard block: vars shared with all puppetmless installs
+  # STANDARD (puppetmastered, v1.0)
   home_directory = "${ var.admin_user == "root" ? "/root" : "/home/${var.admin_user}"}"
-  puppet_target_repodir = "/etc/puppetlabs/puppetmless"
-  puppet_source = "${path.module}/../../../puppet"
-  puppet_apply = "/opt/puppetlabs/bin/puppet apply -dvt --hiera_config=${local.puppet_target_repodir}/environments/${var.puppet_environment}/hieradata/hiera.yaml --modulepath=${local.puppet_target_repodir}/modules:${local.puppet_target_repodir}/environments/shared/modules:${local.puppet_target_repodir}/environments/${var.puppet_environment}/modules ${local.puppet_target_repodir}/environments/${var.puppet_environment}/manifests/${var.puppet_manifest_name}"
+  puppet_exec = "/opt/puppetlabs/bin/puppet"
+  puppet_server_exec = "/opt/puppetlabs/bin/puppetserver"
+  puppet_agent = "${local.puppet_exec} agent -dvt"
   setup_ssh_additional_port = "sudo /usr/sbin/semanage port -m -t ssh_port_t -p tcp ${var.ssh_additional_port} ; sudo sed -i 's/\\#Port 22/Port 22\\nPort ${var.ssh_additional_port}/g' /etc/ssh/sshd_config ; sudo service sshd restart"
-  # custom variables
+  # /STANDARD (puppetmastered, v1.0), custom variables
   hostbase = "${var.hostname}-${terraform.workspace}-${var.project}-${var.account}"
   setup_log_analytics_workspace = "sudo sh onboard_agent.sh -w ${var.log_analytics_workspace_id} -s ${var.log_analytics_workspace_key}"
   setup_move_laa_files = "sudo mv /tmp/omsagent.conf /etc/opt/microsoft/omsagent/${var.log_analytics_workspace_id}/conf/omsagent.conf && sudo mv /tmp/95-omsagent.conf /etc/rsyslog.d/95-omsagent.conf"
@@ -64,8 +64,7 @@ resource "azurerm_virtual_machine" "host" {
   name = "vm-${local.hostbase}"
   location = "${var.resource_group_location}"
   resource_group_name = "${var.resource_group_name}"
-  network_interface_ids = [
-    "${azurerm_network_interface.stnic.id}"]
+  network_interface_ids = ["${azurerm_network_interface.stnic.id}"]
   vm_size = "${var.host_size}"
   delete_os_disk_on_termination = true
   delete_data_disks_on_termination = true
@@ -94,7 +93,7 @@ resource "azurerm_virtual_machine" "host" {
     }
   }
   #
-  # STANDARD
+  # STANDARD (puppetmastered, v1.0)
   #
   # wait for cloud provider to finish install its stuff, otherwise yum/dpkg collide [standard]
   provisioner "remote-exec" {
@@ -121,34 +120,43 @@ resource "azurerm_virtual_machine" "host" {
       "${var.ssh_additional_port == "22" ? "echo no_additional_port" : local.setup_ssh_additional_port}",
     ]
   }
-  # upload puppet manifests [standard]
+  # copy puppet.conf file across to set up puppet agent to point to puppetmaster
   provisioner "file" {
-    source = "${local.puppet_source}"
-    # transfer to intermediary folder
-    destination = "/tmp/puppet-additions"
-    # can't go straight to final destination because user doesn't have access
-    # and "file" provisioners have no sudo escalation
+    destination = "/etc/puppetlabs/puppet/puppet.conf"
+    content = "${data.template_file.puppet_conf.rendered}"
   }
-  # prepare and execute puppet [standard]
+  # run puppet agent to generate cert request to puppetmaster
+  provisioner "remote-exec" {
+    inline = [
+      # run puppet to create (as yet) unsigned key, ignore errors
+      "sudo ${local.puppet_exec} agent -dvt > cert_req_puppet_agent.out 2>&1 || true",
+    ]
+  }
+  # sign cert request locally (on puppetmaster, as root)
+  provisioner "local-exec" {
+    command = "sudo ${local.puppet_server_exec} ca sign --certname ${var.hostname}.${var.host_domain}"
+  }
+  # run puppet agent
   provisioner "remote-exec" {
     inline = [
       # set the admin user's password
       "sudo bash -c \"echo -e '${random_string.admin_password.result}\n${random_string.admin_password.result}' | passwd ${var.admin_user}\"",
       # add admin user to wheel group to allow passworded sudo (redundant for root)
       "sudo usermod -aG wheel ${var.admin_user}",
-      # merge into target puppet folder
-      "sudo mkdir -p ${local.puppet_target_repodir}/",
-      "sudo mv /tmp/puppet-additions/* ${local.puppet_target_repodir}/",
-      # give admin user perms to allow post-terraform rsync
-      "sudo chown -R ${var.admin_user}:${var.admin_user} ${local.puppet_target_repodir}/",
-      # run puppet masterless but using uploaded modules; this is time-consuming so don't wait to complete
-      "sudo bash -c 'nohup ${local.puppet_apply} > ${local.home_directory}/puppet_apply.out & 2>&1'", #
+      # run puppet mastered; this is time-consuming so don't wait to complete
+      "sudo bash -c 'nohup ${local.puppet_agent} > ${local.home_directory}/puppet_agent.out & 2>&1'", #
       # wait a few seconds, then show a snippet from the run
       "sleep 6",
-      "tail -n100 ${local.home_directory}/puppet_apply.out",
+      "tail -n100 ${local.home_directory}/puppet_agent.out",
     ]
   }
-  # /STANDARD
+  # when destroying this resource, clean the old certs off the puppet master
+  provisioner "local-exec" {
+    command = "sudo ${local.puppet_server_exec} ca clean --certname ${var.hostname}.${var.host_domain}; sudo ${local.puppet_exec} node deactivate ${var.hostname}.${var.host_domain}"
+    on_failure = "continue"
+    when = "destroy"
+  }
+  # /STANDARD (puppetmastered, v1.0)
   #
   # Azure-specific
   #
@@ -208,5 +216,14 @@ data "template_file" "rsyslog-95-omsagent-conf" {
   vars = {
     workspace_id = "${var.log_analytics_workspace_id}"
     min_log_level = "${var.min_log_level}"
+  }
+}
+# render a local template file for puppet.conf
+data "template_file" "puppet_conf" {
+  template = file("${path.module}/templates/puppet.conf.tpl")
+  vars = {
+    puppet_environment = "${var.puppet_environment}"
+    puppet_master_fqdn = "${var.puppet_master_fqdn}"
+    puppet_certname = "${var.hostname}.${var.host_domain}"
   }
 }

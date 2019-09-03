@@ -125,7 +125,7 @@ resource "azurerm_network_security_group" "nsg_private" {
 
 # bastion using generic module
 module "bastion" {
-  source = "../shared/create-azure-vm"
+  source = "../shared/create-azure-vm-puppetmless"
   project = "${var.project}"
   account = "${var.account}"
   hostname = "bastion-az-teach${local.unique_append}"
