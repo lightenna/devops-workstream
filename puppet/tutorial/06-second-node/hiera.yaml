@@ -13,5 +13,5 @@ hierarchy:
     path: "common.yaml"
 
 defaults:
-  data_hash: yaml_data
-  datadir: ./
+    data_hash: yaml_data
+    datadir: ./hieradata/

@@ -91,24 +91,6 @@ output "ssh_command_puppetmaster" {
   value = "${module.puppetmaster.instantiated_host_ssh_command}"
 }
 
-# create a host puppetted by connecting to puppetmaster
-# @requires module "aws_background"
-module "puppetmastered" {
-  source = "../shared/puppetmastered"
-  host_name = "puppetmastered${local.unique_append}"
-  aws_region = "${var.aws_region}"
-  # use the fields passed back from aws_background for guaranteed consistency
-  aws_ami = "${module.aws_background.aws_ami_id}"
-  bastion_host = "${module.aws_background.aws_bastion_public_ip}"
-  key_name = "${module.aws_background.aws_key_pair_id}"
-  aws_security_group_id = "${module.aws_background.aws_security_group_id}"
-  aws_subnet_id = "${module.aws_background.aws_subnet_id}"
-}
-# output command for accessing host by SSH
-output "ssh_command_puppetmastered" {
-  value = "${module.puppetmastered.instantiated_host_ssh_command}"
-}
-
 #
 # Example: Ansible
 #

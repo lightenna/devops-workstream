@@ -27,7 +27,6 @@ If you build everything with Terraform, you'll get the following hosts created i
   * [As per `puppetmless`] It installs puppet and its dependencies, then transfers the manifests in [/puppet](/puppet) to ```/etc/puppet```.  Puppet is run (masterless) to apply this configuration to this host.
   * `Puppetmaster` does not have to be used as a Puppet master.  It is a config-managed server, but is built masterless and provides a general purpose guide for the masterless configuration of other hosts in the environment.
   * The `Puppetmaster` module outputs an SSH command line as part of the `terraform apply` run.
-* `Puppetmastered` - Puppet demo (Mastered from `puppetmaster`)
 * `Ansiblelocal` - Ansible demo (Local)
   * Only accessible from the `Bastion`
   * It installs Ansible and its dependencies, then transfers the manifests in [/ansible](/ansible) to ```/etc/ansible```.

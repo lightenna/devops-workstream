@@ -78,7 +78,6 @@ Provisioning
       * [pack_amis](/terraform/shared/pack_amis) - a terraform module to invoke packer
       * [packer](/terraform/shared/packer) - a terraform module to instantiate a host from a packed machine image
       * [puppetmless](/terraform/shared/puppetmless) - a terraform module to set up a generic host and invoke puppet apply on it locally 
-      * [puppetmastered](/terraform/shared/puppetmastered) - a terraform module to set up a generic host, connect it to a puppetmaster and set up a puppet agent for repeat runs 
 
 Testing
 -------
