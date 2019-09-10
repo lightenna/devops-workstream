@@ -1,0 +1,24 @@
+#
+# hiera.yaml
+#   referenced by `puppet apply` and `puppet agent` calls
+#   during masterless/mastered puppet run
+#
+---
+version: 5
+hierarchy:
+  - name: "Per-node data"
+    path: "nodes/%{::hostname}.yaml"
+
+  - name: "Common data"
+    path: "common.yaml"
+
+  - name: "Secret data"
+    lookup_key: eyaml_lookup_key
+    path: "secrets.eyaml"
+    options:
+        pkcs7_private_key: /etc/puppetlabs/puppet/eyaml/puppet-azure-teaching-private-key-pkcs7.pem
+        pkcs7_public_key: /etc/puppetlabs/puppet/eyaml/puppet-azure-teaching-public-key-pkcs7.pem
+
+defaults:
+    data_hash: yaml_data
+    datadir: ./hieradata/
