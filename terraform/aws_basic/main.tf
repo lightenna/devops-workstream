@@ -35,7 +35,7 @@ module "aws_background" {
 # create a [masterless] puppetted host
 # @requires module "aws_background"
 module "puppetmless" {
-  source = "../shared/puppetmless"
+  source = "../shared/create-aws-vm-puppetmless"
   host_name = "puppetmless${local.unique_append}"
   aws_region = "${var.aws_region}"
   # use the fields passed back from aws_background for guaranteed consistency

@@ -57,7 +57,7 @@ output "ssh_command_packed" {
 # create a [masterless] puppetted host
 # @requires module "aws_background"
 module "puppetmless" {
-  source = "../shared/puppetmless"
+  source = "../shared/create-aws-vm-puppetmless"
   host_name = "puppetmless${local.unique_append}"
   aws_region = "${var.aws_region}"
   # use the fields passed back from aws_background for guaranteed consistency
@@ -75,7 +75,7 @@ output "ssh_command_puppetmless" {
 # create a puppetmaster (using the same masterless puppet terraform module as above)
 # @requires module "aws_background"
 module "puppetmaster" {
-  source = "../shared/puppetmless"
+  source = "../shared/create-aws-vm-puppetmless"
   host_name = "puppetmaster${local.unique_append}"
   # use the puppetmaster manifest to define the config
   aws_region = "${var.aws_region}"
