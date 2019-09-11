@@ -1,4 +1,4 @@
-package terratest
+package test
 
 import (
 	"testing"
@@ -7,14 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTerraformAWSBasic(t *testing.T) {
+func TestTerraformAzureBasic(t *testing.T) {
 	t.Parallel()
 
 	uniqueId := "terratest123"
 
 	terraformOptions := &terraform.Options{
 		// The path to where our Terraform code is located
-		TerraformDir: "../../../terraform/aws_basic",
+		TerraformDir: "../../../../terraform/azure_basic",
 
 		// Variables to pass to our Terraform code using -var options
 		Vars: map[string]interface{}{
@@ -32,10 +32,10 @@ func TestTerraformAWSBasic(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	// Run `terraform output` to get the values of output variables
-	output_ssh_command_ansible := terraform.Output(t, terraformOptions, "ssh_command_ansiblelocal")
-	output_ssh_command_puppet := terraform.Output(t, terraformOptions, "ssh_command_puppetmless")
+	output_ssh_command := terraform.Output(t, terraformOptions, "host_bastion_SSH_command")
+	output_admin_password := terraform.Output(t, terraformOptions, "host_bastion_admin_password")
 
 	// Verify we're getting back the outputs we expect
-	assert.Contains(t, output_ssh_command_ansible, "ssh -A")
-	assert.Contains(t, output_ssh_command_puppet, "ssh -A")
+	assert.Contains(t, output_ssh_command, "ssh -A")
+	assert.Equal(t, len(output_admin_password), 12)
 }

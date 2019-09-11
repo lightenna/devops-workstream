@@ -10,6 +10,7 @@
 .idea
 
 # exclude go's `dep ensure`-built directories
-go/src/terratest/vendor
-go/src/terratest/*_cmd.out
+go/src/workstream/vendor
+go/src/workstream/*_cmd.out
+go/src/workstream/test_output
 go/pkg
