@@ -1,0 +1,1 @@
+bolt plan run profiles::appserver --nodes localhost
