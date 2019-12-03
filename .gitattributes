@@ -17,3 +17,9 @@
 *.gif binary
 *.zip binary
 *.xls binary
+*.bin binary
+*.te binary
+
+# Don't modify Windows files
+*.psm1 binary
+*.mof binary

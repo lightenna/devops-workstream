@@ -1,23 +1,98 @@
 
-variable "aws_region" {}
-variable "aws_ami" {}
-variable "aws_security_group_id" {}
-variable "aws_subnet_id" {}
-variable "bastion_host" {}
-variable "host_name" {}
+variable "project" {
+  default = "projname"
+}
 
-variable "local_domain" {
-  description = "Name of the domain used locally in this environment"
+variable "account" {
+  default = "orgname"
+}
+
+variable "hostname" {
+  default = "generic"
+}
+
+variable "host_domain" {
   default = "localdomain"
 }
 
-variable "key_name" {
-  description = "Desired name of AWS key pair"
-  default = "devops_simple_key"
+variable "host_os_image" {
+  # eu-west-2 centos 7 default
+  default = "ami-c22236a6"
 }
 
-variable "manifest_name" {
-  description = "Name of the puppet manifest to apply to this host"
-  default = "site.pp"
+variable "admin_user" {
+  # terraform runs puppet as OS default on AWS, escalated with sudo
+  default = "centos"
 }
 
+variable "pkgman" {
+  default = "yum"
+}
+
+variable "host_size" {
+  default = "t2.micro"
+}
+
+variable "host_tags" {
+  type = string
+  description = "semi-colon (;) separated list of strings"
+  default = ""
+}
+
+variable "host_specific_commands" {
+  type = string
+  description = "semi-colon (;) separated list of strings"
+  default = "sudo yum -y install epel-release;sudo rpm -Uvh https://yum.puppetlabs.com/puppet6/puppet6-release-el-7.noarch.rpm"
+}
+
+variable "region" {
+  default = "eu-west-2"
+}
+
+variable "ssh_key_name" {}
+
+variable "subnet_id" {}
+variable "nsg_id" {}
+
+variable "bastion_public_ip" {
+  # no explicit bastion ip, don't use a bastion
+  default = ""
+}
+
+variable "bastion_user" {
+  default = ""
+}
+
+variable "bastion_ssh_port" {
+  default = "22"
+}
+
+variable "ssh_additional_port" {
+  # port 22 to indicate no additional port
+  default = "22"
+}
+
+variable "puppet_mode" {
+  default = "fire-and-forget"
+}
+
+variable "puppet_sleeptime" {
+  default = 120
+}
+
+variable "puppet_environment" {
+  default = "prod"
+}
+
+variable "puppet_manifest_name" {
+  # empty to evaluate the whole puppet directory
+  default = ""
+}
+
+variable "iam_instance_profile" {
+  default = ""
+}
+
+variable "create_dns_entry" {
+  default = "no"
+}

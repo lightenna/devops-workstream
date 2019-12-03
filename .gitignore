@@ -1,16 +1,48 @@
-
-# exclude .terraform working files
-.terraform/
-*.tfstate*
-
-# exclude Gemfile.lock
-*.lock
-
-# exclude IDE settings
+# Ignore idea config
 .idea
 
-# exclude go's `dep ensure`-built directories
-go/src/workstream/vendor
-go/src/workstream/*_cmd.out
-go/src/workstream/test_output
-go/pkg
+# Exclude go internals and test output (for test suite)
+go/src/*/vendor
+go/src/*/test_cmd.out
+go/src/*/test_output
+go/src/**/Gopkg.lock
+go/src/**/terraform.tfplan
+go/src/**/terraform.tfstate
+go/src/**/terraform.tfstate*
+go/src/**/.test-data
+go/pkg/dep
+
+# Ignore Terraform state
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfstate.lock.info
+terraform.tfstate.d
+
+# Ignore Terraform and Vagrant working directories
+.vagrant
+.terraform
+
+# Exclude go internals and test output (for unit tests)
+terraform/**/terratest/src/test/vendor
+terraform/**/terratest/pkg
+
+# Exclude r10k-managed puppet/modules folder
+puppet/modules
+puppet/.librarian
+# Exclude dynamically generated r10k config file
+puppet/r10k.yaml
+
+**/node_modules
+**/.env
+**/dist-prod
+
+# Ignore compiled python files
+*.pyc
+__pycache__
+
+# Temporary output files
+nohup.out
+puppet_cmd.out
+terraform_cmd.out
+

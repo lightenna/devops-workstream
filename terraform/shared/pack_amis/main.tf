@@ -13,9 +13,8 @@
 #   terraform apply pack_amis
 #
 
-
 provider "aws" {
-  region = "${var.aws_region}"
+  region = var.aws_region
 }
 
 # build AMI using packer (better done with Terraform Enterprise/Atlas, but this works/cheaper)
@@ -27,12 +26,14 @@ resource "null_resource" "pack_centos_updated" {
 
 # find the AWS image we just built
 data "aws_ami" "centos_updated" {
-  most_recent      = true
-  owners     = ["self"]
+  most_recent = true
+  owners      = ["self"]
   filter {
     name   = "name"
     values = ["centos-updated-*"]
   }
+
   # wait for packer run to complete
-  depends_on = ["null_resource.pack_centos_updated"]
+  depends_on = [null_resource.pack_centos_updated]
 }
+

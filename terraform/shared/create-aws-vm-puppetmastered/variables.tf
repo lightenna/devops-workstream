@@ -1,25 +1,15 @@
 
 # sensible defaults
 variable "project" {
-  default = "wrks"
+  default = "projname"
 }
 
 variable "account" {
-  default = "dvo"
+  default = "orgname"
 }
 
 variable "hostname" {
   default = "generic"
-}
-
-variable "pkgman" {
-  default = "yum"
-}
-
-variable "host_specific_commands" {
-  type = "string"
-  description = "semi-colon (;) separated list of strings"
-  default = "sudo yum -y install epel-release;sudo rpm -Uvh https://yum.puppetlabs.com/puppet6/puppet6-release-el-7.noarch.rpm"
 }
 
 variable "host_domain" {
@@ -27,19 +17,40 @@ variable "host_domain" {
 }
 
 variable "host_os_image" {
-  default = "centos-7-x64"
+  # eu-west-2 centos 7 default
+  default = "ami-c22236a6"
+}
+
+variable "host_tags" {
+  type = string
+  description = "semi-colon (;) separated list of strings"
+  default = ""
+}
+
+variable "admin_user" {
+  # terraform runs puppet as OS default on AWS, escalated with sudo
+  default = "centos"
+}
+
+variable "pkgman" {
+  default = "yum"
 }
 
 variable "host_size" {
   default = "t2.micro"
 }
 
-variable "admin_user" {
-  # terraform runs puppet as root
-  default = "root"
+variable "host_specific_commands" {
+  type = string
+  description = "semi-colon (;) separated list of strings"
+  default = "sudo yum -y install epel-release;sudo rpm -Uvh https://yum.puppetlabs.com/puppet6/puppet6-release-el-7.noarch.rpm"
 }
 
-variable "public_key_path" {}
+variable "region" {
+  default = "eu-west-2"
+}
+
+variable "ssh_key_name" {}
 variable "subnet_id" {}
 variable "nsg_id" {}
 
@@ -47,6 +58,11 @@ variable "bastion_public_ip" {
   # no explicit bastion ip, don't use a bastion
   default = ""
 }
+
+variable "bastion_user" {
+  default = ""
+}
+
 variable "bastion_ssh_port" {
   default = "22"
 }
@@ -56,30 +72,24 @@ variable "ssh_additional_port" {
   default = "22"
 }
 
+variable "puppet_mode" {
+  default = "fire-and-forget"
+}
+
+variable "puppet_sleeptime" {
+  default = 120
+}
+
 variable "puppet_environment" {
-  default = "workstream"
+  default = "prod"
 }
 
 variable "puppet_master_fqdn" {}
 
-#
-# unused, from Azure
-#
-variable "min_log_level" {
-  default = "info"
-}
-variable "private_ip" {
-  # no explicit private_ip, so auto-generate a dynamic private IP
+variable "iam_instance_profile" {
   default = ""
 }
-variable "private_ip_address_allocation" {
-  default = "Dynamic"
-}
-variable "public_ip_address" {
-  # no explicit public_ip, none allocated
-  default = ""
-}
-variable "public_ip_address_id" {
-  # no explicit public_ip, none allocated
-  default = ""
+
+variable "create_dns_entry" {
+  default = "no"
 }

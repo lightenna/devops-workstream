@@ -1,11 +1,10 @@
 
-# sensible defaults
 variable "project" {
-  default = "wrks"
+  default = "projname"
 }
 
 variable "account" {
-  default = "dvo"
+  default = "orgname"
 }
 
 variable "hostname" {
@@ -17,9 +16,9 @@ variable "pkgman" {
 }
 
 variable "host_specific_commands" {
-  type = "string"
+  type = string
   description = "semi-colon (;) separated list of strings"
-  default = "sudo yum -y install epel-release;sudo rpm -Uvh https://yum.puppetlabs.com/puppet6/puppet6-release-el-7.noarch.rpm"
+  default = "sudo yum -y install epel-release;sudo rpm -Uvh https://yum.puppet.com/puppet6-release-el-7.noarch.rpm"
 }
 
 variable "host_domain" {
@@ -31,7 +30,15 @@ variable "host_os_image" {
 }
 
 variable "host_size" {
-  default = "Standard_B1ms" # Standard_B1ms £0.0206/hour, £14.83/month
+  # default = "Standard_B1ls" # 1vCPU,0.5GB £0.0044/hour, £3.17/month
+  default = "Standard_B1s" # 1vCPU,1GB £0.0088/hour, £6.34/month
+  # default = "Standard_B1ms" # 1vCPU,2GB £0.0176/hour, £12.67/month
+}
+
+variable "host_tags" {
+  type = string
+  description = "semi-colon (;) separated list of strings"
+  default = ""
 }
 
 variable "admin_user" {
@@ -44,6 +51,10 @@ variable "subnet_id" {}
 variable "nsg_id" {}
 variable "resource_group_location" {}
 variable "resource_group_name" {}
+variable "identity_type" {
+  # create system-managed identity even if not used
+  default = "SystemAssigned"
+}
 
 variable "min_log_level" {
   default = "info"
@@ -82,6 +93,9 @@ variable "bastion_public_ip" {
   # no explicit bastion ip, don't use a bastion
   default = ""
 }
+variable "bastion_user" {
+  default = ""
+}
 variable "bastion_ssh_port" {
   default = "22"
 }
@@ -91,8 +105,25 @@ variable "ssh_additional_port" {
   default = "22"
 }
 
+variable "puppet_mode" {
+  default = "fire-and-forget"
+}
+
+variable "puppet_sleeptime" {
+  default = 120
+}
+
 variable "puppet_environment" {
-  default = "workstream"
+  default = "prod"
 }
 
 variable "puppet_master_fqdn" {}
+
+variable "create_dns_entry" {
+  default = "no"
+}
+
+variable "dns_resource_group_name" {
+  # dns_resource_group_name required if create_dns_entry is yes
+  default = ""
+}
