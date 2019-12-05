@@ -1,0 +1,13 @@
+# configure bash to show coloured username and repo branch on command line
+if [[ ${EUID} == 0 ]];
+then
+  ucol='\[\e[01;31m\]'
+else
+  ucol='\[\e[01;32m\]'
+fi
+# build alternative hostnames, may be used in @host_part
+fqdn_hostname=$(hostname -f)
+shorter_fqdn_hostname=${fqdn_hostname%%.lightenna.com}
+# set command line
+PS1="[${ucol}\u\[\e[m\]@<%= @host_part %> \W\[\033[1;32m\]\$(git branch 2>/dev/null | grep -e '\* ' | sed 's/^..\(.*\)/ {\1}/')\[\033[0m\]]\\$ "
+

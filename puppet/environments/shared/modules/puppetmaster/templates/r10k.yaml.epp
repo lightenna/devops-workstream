@@ -1,0 +1,3 @@
+---
+# Store all cache information in named folder
+cachedir: '<%= $cachedir %>'

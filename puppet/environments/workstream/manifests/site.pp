@@ -10,3 +10,14 @@ node default {
   # include a class locally defined in the environment
   class { 'example': }
 }
+
+node 'puppetmaster', /^puppetmaster/ {
+  class { '::common': }
+  class { 'usertools': }
+  class { '::sudo' : }
+  class { 'puppetmaster': }
+  class { 'puppetmaster::puppetboard':
+    use_https => false,
+    web_port => 18080,
+  }
+}

@@ -11,9 +11,18 @@ mod 'puppetlabs-apt'
 mod 'darin-zypprepo'
 
 # common and deps
+mod 'ghoneycutt-common'
+mod 'ghoneycutt-vim'
+mod 'ghoneycutt-hosts'
+mod 'ghoneycutt-ntp'
+mod 'ghoneycutt-dnsclient'
+mod 'ghoneycutt-pam'
+mod 'trlinkin-nsswitch'
 mod 'puppetlabs-stdlib'
+mod 'puppetlabs-concat'
 
 # system
+mod 'saz-sudo'
 mod 'puppet-rsyslog'
 mod 'puppet-selinux'
 
@@ -22,6 +31,27 @@ mod 'puppetlabs-java'
 mod 'puppetlabs-ruby'
 mod 'puppet-nodejs'
 mod 'puppet-python'
+
+# application servers
+mod 'puppetlabs-apache'
+
+# puppet masters
+mod 'puppet-puppetserver'
+mod 'puppet-puppetboard'
+mod 'camptocamp-augeas'
+mod 'puppetlabs-puppetserver_gem'
+mod 'puppetlabs-puppetdb'
+mod 'puppetlabs-postgresql'
+mod 'puppetlabs-inifile'
+mod 'stahnma-epel'
+mod 'herculesteam-augeasproviders_sysctl'
+mod 'herculesteam-augeasproviders_core'
+mod 'herculesteam-augeasproviders_ssh'
+
+# r10k (and its deps)
+mod 'puppet-r10k'
+mod 'abrader-gms'
+mod 'puppetlabs-git'
 
 # vcsrepo for git
 mod 'puppetlabs-vcsrepo'
