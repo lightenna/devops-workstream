@@ -3,21 +3,27 @@
 # manifest for general configuration-managed hosts
 #
 
-# define a single general node
+# define a general default for unmatched nodes
 node default {
-  # include a class globally defined by the community modules
-  # @todo install global module
   # include a class locally defined in the environment
   class { 'example': }
 }
 
-node 'puppetmaster', /^puppetmaster/ {
+# match all hosts beginning 'puppetmaster...'
+node /^puppetmaster/ {
+  # include classes from the community modules
   class { '::common': }
-  class { 'usertools': }
   class { '::sudo' : }
+  # include shared modules
+  class { 'usertools': }
   class { 'puppetmaster': }
   class { 'puppetmaster::puppetboard':
     use_https => false,
     web_port => 18080,
   }
+}
+
+# match the master teaching puppetmaster with an empty catalogue to avoid over-puppetting it
+node 'puppetmaster.training.azure-dns.lightenna.com' {
+  notify { 'No resources were managed' : }
 }

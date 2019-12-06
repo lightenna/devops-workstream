@@ -1,0 +1,46 @@
+#
+# hiera.yaml (puppetmless)
+#     referenced by `puppet apply` and `puppet agent` calls
+#     during masterless/mastered puppet run
+#
+---
+version: 5
+hierarchy:
+  - name: "Per-node data (by FQDN)"
+    path: "nodes/%{::fqdn}.yaml"
+
+  - name: "Per-node data (by hostname)"
+    path: "nodes/%{::hostname}.yaml"
+
+  - name: "Per-node secret data (encrypted)"
+    lookup_key: eyaml_lookup_key
+    path: "nodes/%{::hostname}-secrets.eyaml"
+    options:
+        pkcs7_private_key: ../../../eyaml/keys/private_key.pkcs7.pem
+        pkcs7_public_key: ../../../eyaml/keys/public_key.pkcs7.pem
+
+  - name: "Per-OS defaults"
+    path: "osfamily/%{facts.os.family}.%{facts.os.architecture}.yaml"
+
+  - name: "Per-domain data"
+    path: "domains/%{::domain}.yaml"
+
+  - name: "Shared per-OS defaults"
+    path: "../../shared/hieradata/osfamily/%{facts.os.family}.%{facts.os.architecture}.yaml"
+
+  - name: "Secret data"
+    lookup_key: eyaml_lookup_key
+    path: "secrets.eyaml"
+    options:
+        pkcs7_private_key: ../../../eyaml/keys/private_key.pkcs7.pem
+        pkcs7_public_key: ../../../eyaml/keys/public_key.pkcs7.pem
+
+  - name: "Common data"
+    path: "common.yaml"
+
+  - name: "Shared common data"
+    path: "../../shared/hieradata/common.yaml"
+
+defaults:
+    data_hash: yaml_data
+    datadir: ./hieradata/

@@ -45,7 +45,7 @@ class puppetmaster::puppetboard (
 
   if ($certificate != undef) {
     # write out the certs/keys
-    webtools::write_cert { "${cert_name}":
+    puppetmaster::write_cert { "${cert_name}":
       cert_directory_path => $cert_directory_path,
       key_directory_path  => $key_directory_path,
       key                 => $key,

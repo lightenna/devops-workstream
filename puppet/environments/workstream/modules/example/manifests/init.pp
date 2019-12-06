@@ -11,6 +11,8 @@ class example (
 
 ) {
 
-  debug("This is some output from the 'example' module, visible only with -d or --debug.")
+  notify { 'example-notify':
+    message => "This is some output from the 'example' module.",
+  }
 
 }

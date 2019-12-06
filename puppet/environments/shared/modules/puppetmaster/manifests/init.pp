@@ -22,14 +22,6 @@ class puppetmaster (
     @domotd::register { "PuppetDB[${puppetdb_https_port}]" : }
   }
 
-  # install pre-reqs if not already present
-  include '::apache'
-  include '::apache::mod::version'
-  include '::apache::mod::wsgi'
-
-  # python installed by puppetboard
-  # include '::python'
-
   # fetch and symlink the control repo
   class { 'puppetmaster::control_repo':
     before => [Anchor['puppetmaster-puppet-begin']],
@@ -53,6 +45,12 @@ class puppetmaster (
     ensure  => present,
     path    => '/etc/puppetlabs/puppet/puppet.conf',
     require => [Class['puppetmaster::install']],
+  }
+  # set the codedir for puppet (e.g. lookup) calls on the puppet master, although master-code-dir also set in /etc/puppetlabs/puppetserver/conf.d/puppetserver.conf by ::puppermaster module
+  ini_setting { 'puppetmaster-conf-master-codedir':
+    section => 'master',
+    setting => 'codedir',
+    value   => $master_code_dir,
   }
   # set the environment for the puppet master
   ini_setting { 'puppetmaster-conf-master-default-env':
@@ -83,7 +81,7 @@ class puppetmaster (
 
   # install keys if set
   if ($keys != {}) {
-    create_resources(admintools::write_keypair, $keys, $key_defaults)
+    create_resources(usertools::write_keypair, $keys, $key_defaults)
   }
 
   # define puppetmaster as local machine (for command line puppet)

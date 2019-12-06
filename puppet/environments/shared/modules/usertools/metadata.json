@@ -1,6 +1,6 @@
 {
   "name": "puppet-usertools",
-  "version": "0.0.4",
+  "version": "0.0.10",
   "author": "(c) Devopera",
   "summary": "Shared puppet manifests across environments",
   "license": "Apache-2.0",

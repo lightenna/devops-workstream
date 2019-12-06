@@ -1,32 +1,40 @@
 define usertools::user (
 
-  $user              = $title,
-  $group             = $user,
-  $group_primary     = $group,
-  $uid               = undef,
-  $gid               = undef,
-  $shell             = '/bin/bash',
-  $password          = undef,
-  $managehome        = true,
-  $managehomessh     = true,
-  $home              = undef,
-  $home_mode         = '0700',
-  $comment           = '',
-  $ensure            = 'present',
-  $groups            = [],
-  $keys              = {},
-  $symlinks          = {},
-  $directories       = {},
-  $colouring         = {},
+  $user                  = $title,
+  $group                 = $user,
+  $group_primary         = $group,
+  $uid                   = undef,
+  $gid                   = undef,
+  $shell                 = '/bin/bash',
+  $password              = undef,
+  $managehome            = true,
+  $managehome_ssh        = true,
+  $manage_command_prompt = true,
+  $manage_logout         = true,
+  $home                  = undef,
+  $home_mode             = '0700',
+  $home_dir_root         = '/home',
+  $comment               = '',
+  $ensure                = 'present',
+  $groups                = [],
+  $keys                  = {},
+  $symlinks              = {},
+  $directories           = {},
+  $colouring             = {},
+  $bashadditions         = {},
+  $default_bashaddition  = {},
 
-  $git_email         = undef,
-  $git_name          = undef,
+  $git_email             = undef,
+  $git_name              = undef,
+  $git_http_proxy        = undef,
+  $git_credential_helper = undef,
+  $git_push_default      = undef,
 
-  $ssh_auth_key      = '',
-  $ssh_auth_key_type = 'ssh-rsa',
+  $ssh_auth_key          = '',
+  $ssh_auth_key_type     = 'ssh-rsa',
 
   # @todo remove, only introduced for compatibility with common::mkuser
-  $create_group      = undef,
+  $create_group          = undef,
 
 ) {
 
@@ -35,7 +43,7 @@ define usertools::user (
     if ($user == 'root') {
       $home_resolved = '/root'
     } else {
-      $home_resolved = "/home/${user}"
+      $home_resolved = "${home_dir_root}/${user}"
     }
   } else {
     $home_resolved = "${home}"
@@ -71,7 +79,7 @@ define usertools::user (
       require => User[$user],
     }
   }
-  if ($managehomessh) {
+  if ($managehome_ssh) {
     usertools::safe_directory { "usertools-user-${user}-home-dotssh":
       ensure  => $ensure,
       path    => "${home_resolved}/.ssh",
@@ -123,28 +131,47 @@ define usertools::user (
       require => [File["${home_resolved}"]],
     }
 
-    # add command-line colouring [all users]
-    ensure_resource(usertools::colouring, "${user}", $colouring + {
-      home => $home_resolved,
-    })
+    # apply additions if set
+    if ($bashadditions != {}) {
+      $bashadditions.each |$key, $value| {
+        usertools::bashaddition { "usertools-user-bashadd-${user}-${key}":
+          content => $value['content'],
+          user    => $user,
+          home    => $home_resolved,
+          require => [File["${home_resolved}"]],
+        }
+      }
+    }
 
-    # add session timeout [all users]
-    usertools::autologout { "${user}":
-      home => "${home_resolved}",
+    if ($manage_command_prompt) {
+      # add command-line colouring [all users]
+      ensure_resource(usertools::colouring, "${user}", $colouring + {
+        home => $home_resolved,
+      })
+    }
+
+    if ($manage_logout) {
+      # add session timeout [all users]
+      usertools::autologout { "${user}":
+        home => "${home_resolved}",
+      }
     }
   }
 
   if ($ensure != 'absent' and $git_email != undef) {
     usertools::gitconfig { "${user}":
-      git_email => $git_email,
-      git_name  => $git_name,
-      require   => User[$user],
+      git_name          => $git_name,
+      email             => $git_email,
+      http_proxy        => $git_http_proxy,
+      credential_helper => $git_credential_helper,
+      push_default      => $git_push_default,
+      require           => User[$user],
     }
   }
 
   # create keys if set
   # warning: use with care, each key name must be globally unique
-  if ($ensure != 'absent' and $managehomessh and $keys != {}) {
+  if ($ensure != 'absent' and $managehome_ssh and $keys != {}) {
     create_resources(usertools::userkey, $keys, {
       user    => $user,
       group   => $group,
