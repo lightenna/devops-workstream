@@ -162,28 +162,12 @@ resource "azurerm_public_ip" "pubipbst" {
   }
 }
 
-output "host_bastion_SSH_command" {
-  value = "ssh -A -p ${var.ssh_additional_port} ${module.bastion.admin_user}@${module.bastion.public_ip}"
-}
-
-output "host_bastion_admin_password" {
-  value = module.bastion.admin_password
-}
-
-output "host_bastion_re-send_all_puppet_scripts" {
-  value = "${module.bastion.resend_puppet_scripts}\r\n"
-}
-
-output "host_bastion_re-puppet_command_on_host" {
-  value = "${module.bastion.repuppet_command}\r\n"
-}
-
-# puppet-mastered host using generic module
-module "mastered" {
-  source                  = "../shared/create-azure-vm-puppetmastered"
+# puppetmaster host using generic module
+module "master" {
+  source                  = "../shared/create-azure-vm-puppetmless"
   project                 = var.project
   account                 = var.account
-  hostname                = "staging${local.unique_append}"
+  hostname                = "puppetmaster${local.unique_append}"
   admin_user              = var.admin_user
   public_key_path         = var.public_key_path
   subnet_id               = azurerm_subnet.intnet.id
@@ -196,39 +180,21 @@ module "mastered" {
   public_ip_address    = azurerm_public_ip.pubipmsd.ip_address
   public_ip_address_id = azurerm_public_ip.pubipmsd.id
   ssh_additional_port  = var.ssh_additional_port
-  bastion_public_ip    = azurerm_public_ip.pubipbst.ip_address
-  puppet_master_fqdn   = "puppetmaster.training.azure-dns.lightenna.com"
+  bastion_public_ip    = azurerm_public_ip.pubipmsd.ip_address
   puppet_environment   = "workstream"
 }
 
 resource "azurerm_public_ip" "pubipmsd" {
-  name                = "pubip-mastered-${local.hostbase}${local.unique_append}"
+  name                = "pubip-master-${local.hostbase}${local.unique_append}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
 
   # public_ip_address_allocation now known as allocation_method
   tags = {
-    name        = "pubip-mastered-${local.hostbase}${local.unique_append}"
+    name        = "pubip-master-${local.hostbase}${local.unique_append}"
     project     = var.project
     account     = var.account
     environment = terraform.workspace
   }
 }
-
-output "host_mastered_SSH_command" {
-  value = "ssh -A -p ${var.ssh_additional_port} ${module.mastered.admin_user}@${module.mastered.public_ip}"
-}
-
-output "host_mastered_admin_password" {
-  value = module.mastered.admin_password
-}
-
-output "host_mastered_re-send_all_puppet_scripts" {
-  value = "${module.mastered.resend_puppet_scripts}\r\n"
-}
-
-output "host_mastered_re-puppet_command_on_host" {
-  value = "${module.mastered.repuppet_command}\r\n"
-}
-
