@@ -4,6 +4,7 @@ define usertools::colouring (
   $home,
   $host_part = '\h',
   $shared    = true,
+  $chophost  = '',
 
 ) {
 

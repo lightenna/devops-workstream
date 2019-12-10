@@ -32,6 +32,7 @@ define usertools::user (
 
   $ssh_auth_key          = '',
   $ssh_auth_key_type     = 'ssh-rsa',
+  $colouring_chophost    = '',
 
   # @todo remove, only introduced for compatibility with common::mkuser
   $create_group          = undef,
@@ -147,6 +148,7 @@ define usertools::user (
       # add command-line colouring [all users]
       ensure_resource(usertools::colouring, "${user}", $colouring + {
         home => $home_resolved,
+        chophost => $colouring_chophost,
       })
     }
 

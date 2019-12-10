@@ -7,7 +7,7 @@ else
 fi
 # build alternative hostnames, may be used in @host_part
 fqdn_hostname=$(hostname -f)
-shorter_fqdn_hostname=${fqdn_hostname%%.lightenna.com}
+shorter_fqdn_hostname=${fqdn_hostname%%<%= @chophost %>}
 # set command line
 PS1="[${ucol}\u\[\e[m\]@<%= @host_part %> \W\[\033[1;32m\]\$(git branch 2>/dev/null | grep -e '\* ' | sed 's/^..\(.*\)/ {\1}/')\[\033[0m\]]\\$ "
 

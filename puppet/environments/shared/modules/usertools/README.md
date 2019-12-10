@@ -4,6 +4,8 @@ usertools
 Change history
 --------------
 
+* v0.0.11
+    * Parameterised colouring to control shorter_hostname domain removal (chophost)
 * v0.0.10
     * Added new parameters for gitconfig
 * v0.0.9
