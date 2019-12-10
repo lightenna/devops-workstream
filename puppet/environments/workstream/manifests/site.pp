@@ -13,7 +13,8 @@ node default {
 node /^puppetmaster/ {
   # include classes from the community modules
   class { '::common': }
-  class { '::sudo' : }
+  # temporarily disable sudo becuase might be causing mid-run issue
+  # class { '::sudo' : }
   # include shared modules
   class { 'usertools': }
   class { 'puppetmaster': }

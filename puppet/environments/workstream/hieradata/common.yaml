@@ -1,0 +1,28 @@
+#
+# common.yaml
+#     referenced by puppet, packer and vagrant runs
+#
+---
+usertools::users:
+    # service users
+    git:
+        uid: "21001"
+        shell: "/bin/false"
+        comment: "Git autonomous user"
+        home: "/home/git"
+        gid: "%{lookup('common::groups.iac-data.gid')}"
+        group: "iac-data"
+        groups:
+            - "www-data"
+            - "iac-data"
+    # service users installed on selected systems
+    #   selftest: 21002
+common::groups:
+    # service groups
+    www-data:
+        gid: "22001"
+    iac-data:
+        gid: "22002"
+    # user groups, created in users
+    #   puppet: "32001"
+...

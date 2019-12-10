@@ -1,0 +1,51 @@
+#
+# Host-specific, common
+#
+---
+lookup_options:
+    usertools::users:
+        merge: # deep hash merge
+            strategy: deep
+            merge_hash_arrays: true
+    pam::allowed_users:
+        merge: unique # array merge
+    csf::config::settings:
+        merge: hash
+    doaws::users:
+        merge: hash
+    doazure::users:
+        merge: hash
+
+usertools::users:
+    # service users
+    #   puppet only on puppetmasters
+    puppet:
+        shell: "/bin/false"
+        comment: "Puppet autonomous user"
+        home: "/opt/puppetlabs/server/data/puppetserver"
+        # gid: "%{lookup('common::groups.iac-data.gid')}"
+        # group: "iac-data"
+        gid: "32001"
+        group: "puppet"
+        groups:
+            - "www-data"
+            - "iac-data"
+        managehome: false
+        managehome_ssh: false
+    # git on all machines, but default to iac-data on puppetmasters
+    git:
+        gid: "%{lookup('common::groups.iac-data.gid')}"
+        group: "iac-data"
+
+# allow puppet to have a crontab (still /bin/false)
+pam::allowed_users:
+    - puppet
+
+csf::config::settings:
+    TCP_IN:
+        # allow SSH, NRPE, Puppet
+        value: "%{lookup('harden::ssh_port')},%{lookup('nrpe::server_port')},8140"
+
+# enable self-test on this host
+devtools::test::script_name: "puppetmaster.rb"
+...
