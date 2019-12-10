@@ -28,6 +28,7 @@ common::groups:
 
 # by default, run SSH on 22 unless altered
 harden::ssh_port: 22
+harden::stage_last::remove_rootlike: false
 
 # show message of the day (MOTD) including open port list
 domotd::tcp_in_hash: "%{alias('csf::config::settings.TCP_IN')}"

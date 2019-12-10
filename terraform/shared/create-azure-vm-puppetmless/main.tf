@@ -194,12 +194,11 @@ resource "azurerm_virtual_machine" "host" {
       var.puppet_mode == "blocking" ? "sudo bash -c '(${local.puppet_run} 2>&1; exit 0)'; exit 0" : "echo 'Different mode selected'",
       # soft-blocking: run puppet; wait a few seconds, then tail the run until complete
       # - currently does not show the puppet run
-      var.puppet_mode == "soft-blocking" ? "sudo bash -c 'nohup ${local.puppet_run} > ${local.root_directory}/puppet_agent.out 2>&1 &' && sleep 6 ; exit 0" : "echo 'Different mode selected'",
+      var.puppet_mode == "soft-blocking" ? "sudo bash -c 'nohup ${local.puppet_run} > ${local.root_directory}/puppet_agent.out 2>&1 &' && sleep ${var.puppet_sleeptime} ; exit 0" : "echo 'Different mode selected'",
       var.puppet_mode == "soft-blocking" ? local.softblocktail : "echo 'Different mode selected'",
       # fire-and-forget: run puppet; wait a few seconds, then tail progress to show start, return
       # + works, but cannot do anything downstream of puppet run
-      var.puppet_mode == "fire-and-forget" ? "sudo bash -c 'nohup ${local.puppet_run} > ${local.root_directory}/puppet_agent.out 2>&1 &'" : "echo 'Different mode selected'",
-      var.puppet_mode == "fire-and-forget" ? "sleep ${var.puppet_sleeptime}" : "echo 'Different mode selected'",
+      var.puppet_mode == "fire-and-forget" ? "sudo bash -c 'nohup ${local.puppet_run} > ${local.root_directory}/puppet_agent.out 2>&1 &' && sleep ${var.puppet_sleeptime} ; exit 0" : "echo 'Different mode selected'",
       var.puppet_mode == "fire-and-forget" ? "sudo bash -c 'tail -n10000 ${local.root_directory}/puppet_agent.out'" : "echo 'Different mode selected'",
     ]
   }

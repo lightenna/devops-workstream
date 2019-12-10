@@ -79,7 +79,7 @@ variable "puppet_mode" {
 }
 
 variable "puppet_sleeptime" {
-  default = 120
+  default = 6
 }
 
 variable "puppet_manifest_name" {
