@@ -18,6 +18,9 @@ class puppetmaster::control_repo (
 
 ) {
 
+  # install pre-reqs if not already present
+  include '::git'
+
   if ($manage_control_repo) {
     usertools::safe_repo { 'puppetmaster-control_repo-fetch':
       user            => $service_user,

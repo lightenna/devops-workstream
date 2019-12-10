@@ -28,6 +28,7 @@ class puppetmaster::puppetboard (
   include '::apache::mod::version'
   include '::apache::mod::wsgi'
   include '::python'
+  include '::git'
 
   # install puppetboard
   class { '::puppetboard':

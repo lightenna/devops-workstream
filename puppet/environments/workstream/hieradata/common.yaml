@@ -25,4 +25,5 @@ common::groups:
         gid: "22002"
     # user groups, created in users
     #   puppet: "32001"
+
 ...

@@ -7,13 +7,7 @@ lookup_options:
         merge: # deep hash merge
             strategy: deep
             merge_hash_arrays: true
-    pam::allowed_users:
-        merge: unique # array merge
     csf::config::settings:
-        merge: hash
-    doaws::users:
-        merge: hash
-    doazure::users:
         merge: hash
 
 usertools::users:
@@ -37,14 +31,17 @@ usertools::users:
         gid: "%{lookup('common::groups.iac-data.gid')}"
         group: "iac-data"
 
-# allow puppet to have a crontab (still /bin/false)
-pam::allowed_users:
-    - puppet
-
 csf::config::settings:
     TCP_IN:
         # allow SSH, NRPE, Puppet
         value: "%{lookup('harden::ssh_port')},%{lookup('nrpe::server_port')},8140"
+
+# puppetmaster
+python::pip: "present"
+python::dev: "present"
+# puppetboard requires virtualenv
+python::virtualenv: "present"
+python::use_epel: true
 
 # enable self-test on this host
 devtools::test::script_name: "puppetmaster.rb"
