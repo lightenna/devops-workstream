@@ -31,10 +31,13 @@ usertools::users:
         gid: "%{lookup('common::groups.iac-data.gid')}"
         group: "iac-data"
 
+# run SSH on non-standard port for bastion
+harden::ssh_port: 443
+
 csf::config::settings:
     TCP_IN:
-        # allow SSH, Puppet
-        value: "%{lookup('harden::ssh_port')},8140"
+        # allow SSH on both 22 (during provisioning) and non-standard (during life), Puppet on 8140
+        value: "22,%{lookup('harden::ssh_port')},8140"
 
 # puppetmaster
 python::pip: "present"

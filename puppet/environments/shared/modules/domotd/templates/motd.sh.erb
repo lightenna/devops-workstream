@@ -1,0 +1,39 @@
+
+# cache facter output for repeat grepping
+facter=`facter`
+
+function find_fact {
+  echo "$facter" | grep "$1 =>" | tail -n 1 | gawk -F" " ' { print $3; } '
+}
+
+# update motd if template file exists
+if [ -f <%= @motd_template %> ]
+then
+  eval "sed \
+   -e 's/\%{::hostname}/$(find_fact "hostname")/g' \
+   -e 's/\%{::processorcount}/$(find_fact "processorcount")/g' \
+   -e 's/\%{::memorysize}/$(find_fact "memorysize")/g' \
+   -e 's/\%{::operatingsystem}/$(find_fact "operatingsystem")/g' \
+   -e 's/\%{::operatingsystemrelease}/$(find_fact "operatingsystemrelease")/g' \
+   -e 's/\%{::fqdn}/$(find_fact "fqdn")/g' \
+   -e 's/\%{::ipaddress}/$(find_fact "ipaddress")/g' \
+   -e 's/\%{::macaddress}/$(find_fact "macaddress")/g' \
+   <%= @motd_template %> > <%= @motd %>"
+fi
+
+# update issue.erb if template file exists
+if [ -f <%= @issue_template %> ]
+then
+  eval "sed \
+   -e 's/\%{::hostname}/$(find_fact "hostname")/g' \
+   -e 's/\%{::processorcount}/$(find_fact "processorcount")/g' \
+   -e 's/\%{::memorysize}/$(find_fact "memorysize")/g' \
+   -e 's/\%{::operatingsystem}/$(find_fact "operatingsystem")/g' \
+   -e 's/\%{::operatingsystemrelease}/$(find_fact "operatingsystemrelease")/g' \
+   -e 's/\%{::fqdn}/$(find_fact "fqdn")/g' \
+   -e 's/\%{::ipaddress}/$(find_fact "ipaddress")/g' \
+   -e 's/\%{::macaddress}/$(find_fact "macaddress")/g' \
+   <%= @issue_template %> > <%= @issue %>"
+fi
+
+exit 0

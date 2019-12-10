@@ -1,0 +1,30 @@
+#
+# Domain-specific, *.vagrant
+#
+---
+lookup_options:
+    sudo::configs:
+        merge: hash
+    pam::allowed_users:
+        merge: unique # array merge
+
+pam::allowed_users:
+    - vagrant
+
+# always run SSH on 22 for easy `vagrant ssh`
+harden::ssh_port: 22
+
+# display the private_network IP
+domotd::ipaddress: "%{facts.networking.interfaces.eth1.ip}"
+
+sudo::configs:
+    # for <hostname>.vagrant machines, vagrant user can sudo without a password
+    vagrant:
+        priority: 90
+        content: "vagrant ALL=(ALL) NOPASSWD: ALL\n"
+
+# disable automated agent runs for local dev machines, including local puppet masters
+puppetagent::run_as_service: false
+puppetmaster::agent::run_as_service: false
+
+...

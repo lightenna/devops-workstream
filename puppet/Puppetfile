@@ -26,11 +26,16 @@ mod 'saz-sudo'
 mod 'puppet-rsyslog'
 mod 'puppet-selinux'
 
+# security
+mod 'thbe-rkhunter'
+mod 'sensson-csf'
+
 # languages
 mod 'puppetlabs-java'
 mod 'puppetlabs-ruby'
 mod 'puppet-nodejs'
 mod 'puppet-python'
+mod 'bodgit-scl'
 
 # application servers
 mod 'puppetlabs-apache'

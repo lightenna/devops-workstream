@@ -1,0 +1,14 @@
+{
+  "name": "devopera-domotd",
+  "version": "0.11.0",
+  "author": "(c) Alex Stanhope, Devopera.com",
+  "summary": "Message of the Day (MOTD) installation and configuration module",
+  "license": "Apache License, Version 2.0",
+  "source": "https://github.com/devopera/puppet-domotd",
+  "project_page": "http://devopera.com/module/domotd",
+  "description": "The Message of the Day (MOTD) can be used to show system information at login time.  \nFor the Devopera family of modules, it shows a summary of host information (size/spec of machine), \nnetwork setup (IP/MAC), what's installed (profiles and services) and exposed ports.",
+  "issues_url": "https://github.com/devopera/puppet-domotd/issues",
+  "dependencies": [
+  
+  ]
+}

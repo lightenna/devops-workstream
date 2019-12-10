@@ -12,11 +12,14 @@ node default {
 # match all hosts beginning 'puppetmaster...'
 node /^puppetmaster/ {
   # include classes from the community modules
-  class { '::common': }
-  # temporarily disable sudo becuase might be causing mid-run issue
+  # class { '::common': }
+  # temporarily disable sudo because might be causing mid-run issue
   # class { '::sudo' : }
   # include shared modules
-  class { 'usertools': }
+  # class { 'usertools': }
+
+  # user and environment setup
+  class { 'local::general': }
   class { 'puppetmaster': }
   class { 'puppetmaster::puppetboard':
     use_https => false,
@@ -28,3 +31,7 @@ node /^puppetmaster/ {
 node 'puppetmaster.training.azure-dns.lightenna.com' {
   notify { 'No resources were managed' : }
 }
+
+# set up stages: first, main (default) and last
+stage { ['first', 'last']: }
+Stage['first'] -> Stage['main'] -> Stage['last']
