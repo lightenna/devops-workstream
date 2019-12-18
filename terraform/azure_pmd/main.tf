@@ -85,46 +85,6 @@ resource "azurerm_network_security_group" "nsg_public" {
   }
 }
 
-resource "azurerm_network_security_group" "nsg_private" {
-  name                = "nsgpriv-${local.hostbase}${local.unique_append}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  # only allow network access from within the subnet
-  # - SSH
-  security_rule {
-    name                       = "SSH"
-    priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = azurerm_subnet.intnet.address_prefix
-    destination_address_prefix = azurerm_subnet.intnet.address_prefix
-  }
-
-  # - Puppet
-  security_rule {
-    name                       = "puppet"
-    priority                   = 1002
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "8140"
-    source_address_prefix      = azurerm_subnet.intnet.address_prefix
-    destination_address_prefix = azurerm_subnet.intnet.address_prefix
-  }
-
-  tags = {
-    name        = "nsgpriv-${local.hostbase}"
-    project     = var.project
-    account     = var.account
-    environment = terraform.workspace
-  }
-}
-
 # bastion using generic module
 module "bastion" {
   source                  = "../shared/create-azure-vm-puppetmastered"
