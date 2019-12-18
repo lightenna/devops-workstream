@@ -104,10 +104,8 @@ module "bastion" {
   public_ip_address_id = azurerm_public_ip.pubipbst.id
   ssh_additional_port  = var.ssh_additional_port
   bastion_public_ip    = azurerm_public_ip.pubipbst.ip_address
-  # create a system-managed identity and assign it the referenced role
-  identity_type = "SystemAssigned"
   puppet_environment   = "workstream"
-  puppet_master_fqdn = "puppetmaster.training.azure-dns.lightenna.com"
+  puppet_master_fqdn   = "puppetmaster.training.azure-dns.lightenna.com"
 }
 
 resource "azurerm_public_ip" "pubipbst" {
