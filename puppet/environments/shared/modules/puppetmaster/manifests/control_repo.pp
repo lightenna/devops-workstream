@@ -43,6 +43,8 @@ class puppetmaster::control_repo (
       })
     }
 
+    anchor { 'puppetmaster-control_repo-r10k-ready': }
+
     if ($manage_r10k_puppetfile) {
       # create r10k.yaml config file
       file { 'puppetmaster-control_repo-config-r10k':
@@ -70,8 +72,6 @@ class puppetmaster::control_repo (
         before => [Anchor['puppetmaster-control_repo-r10k-ready']],
       }
 
-      anchor { 'puppetmaster-control_repo-r10k-ready': } ->
-
       # install puppetfile if one exists in control repo, but wipe the cache afterwards
       exec { 'puppetmaster-control_repo-r10k-puppetfile-install':
         path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
@@ -80,6 +80,7 @@ class puppetmaster::control_repo (
         group   => $service_group,
         cwd     => "${path}/${repo_name}/${puppetfile_relative_path}",
         onlyif  => "test -e ${path}/${repo_name}/${puppetfile_relative_path}/${puppetfile_name}",
+        require => [Anchor['puppetmaster-control_repo-r10k-ready']],
       }
     }
   }

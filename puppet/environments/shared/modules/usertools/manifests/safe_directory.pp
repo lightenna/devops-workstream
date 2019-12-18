@@ -12,7 +12,7 @@ define usertools::safe_directory (
   if ($treatas == 'existing') {
     case $operatingsystem {
 
-      centos, redhat, fedora, ubuntu, debian: {
+      centos, redhat, oraclelinux, fedora, ubuntu, debian: {
         exec { "usertools-safedir-${title}":
           path    => '/bin:/usr/bin',
           command => "mkdir -p ${path}",

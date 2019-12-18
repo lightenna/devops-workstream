@@ -137,6 +137,7 @@ define usertools::user (
       $bashadditions.each |$key, $value| {
         usertools::bashaddition { "usertools-user-bashadd-${user}-${key}":
           content => $value['content'],
+          target  => $value['target'],
           user    => $user,
           home    => $home_resolved,
           require => [File["${home_resolved}"]],
@@ -147,7 +148,7 @@ define usertools::user (
     if ($manage_command_prompt) {
       # add command-line colouring [all users]
       ensure_resource(usertools::colouring, "${user}", $colouring + {
-        home => $home_resolved,
+        home     => $home_resolved,
         chophost => $colouring_chophost,
       })
     }

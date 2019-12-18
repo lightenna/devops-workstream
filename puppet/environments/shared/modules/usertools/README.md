@@ -4,6 +4,10 @@ usertools
 Change history
 --------------
 
+* v0.0.13
+    * Added pass-through for target in strange .each iterator
+* v0.0.12
+    * Added Oracle Linux to list for matching
 * v0.0.11
     * Parameterised colouring to control shorter_hostname domain removal (chophost)
 * v0.0.10

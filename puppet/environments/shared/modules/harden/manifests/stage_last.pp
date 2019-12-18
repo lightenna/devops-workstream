@@ -8,7 +8,7 @@ class harden::stage_last (
 
   # remove default OS users, after may have been used for provisioning
   case $operatingsystem {
-    centos, redhat, fedora: {
+    centos, redhat, oraclelinux, fedora: {
       harden::remove_user { 'centos' : }
     }
     ubuntu, debian: {

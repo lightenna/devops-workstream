@@ -1,6 +1,6 @@
 {
   "name": "puppet-harden",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "(c) Devopera",
   "summary": "Shared puppet manifests across environments",
   "license": "Apache-2.0",

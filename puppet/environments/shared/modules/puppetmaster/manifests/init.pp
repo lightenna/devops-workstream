@@ -15,6 +15,8 @@ class puppetmaster (
 
 ) {
 
+  anchor { 'puppetmaster-containment-begin' : }
+
   if defined(Class['domotd']) {
     # register external services ()
     @domotd::register { "Puppetserver(8140)" : }
@@ -24,26 +26,43 @@ class puppetmaster (
 
   # fetch and symlink the control repo
   class { 'puppetmaster::control_repo':
-    before => [Anchor['puppetmaster-puppet-begin']],
+    require => [Anchor['puppetmaster-containment-begin']],
+    before => [Anchor['puppetmaster-puppet-begin'], Anchor['puppetmaster-containment-complete']],
   }
 
   anchor { 'puppetmaster-puppet-begin' : }
 
-  # install components
+  class { 'puppetmaster::install' :
+    master_code_dir => $master_code_dir,
+    require => [Anchor['puppetmaster-puppet-begin'], Anchor['puppetmaster-containment-complete']],
+  }
+
+  # configure the Puppet master to use Puppetdb
+  class { '::puppetdb::master::config':
+    strict_validation => false,
+    puppetdb_port => $puppetdb_https_port,
+    # don't specify localhost, because cert matches FQDN only
+    # puppetdb_server => 'localhost',
+    # don't connect over HTTP, puppetserver no longer supports that
+    # puppetdb_disable_ssl => true,
+  }
+  # install eyaml plugin for puppetserver
+  class { '::puppetserver::hiera::eyaml':
+    require => Class['puppetserver::install'],
+  }
+
   if ($manage_agent) {
     class { 'puppetmaster::agent':
       default_environment => $default_environment,
       server              => $server,
+      require => [Anchor['puppetmaster-containment-begin']],
     }
-  }
-  class { 'puppetmaster::install' :
-    master_code_dir => $master_code_dir,
-    require => [Anchor['puppetmaster-puppet-begin']],
   }
 
   Ini_setting {
     ensure  => present,
     path    => '/etc/puppetlabs/puppet/puppet.conf',
+    notify => [Service[$::puppetserver::service]],
     require => [Class['puppetmaster::install']],
   }
   # set the codedir for puppet (e.g. lookup) calls on the puppet master, although master-code-dir also set in /etc/puppetlabs/puppetserver/conf.d/puppetserver.conf by ::puppermaster module
@@ -65,20 +84,6 @@ class puppetmaster (
     value   => 'puppetdb',
   }
 
-  # configure the Puppet master to use Puppetdb
-  class { '::puppetdb::master::config':
-    strict_validation => false,
-    puppetdb_port => $puppetdb_https_port,
-    # don't specify localhost, because cert matches FQDN only
-    # puppetdb_server => 'localhost',
-    # don't connect over HTTP, puppetserver no longer supports that
-    # puppetdb_disable_ssl => true,
-  }
-  # install eyaml plugin for puppetserver
-  class { '::puppetserver::hiera::eyaml':
-    require => Class['puppetserver::install'],
-  }
-
   # install keys if set
   if ($keys != {}) {
     create_resources(usertools::write_keypair, $keys, $key_defaults)
@@ -95,7 +100,7 @@ class puppetmaster (
   }
 
   # use anchor pattern to ensure containment of selected resources
-  anchor { 'puppetmaster-puppet-complete' :
+  anchor { 'puppetmaster-containment-complete' :
     require => [Anchor['puppetmaster-puppet-begin']],
   }
 

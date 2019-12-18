@@ -10,7 +10,7 @@ define usertools::safe_symlink (
 ) {
 
   case $operatingsystem {
-    centos, redhat, fedora, ubuntu, debian: {
+    centos, redhat, oraclelinux, fedora, ubuntu, debian: {
       $resolved_flag = $link_type ? {
         default => '-sf',
       }

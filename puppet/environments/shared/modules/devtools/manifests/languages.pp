@@ -16,7 +16,7 @@ class devtools::languages (
   ensure_resource(anchor,'devtools-languages-ruby-ready',{})
 
   case $operatingsystem {
-    centos, redhat: {
+    centos, redhat, oraclelinux, fedora: {
       # install SCL
       include '::scl'
       # use up-to-date Ruby globally

@@ -8,7 +8,7 @@ class domotd::params {
   $tcp_in_hash = { value => '' }
 
   case $operatingsystem {
-    centos, redhat, fedora: {
+    centos, redhat, oraclelinux, fedora: {
       $motd = '/etc/motd'
       $motd_template = '/etc/motd.template'
       $rc_local_target = '/etc/rc.d/rc.local'

@@ -17,7 +17,7 @@ class devtools (
   # install C/C++ build tools
   ensure_packages(['make', 'gcc'], { ensure => 'present' })
   case $operatingsystem {
-    centos, redhat: {
+    centos, redhat, oraclelinux, fedora: {
       ensure_packages(['gcc-c++'], { ensure => 'present' })
     }
     ubuntu, debian: {

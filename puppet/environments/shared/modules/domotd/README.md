@@ -6,26 +6,30 @@ The Message of the Day (MOTD) can be used to show system information at login ti
 Changelog
 ---------
 
+2019-12-13 (v0.11.1)
+
+* Added Oracle Linux to list for matching
+
 2019-12-10 (v0.11.0)
 
-  * added service_provider to show in MOTD
+* added service_provider to show in MOTD
 
 2019-12-09 (v0.10.0)
 
-  * added tcp_in_list string to allow showing a port list directly from the firewall
-  * added tcp_in_hash hash to allow showing a port list when stored as the first key in a hash
+* added tcp_in_list string to allow showing a port list directly from the firewall
+* added tcp_in_hash hash to allow showing a port list when stored as the first key in a hash
 
 2013-09-28 (v0.9.0)
 
-  * rewritten for both CentOS and Ubuntu
+* rewritten for both CentOS and Ubuntu
 
 2013-09-03
 
-  * /etc/issue now dynamically generated from /etc/issue.template like motd.template
+* /etc/issue now dynamically generated from /etc/issue.template like motd.template
 
 2013-05-08
 
-  * Added /etc/issue message to show IP/MAC address before login
+* Added /etc/issue message to show IP/MAC address before login
 
 How it works
 ------------

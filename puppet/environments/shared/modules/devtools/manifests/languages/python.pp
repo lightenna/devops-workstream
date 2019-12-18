@@ -10,7 +10,7 @@ class devtools::languages::python (
   ensure_resource(anchor,'devtools-languages-python-ready',{})
 
   case $operatingsystem {
-    centos, redhat: {
+    centos, redhat, oraclelinux, fedora: {
       # install SCL
       include '::scl'
       # use up-to-date Python globally

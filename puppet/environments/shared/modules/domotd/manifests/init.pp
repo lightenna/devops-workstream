@@ -116,7 +116,7 @@ class domotd (
   }
 
   case $operatingsystem {
-    centos, redhat, fedora: {
+    centos, redhat, oraclelinux, fedora: {
       # if we're relying on rc.local
       if (($rc_local_target != undef) and ($use_dynamics)) {
         # check that rc.local is setup as a symlink

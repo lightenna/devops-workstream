@@ -12,7 +12,7 @@ class devtools::test (
 
   if ($script_name != undef) {
     case $operatingsystem {
-      centos, redhat: {
+      centos, redhat, oraclelinux, fedora: {
         # install SCL (non-exclusively)
         include '::scl'
         # use up-to-date Ruby globally

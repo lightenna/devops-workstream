@@ -9,7 +9,7 @@ class harden (
 
   # enable SELinux if available
   case $operatingsystem {
-    centos, redhat, fedora: {
+    centos, redhat, oraclelinux, fedora: {
       # manage SELinux
       class { 'selinux':
         mode => $selinux_mode,

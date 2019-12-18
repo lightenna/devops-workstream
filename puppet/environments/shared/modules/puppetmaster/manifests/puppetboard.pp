@@ -3,7 +3,7 @@ class puppetmaster::puppetboard (
 
   $cert_directory_path = '/etc/pki/tls/certs',
   $key_directory_path = '/etc/pki/tls/private',
-  $cert_name = 'puppetmaster.localdomain',
+  $cert_name = 'localhost',
   $use_https = true,
   $certificate = undef,
   $key = undef,
@@ -17,6 +17,8 @@ class puppetmaster::puppetboard (
   $web_port = 443,
 
 ) {
+
+  anchor { 'puppetmaster-puppetboard-containment-begin' : }
 
   if defined(Class['domotd']) {
     # register external services ()
@@ -38,10 +40,20 @@ class puppetmaster::puppetboard (
     # virtualenv_version => '3',
     # lock to puppetboard 1.0.0 because 1.1.0 breaks virtualenv/parse module
     revision => 'v1.0.0',
-    # disable manage_virtualenv to avoid Python class collision
+    # disable manage_virtualenv to avoid Python class collision; requires python::virtualenv: "present"
     manage_virtualenv => false,
     # leave r10k to pull in git package
     manage_git => false,
+    # contain
+    require => [Anchor['puppetmaster-puppetboard-containment-begin']],
+    before => [Anchor['puppetmaster-puppetboard-containment-complete']],
+  }
+
+  # perform checkout using named user
+  Vcsrepo <| title == '/srv/puppetboard/puppetboard' |> {
+    user => $::puppetboard::user,
+    # fix missing dep on directory for vcsrepo to checkout into
+    require => [User[$::puppetboard::user],File[$::puppetboard::basedir]],
   }
 
   if ($certificate != undef) {
@@ -115,5 +127,7 @@ class puppetmaster::puppetboard (
     content => inline_template($template),
   }
 
+  # use anchor pattern to ensure containment of selected resources
+  anchor { 'puppetmaster-puppetboard-containment-complete' : }
 }
 
