@@ -15,6 +15,7 @@ locals {
 
 resource "random_string" "unique_key" {
   length = 8
+  upper = false
   special = false
 }
 
