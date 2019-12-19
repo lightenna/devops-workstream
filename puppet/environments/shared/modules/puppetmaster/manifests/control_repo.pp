@@ -1,8 +1,8 @@
 
 class puppetmaster::control_repo (
 
-  $service_user = 'git',
-  $service_group = 'iac-data',
+  $service_user = 'puppet',
+  $service_group = 'puppet',
   $path = '/srv/git/github.com',
   $repo_name = 'devops-workstream',
   $revision = 'master',

@@ -3,12 +3,13 @@ puppetmaster
 
 Notes
 -----
-* `puppet` user needs to be able to read the puppet manifests.
-    * That might mean adding puppet to iac-data, which implies managing the `puppet` user.
+* `puppet` user needs to be able to read the puppet manifests that are checked out by control_repo.
 
 Change history
 --------------
 
+* v0.0.12
+    * Reverted to more reliable defaults for puppetmaster
 * v0.0.11
     * Forced vcsrepo to check for (require) $basedir before trying to checkout into it
 * v0.0.10

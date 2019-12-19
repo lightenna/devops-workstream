@@ -70,5 +70,13 @@ csf::config::settings:
     CT_EMAIL_ALERT:
         value: "1"
 
+# tell puppetmaster to use iac/www-data groups, defined here
+puppetmaster::control_repo::service_user: "git"
+puppetmaster::control_repo::service_group: "iac-data"
+puppetmaster::puppetboard::web_group: "www-data"
+puppetmaster::key_defaults:
+    user: "root"
+    group: "iac-data"
+    mode: "0640"
 
 ...

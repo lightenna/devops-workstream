@@ -9,7 +9,7 @@ class puppetmaster (
   $keys = {},
   $key_defaults = {
     user => 'root',
-    group => 'iac-data',
+    group => 'puppet',
     mode => '0640',
   },
 

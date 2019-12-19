@@ -12,7 +12,7 @@ class puppetmaster::puppetboard (
   $htpasswd_password = 'admLn**',
   $board_realm = 'Puppetboard',
   $web_user = 'apache',
-  $web_group = 'www-data',
+  $web_group = 'apache',
   $web_passpath = '/var/www/secure',
   $web_port = 443,
 
