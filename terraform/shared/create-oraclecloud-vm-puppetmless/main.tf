@@ -247,4 +247,5 @@ resource "oci_dns_record" "dynamic_a_record" {
   rtype = "A"
   rdata = oci_core_instance.instance[0].public_ip
   ttl = "300"
+  count = (var.create_dns_entry == "yes" ? 1 : 0)
 }
