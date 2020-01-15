@@ -1,0 +1,15 @@
+#
+# STANDARD (puppet_run, v1.8)
+#
+# blocking: run puppet using uploaded modules, output to console only
+# - currently fails because CSF blocks the run, which then kills the process
+${puppet_mode == "blocking" ? "sudo bash -c '(${puppet_run} 2>&1; exit 0)'; exit 0" : "echo 'Different mode selected'"}
+# soft-blocking: run puppet; wait a few seconds, then tail the run until complete
+# - currently does not show the puppet run
+${puppet_mode == "soft-blocking" ? "sudo bash -c 'nohup ${puppet_run} > /root/puppet_run.out 2>&1 &' && sleep 6 ; exit 0" : "echo 'Different mode selected'"}
+${puppet_mode == "soft-blocking" ? "( sudo tail -f -n100 /root/puppet_run.out & ) | grep -q \"Notice: Applied catalog in\"" : "echo 'Different mode selected'"}
+# fire-and-forget: run puppet; wait a few seconds, then tail progress to show start, return
+# + works, but cannot do anything downstream of puppet run
+${puppet_mode == "fire-and-forget" ? "sudo bash -c 'nohup ${puppet_run} > /root/puppet_run.out 2>&1 &' && sleep ${puppet_sleeptime} ; exit 0" : "echo 'Different mode selected'"}
+${puppet_mode == "fire-and-forget" ? "sudo bash -c 'tail -n10000 /root/puppet_run.out'" : "echo 'Different mode selected'"}
+# /STANDARD (puppet_run, v1.8)

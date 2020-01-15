@@ -1,3 +1,4 @@
+variable "compartment_ocid" {}
 
 variable "project" {
   default = "projname"
@@ -9,6 +10,15 @@ variable "account" {
 
 variable "hostname" {
   default = "generic"
+}
+
+variable "region" {
+  default = "uk-london-1"
+}
+
+variable "region_ad" {
+  # was 1, but 2 seems to be free eligible
+  default = "2"
 }
 
 variable "pkgman" {
@@ -26,68 +36,41 @@ variable "host_domain" {
 }
 
 variable "host_os_image" {
-  default = "centos-7-x64"
+  type = map(string)
+
+  default = {
+    # Install Oracle 7.x [default]
+    #  + see https://docs.cloud.oracle.com/iaas/images/image/cc839b42-1566-4d87-92c3-dbb5945299c7/
+    uk-london-1 = "ocid1.image.oc1.uk-london-1.aaaaaaaagwdcgcw4squjusjy4yoyzxlewn6omj75f2xur2qpo7dgwexnzyhq"
+
+    # Install CentOS 7.x
+    #  + see https://docs.cloud.oracle.com/iaas/images/image/e090db79-477b-4d8b-92bc-f3485e6ed09d/
+    # uk-london-1 = "ocid1.image.oc1.uk-london-1.aaaaaaaabf2eslezq4wejiu3kq7zbbbmkw5k55eltwmpgpgzju2t7q3nlx7q"
+  }
 }
 
 variable "host_size" {
-  # default = "Standard_B1ls" # 1vCPU,0.5GB £0.0044/hour, £3.17/month
-  default = "Standard_B1s" # 1vCPU,1GB £0.0088/hour, £6.34/month
-  # default = "Standard_B1ms" # 1vCPU,2GB £0.0176/hour, £12.67/month
+  # default = "VM.Standard2.1"
+  default = "VM.Standard.E2.1.Micro"
 }
 
 variable "host_tags" {
-  type = string
+  type = map(string)
   description = "semi-colon (;) separated list of strings"
-  default = ""
+  default = {}
+}
+
+variable "volume_size" {
+  default = "50"
 }
 
 variable "admin_user" {
-  # terraform runs as rootlike, sudos to run puppet as root
-  default = "rootlike"
+  # terraform runs as admin_user, sudos to run puppet as root
+  default = "opc"
 }
 
 variable "public_key_path" {}
 variable "subnet_id" {}
-variable "nsg_id" {}
-variable "resource_group_location" {}
-variable "resource_group_name" {}
-variable "identity_type" {
-  # create system-managed identity even if not used
-  default = "SystemAssigned"
-}
-
-variable "min_log_level" {
-  default = "info"
-}
-
-variable "private_ip" {
-  # no explicit private_ip, so auto-generate a dynamic private IP
-  default = ""
-}
-
-variable "private_ip_address_allocation" {
-  default = "Dynamic"
-}
-
-variable "public_ip_address" {
-  # no explicit public_ip, none allocated
-  default = ""
-}
-
-variable "public_ip_address_id" {
-  # no explicit public_ip, none allocated
-  default = ""
-}
-
-variable "log_analytics_workspace_id" {
-  # no explicit log analytics workspace, no LAA installed
-  default = ""
-}
-
-variable "log_analytics_workspace_key" {
-  # no explicit log analytics workspace, no LAA installed
-  default = ""
-}
 
 variable "bastion_public_ip" {
   # no explicit bastion ip, don't use a bastion
@@ -117,7 +100,10 @@ variable "puppet_environment" {
   default = "prod"
 }
 
-variable "puppet_master_fqdn" {}
+variable "puppet_manifest_name" {
+  # empty to evaluate the whole puppet directory
+  default = ""
+}
 
 variable "create_dns_entry" {
   default = "no"
@@ -130,4 +116,18 @@ variable "dns_resource_group_name" {
 
 variable "facts" {
   default = {}
+}
+
+## sensible Oracle-specific defaults
+
+variable "num_instances" {
+  default = "1"
+}
+
+variable "num_iscsi_volumes_per_instance" {
+  default = "0"
+}
+
+variable "num_paravirtualized_volumes_per_instance" {
+  default = "1"
 }

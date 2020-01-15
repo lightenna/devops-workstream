@@ -23,7 +23,7 @@ locals {
 
 # set up the AWS environment
 module "aws_background" {
-  source        = "../shared/aws_background"
+  source        = "../../shared/aws_background"
   unique_append = local.unique_append
   aws_region    = var.aws_region
   key_name      = var.key_name
@@ -36,7 +36,7 @@ module "aws_background" {
 # create an packer-managed host
 # @requires module "aws_background"
 module "packer" {
-  source     = "../shared/packer"
+  source     = "../../shared/packer"
   host_name  = "packed${local.unique_append}"
   aws_region = var.aws_region
 
@@ -60,7 +60,7 @@ output "ssh_command_packed" {
 # create a [masterless] puppetted host
 # @requires module "aws_background"
 module "puppetmless" {
-  source     = "../shared/create-aws-vm-puppetmless"
+  source     = "../../shared/create-aws-vm-puppetmless"
   host_name  = "puppetmless${local.unique_append}"
   aws_region = var.aws_region
 
@@ -81,7 +81,7 @@ output "ssh_command_puppetmless" {
 # create a puppetmaster (using the same masterless puppet terraform module as above)
 # @requires module "aws_background"
 module "puppetmaster" {
-  source    = "../shared/create-aws-vm-puppetmless"
+  source    = "../../shared/create-aws-vm-puppetmless"
   host_name = "puppetmaster${local.unique_append}"
 
   # use the puppetmaster manifest to define the config
@@ -108,7 +108,7 @@ output "ssh_command_puppetmaster" {
 # create an ansible-managed host
 # @requires module "aws_background"
 module "ansiblelocal" {
-  source    = "../shared/ansiblelocal"
+  source    = "../../shared/ansiblelocal"
   host_name = "ansiblelocal${local.unique_append}"
 
   # use the main playbook to define the config
@@ -131,7 +131,7 @@ output "ssh_command_ansiblelocal" {
 # create an ansible-managed host
 # @requires module "aws_background"
 module "ansiblecontrol" {
-  source    = "../shared/ansiblecontrol"
+  source    = "../../shared/ansiblecontrol"
   host_name = "ansiblecontrol${local.unique_append}"
 
   # use the main playbook to define the config
@@ -158,7 +158,7 @@ output "ssh_command_ansiblecontrol" {
 # create a docker host
 # @requires module "aws_background"
 module "dockerhost" {
-  source     = "../shared/docker"
+  source     = "../../shared/docker"
   host_name  = "dockerhost${local.unique_append}"
   aws_region = var.aws_region
 

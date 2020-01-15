@@ -23,7 +23,7 @@ locals {
 
 # set up the AWS environment
 module "aws_background" {
-  source        = "../shared/aws_background"
+  source        = "../../shared/aws_background"
   unique_append = local.unique_append
   aws_region    = var.aws_region
   key_name      = var.key_name
@@ -36,7 +36,7 @@ module "aws_background" {
 # create a [masterless] puppetted host
 # @requires module "aws_background"
 module "puppetmless" {
-  source     = "../shared/create-aws-vm-puppetmless"
+  source     = "../../shared/create-aws-vm-puppetmless"
   host_name  = "puppetmless${local.unique_append}"
   aws_region = var.aws_region
 
@@ -61,7 +61,7 @@ output "ssh_command_puppetmless" {
 # create an ansible-managed host
 # @requires module "aws_background"
 module "ansiblelocal" {
-  source    = "../shared/ansiblelocal"
+  source    = "../../shared/ansiblelocal"
   host_name = "ansiblelocal${local.unique_append}"
 
   # use the main playbook to define the config

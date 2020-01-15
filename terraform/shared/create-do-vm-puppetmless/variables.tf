@@ -79,7 +79,7 @@ variable "puppet_mode" {
 }
 
 variable "puppet_sleeptime" {
-  default = 6
+  default = 120
 }
 
 variable "puppet_manifest_name" {
@@ -89,4 +89,8 @@ variable "puppet_manifest_name" {
 
 variable "create_dns_entry" {
   default = "no"
+}
+
+variable "facts" {
+  default = {}
 }

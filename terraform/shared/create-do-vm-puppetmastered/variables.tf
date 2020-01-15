@@ -75,7 +75,7 @@ variable "puppet_mode" {
 }
 
 variable "puppet_sleeptime" {
-  default = 6
+  default = 120
 }
 
 variable "puppet_environment" {
@@ -86,4 +86,8 @@ variable "puppet_master_fqdn" {}
 
 variable "create_dns_entry" {
   default = "no"
+}
+
+variable "facts" {
+  default = {}
 }

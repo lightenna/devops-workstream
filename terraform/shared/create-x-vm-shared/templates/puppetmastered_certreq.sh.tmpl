@@ -1,0 +1,37 @@
+#
+# STANDARD (puppetmastered, v1.8)
+#
+# wait for cloud provider to finish install its stuff, otherwise yum/dpkg collide [standard]
+sleep 60
+# run any host-specific commands [standard]
+${host_specific_commands}
+# run install script to build host [standard]
+# deltarpm to reduce package manager work
+sudo ${pkgman} -y install deltarpm
+# install basic utilities
+sudo ${pkgman} -y install wget curl unzip htop
+# install semanage for SELinux
+sudo ${pkgman} -y install policycoreutils-python
+# bring box up-to-date
+sudo ${pkgman} -y update
+# install puppet
+sudo ${pkgman} -y install puppet-agent
+# set the hostname
+sudo hostnamectl set-hostname ${hostname}.${host_domain}
+# make SSH available on additional port, only if set
+${ssh_additional_port == "22" ? "echo no_additional_port" : "sudo /usr/sbin/semanage port -m -t ssh_port_t -p tcp ${ssh_additional_port} ; sudo sed -i 's/\\#Port 22/Port 22\\nPort ${ssh_additional_port}/g' /etc/ssh/sshd_config ; sudo service sshd restart"}
+# add admin user to wheel group to allow passworded sudo (redundant for root)
+sudo usermod -aG wheel ${admin_user}
+# set the admin user's password
+sudo bash -c "echo -e '${admin_password}\n${admin_password}' | passwd ${admin_user}"
+# merge facts into target puppet folder [standard]
+sudo mkdir -p /etc/puppetlabs/facter/facts.d
+sudo mv /tmp/puppet-facts.yaml /etc/puppetlabs/facter/facts.d/
+#
+# DIVERGE point for puppetmastered
+#
+# + move puppet.conf into position (as root) to set up puppet agent to point to puppetmaster
+sudo mv /tmp/puppet-additions.conf /etc/puppetlabs/puppet/puppet.conf
+# + run puppet to create (as yet) unsigned key, ignore errors
+sudo ${puppet_exec} agent -dvt > cert_req_puppet_agent.out 2>&1 || true
+# /STANDARD (puppetmastered, v1.8)

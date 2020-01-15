@@ -88,7 +88,7 @@ resource "azurerm_network_security_group" "nsg_public" {
 
 # bastion using generic module
 module "bastion" {
-  source                  = "../shared/create-azure-vm-puppetmastered"
+  source                  = "../../shared/create-azure-vm-puppetmastered"
   project                 = var.project
   account                 = var.account
   hostname                = "bastion${local.unique_append}"

@@ -129,7 +129,7 @@ resource "azurerm_network_security_group" "nsg_private" {
 
 # bastion using generic module
 module "bastion" {
-  source = "../shared/create-azure-vm-puppetmless"
+  source = "../../shared/create-azure-vm-puppetmless"
   project = var.project
   account = var.account
   hostname = "bastion${local.unique_append}"
@@ -166,7 +166,7 @@ resource "azurerm_public_ip" "pubipbst" {
 
 # puppetmaster host using generic module
 module "master" {
-  source = "../shared/create-azure-vm-puppetmless"
+  source = "../../shared/create-azure-vm-puppetmless"
   project = var.project
   account = var.account
   hostname = "puppetmaster${local.unique_append}"

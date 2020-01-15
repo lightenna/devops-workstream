@@ -33,6 +33,10 @@ variable "host_size" {
   default = "t2.micro"
 }
 
+variable "volume_size" {
+  default = "8"
+}
+
 variable "host_tags" {
   type = string
   description = "semi-colon (;) separated list of strings"
@@ -67,6 +71,10 @@ variable "bastion_ssh_port" {
   default = "22"
 }
 
+variable "bastion_use_external" {
+  default = "false"
+}
+
 variable "ssh_additional_port" {
   # port 22 to indicate no additional port
   default = "22"
@@ -77,7 +85,7 @@ variable "puppet_mode" {
 }
 
 variable "puppet_sleeptime" {
-  default = 6
+  default = 120
 }
 
 variable "puppet_environment" {
@@ -95,4 +103,8 @@ variable "iam_instance_profile" {
 
 variable "create_dns_entry" {
   default = "no"
+}
+
+variable "facts" {
+  default = {}
 }

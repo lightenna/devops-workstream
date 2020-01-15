@@ -110,7 +110,7 @@ variable "puppet_mode" {
 }
 
 variable "puppet_sleeptime" {
-  default = 6
+  default = 120
 }
 
 variable "puppet_environment" {
@@ -129,4 +129,8 @@ variable "create_dns_entry" {
 variable "dns_resource_group_name" {
   # dns_resource_group_name required if create_dns_entry is yes
   default = ""
+}
+
+variable "facts" {
+  default = {}
 }

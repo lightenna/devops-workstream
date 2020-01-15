@@ -1,4 +1,3 @@
-# create output variables
 output "admin_user" {
   value = var.admin_user
 }
@@ -6,10 +5,10 @@ output "admin_password" {
   value = random_string.admin_password.result
 }
 output "private_ip" {
-  value = aws_instance.puppetted_host.private_ip
+  value = oci_core_instance.instance[0].private_ip
 }
 output "public_ip" {
-  value = aws_instance.puppetted_host.public_ip
+  value = oci_core_instance.instance[0].public_ip
 }
 output "bastion_host" {
   value = var.bastion_public_ip
@@ -21,11 +20,11 @@ output "bastion_user" {
   value = local.real_bastion_user
 }
 output "host_fqdn" {
-  value = ""
+  value = "${var.hostname}.${var.host_domain}"
 }
 output "ssh_command" {
   # disable host checking and store the received key in /dev/null to avoid false 'man-in-the-middle' warnings
-  value = "ssh -A -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -A -p ${var.bastion_ssh_port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p ${local.real_bastion_user}@${local.real_bastion_public_ip}' ${var.admin_user}@${aws_instance.puppetted_host.public_ip}"
+  value = "ssh -A -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -A -p ${var.bastion_ssh_port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p ${var.admin_user}@${var.bastion_public_ip}' ${var.admin_user}@${oci_core_instance.instance[0].private_ip}"
 }
 output "ssh_additional_port" {
   value = var.ssh_additional_port
@@ -37,3 +36,4 @@ output "repuppet_command" {
 output "resend_puppet_scripts" {
   value = "n/a"
 }
+

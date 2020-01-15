@@ -32,7 +32,7 @@ output "ssh_additional_port" {
 }
 output "repuppet_command" {
   # note live output streamed using tail but never completes; needs Ctrl+C to exit from tail -f
-  value = "sudo bash -c '${local.puppet_run} > ${local.root_directory}/puppet_apply.out & 2>&1 ; tail -f -n1000 ${local.root_directory}/puppet_apply.out'"
+  value = "sudo bash -c '${local.puppet_run} > /root/puppet_apply.out & 2>&1 ; tail -f -n1000 /root/puppet_apply.out'"
 }
 output "resend_puppet_scripts" {
   value = "n/a"

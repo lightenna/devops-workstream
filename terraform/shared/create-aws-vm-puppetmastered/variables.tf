@@ -18,7 +18,16 @@ variable "host_domain" {
 
 variable "host_os_image" {
   # eu-west-2 centos 7 default
-  default = "ami-c22236a6"
+  # Non-subscription, older alternative
+  # default = "ami-c22236a6"
+
+  # AMI ID source using AWS CLI:
+  # see https://stackoverflow.com/questions/40835953/how-to-find-ami-id-of-centos-7-image-in-aws-marketplace
+  #   aws ec2 describe-images --owners 'aws-marketplace' --filters 'Name=product-code,Values=aw0evgkw8e5c1q413zgy5pjce' \
+  #     --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' --output 'text'
+  # requires AWS Marketplace subscription
+  #   https://aws.amazon.com/marketplace/pp?sku=aw0evgkw8e5c1q413zgy5pjce
+  default = "ami-0eab3a90fc693af19"
 }
 
 variable "host_tags" {
@@ -38,6 +47,10 @@ variable "pkgman" {
 
 variable "host_size" {
   default = "t2.micro"
+}
+
+variable "volume_size" {
+  default = "8"
 }
 
 variable "host_specific_commands" {
@@ -67,6 +80,10 @@ variable "bastion_ssh_port" {
   default = "22"
 }
 
+variable "bastion_use_external" {
+  default = "false"
+}
+
 variable "ssh_additional_port" {
   # port 22 to indicate no additional port
   default = "22"
@@ -77,7 +94,7 @@ variable "puppet_mode" {
 }
 
 variable "puppet_sleeptime" {
-  default = 6
+  default = 120
 }
 
 variable "puppet_environment" {
@@ -92,4 +109,8 @@ variable "iam_instance_profile" {
 
 variable "create_dns_entry" {
   default = "no"
+}
+
+variable "facts" {
+  default = {}
 }
