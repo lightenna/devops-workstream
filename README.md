@@ -50,7 +50,7 @@ Image creation and orchestration
 
 * [/packer](/packer) - a set of Packer templates
   * `centos_updates.json` - create updated AMI image based on CentOS 7 (cross-region)
-  * `remote_provisioning.json` - create AMI image based on CentOS 7, including this repo with all pre-requisites installed
+  * `remprov/remote_provisioning.json` - create AMI image based on CentOS 7, including this repo with all pre-requisites installed
 
 Config management
 

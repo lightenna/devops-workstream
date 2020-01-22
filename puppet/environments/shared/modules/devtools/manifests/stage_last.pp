@@ -11,7 +11,9 @@ class devtools::stage_last (
   if ($script_name != undef) {
     # run test
     devtools::run_ruby { 'devtools-test-run-rspec-testsuite' :
-      command => "rspec ${path}/${script_name} | grep \"${match}\" > /dev/null 2>&1",
+      # don't grep, because it trambles the return status (all tests go green!)
+      # command => "rspec ${path}/${script_name} | grep \"${match}\" > /dev/null 2>&1",
+      command => "rspec ${path}/${script_name}",
       onlyif  => "test -e ${path}/${script_name}",
     }
   }

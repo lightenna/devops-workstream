@@ -4,7 +4,7 @@
 class domotd (
 
   # by default, don't update motd/issue every restart, only on puppet runs
-  $use_dynamics = false,
+  $use_dynamics = $domotd::params::use_dynamics,
 
   # location of motd file (used at login)
   $motd = $domotd::params::motd,
@@ -154,6 +154,7 @@ class domotd (
       exec { 'domotd-disable-redundants' :
         path => '/usr/bin:/bin',
         command => 'chmod 0644 /etc/update-motd.d/00-header /etc/update-motd.d/10-help-text',
+        onlyif => 'test -e /etc/update-motd.d/00-header',
       }
     }
   }

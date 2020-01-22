@@ -3,16 +3,32 @@ class harden::stage_last (
 
   $puppetmless_path = '/etc/puppetlabs/puppetmless',
   $remove_rootlike = true,
+  $remove_osdefaultuser = true,
+  $disable_osdefaultuser = false,
 
 ) {
 
-  # remove default OS users, after may have been used for provisioning
-  case $operatingsystem {
-    centos, redhat, oraclelinux, fedora: {
-      harden::remove_user { 'centos' : }
+  if ($remove_osdefaultuser) {
+    # remove default OS users, after may have been used for provisioning
+    case $operatingsystem {
+      centos, redhat, oraclelinux, fedora: {
+        harden::remove_user { 'centos': }
+      }
+      ubuntu, debian: {
+        harden::remove_user { 'ubuntu': }
+      }
     }
-    ubuntu, debian: {
-      harden::remove_user { 'ubuntu' : }
+  } else {
+    if ($disable_osdefaultuser) {
+      # disable default OS users
+      case $operatingsystem {
+        centos, redhat, oraclelinux, fedora: {
+          harden::disable_user { 'centos': }
+        }
+        ubuntu, debian: {
+          harden::disable_user { 'ubuntu': }
+        }
+      }
     }
   }
 
@@ -26,6 +42,11 @@ class harden::stage_last (
     path => '/usr/bin',
     command => "rm -rf ${puppetmless_path}/*",
     onlyif => "test -e ${puppetmless_path}/Puppetfile",
+  }
+  exec { 'harden-remove-tmp-hiera':
+    path => '/usr/bin',
+    command => "rm -rf /tmp/hiera_packer/",
+    onlyif => "test -e /tmp/hiera_packer/",
   }
 
 }

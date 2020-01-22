@@ -6,6 +6,10 @@ The Message of the Day (MOTD) can be used to show system information at login ti
 Changelog
 ---------
 
+2019-12-18 (v0.11.2)
+
+* Fixed pass-through of use_dynamics from params.pp
+
 2019-12-13 (v0.11.1)
 
 * Added Oracle Linux to list for matching

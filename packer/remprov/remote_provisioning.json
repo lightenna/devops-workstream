@@ -1,13 +1,16 @@
 {
   "_purpose": "Create a public AMI with Workstream source and pre-requisites all bundled up",
-  "_comment": "@var aws_access_key, @var aws_secret_key from AWS credentials. No defaults are provided.",
+  "_comment": "@var aws_access_key, @var aws_secret_key from AWS credentials, @aws_vpc_id and @aws_subnet_id must be provided. No defaults are provided.",
   "variables": {
     "aws_access_key": "",
     "aws_secret_key": "",
-    "terraform_url": "https://releases.hashicorp.com/terraform/0.12.5/terraform_0.12.5_linux_amd64.zip",
-    "terraform_zip": "terraform_0.12.5_linux_amd64.zip",
-    "packer_url": "https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip",
-    "packer_zip": "packer_1.4.2_linux_amd64.zip",
+    "aws_vpc_id": "",
+    "aws_subnet_id": "",
+    "aws_region": "us-east-1",
+    "terraform_url": "https://releases.hashicorp.com/terraform/0.12.19/terraform_0.12.19_linux_amd64.zip",
+    "terraform_zip": "terraform_0.12.19_linux_amd64.zip",
+    "packer_url": "https://releases.hashicorp.com/packer/1.5.1/packer_1.5.1_linux_amd64.zip",
+    "packer_zip": "packer_1.5.1_linux_amd64.zip",
     "virtualenv_url": "https://pypi.python.org/packages/source/v/virtualenv/virtualenv-13.1.2.tar.gz",
     "virtualenv_zip": "virtualenv-13.1.2.tar.gz"
   },
@@ -16,7 +19,7 @@
       "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
-      "region": "eu-west-2",
+      "region": "{{user `aws_region`}}",
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
@@ -29,12 +32,16 @@
         "most_recent": true
       },
       "instance_type": "t2.micro",
-      "ssh_username": "centos",
+      "ssh_username": "ec2-user",
       "tags": {
         "workstream-role": "remprov"
       },
       "ami_groups": ["all"],
-      "ami_name": "workstream-remprov"
+      "ami_name": "workstream-remprov",
+      "ami_description": "A remote provisioning machine with a set of examples from devops-workstream",
+      "vpc_id": "{{user `aws_vpc_id`}}",
+      "subnet_id": "{{user `aws_subnet_id`}}",
+      "user_data_file": "./templates/cloud-defaults.cfg"
     }
   ],
   "_comment": "install pre-requisites and transfer bundled repo",
@@ -70,7 +77,19 @@
     },
     {
       "type": "file",
-      "source": "../../devops-workstream",
+      "source": "./templates/cloud-defaults.cfg",
+      "destination": "/tmp/cloud-defaults.cfg"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo mkdir -p /etc/cloud/cloud.cfg.d/",
+        "sudo mv /tmp/cloud-defaults.cfg /etc/cloud/cloud.cfg.d/defaults.cfg"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "../../../devops-workstream",
       "destination": "~/"
     }
   ]

@@ -1,0 +1,22 @@
+
+class devtools::languages::ruby (
+
+) {
+
+  # install Ruby (OS-latest)
+  include '::ruby'
+  ensure_resource(anchor,'devtools-languages-ruby-ready',{})
+
+  case $operatingsystem {
+    centos, redhat, oraclelinux, fedora: {
+      # install SCL
+      include '::scl'
+      # use up-to-date Ruby globally
+      ensure_resource(scl::collection, 'rh-ruby25', {
+        enable => true,
+        before => Anchor['devtools-languages-ruby-ready'],
+      })
+    }
+  }
+
+}

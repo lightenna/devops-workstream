@@ -11,21 +11,7 @@ class devtools::test (
 ) {
 
   if ($script_name != undef) {
-    case $operatingsystem {
-      centos, redhat, oraclelinux, fedora: {
-        # install SCL (non-exclusively)
-        include '::scl'
-        # use up-to-date Ruby globally
-        ensure_resource(scl::collection, 'rh-ruby25', {
-          enable => true,
-          before => Anchor['devtools-languages-ruby-ready'],
-        })
-      }
-      ubuntu, debian: {
-      }
-    }
-    ensure_resource(anchor,'devtools-languages-ruby-ready',{})
-
+    include 'devtools::languages::ruby'
     # install required gems for post-run testing
     devtools::run_ruby { 'devtools-test-install-gems':
       command => 'gem install rake serverspec',
@@ -37,7 +23,7 @@ class devtools::test (
       path => "${path}",
       user => "${user}",
       group => "${group}",
-      mode => '0700',
+      mode => '0750',
     }
 
     # transfer test script, but standardise name
@@ -46,7 +32,7 @@ class devtools::test (
       source => "puppet:///modules/${selftest_module_path}/${script_name}",
       owner => "${user}",
       group => "${group}",
-      mode => '0600',
+      mode => '0640',
       require => [File["${path}"]],
     }
 

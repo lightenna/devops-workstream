@@ -26,6 +26,7 @@ terraform.tfstate.d
 # Exclude go internals and test output (for unit tests)
 terraform/**/terratest/src/test/vendor
 terraform/**/terratest/pkg
+vagrant/**/output.txt
 
 # Exclude r10k-managed puppet/modules folder
 puppet/modules
@@ -40,6 +41,7 @@ puppet/r10k.yaml
 # Ignore compiled python files
 *.pyc
 __pycache__
+packer/build_remprov_withvars.py
 
 # Temporary output files
 nohup.out

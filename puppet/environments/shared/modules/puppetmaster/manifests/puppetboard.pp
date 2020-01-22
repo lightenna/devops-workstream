@@ -11,6 +11,7 @@ class puppetmaster::puppetboard (
   $htpasswd_username = 'admin',
   $htpasswd_password = 'admLn**',
   $board_realm = 'Puppetboard',
+  $board_offline = true,
   $web_user = 'apache',
   $web_group = 'apache',
   $web_passpath = '/var/www/secure',
@@ -44,6 +45,8 @@ class puppetmaster::puppetboard (
     manage_virtualenv => false,
     # leave r10k to pull in git package
     manage_git => false,
+    # use in offline mode to avoid CDN call-outs
+    offline_mode => $board_offline,
     # contain
     require => [Anchor['puppetmaster-puppetboard-containment-begin']],
     before => [Anchor['puppetmaster-puppetboard-containment-complete']],

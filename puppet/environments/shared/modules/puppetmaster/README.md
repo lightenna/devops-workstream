@@ -8,6 +8,8 @@ Notes
 Change history
 --------------
 
+* v0.0.13
+    * Set puppetboard to use offline mode by default, to avoid call out for CDN versions of jquery etc.
 * v0.0.12
     * Reverted to more reliable defaults for puppetmaster
 * v0.0.11
