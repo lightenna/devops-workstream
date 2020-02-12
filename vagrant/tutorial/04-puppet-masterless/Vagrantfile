@@ -1,0 +1,24 @@
+Vagrant.configure("2") do |config|
+  # hypervisor
+  config.vm.provider "virtualbox" do |vmp|
+    vmp.memory = 2048
+    vmp.cpus = 2
+  end
+
+  # base OS
+  config.vm.box = "generic/centos7"
+
+  # machine specific
+  config.vm.hostname = "bastion.vagrant"
+  config.vm.network "private_network", ip: "192.168.23.10"
+  config.vm.synced_folder "../../../eyaml/keys", "/srv/keys"
+  config.vm.provision "shell", path: "../../shared/scripts/bootco7.sh"
+
+  # kick off puppet run
+  config.vm.provision "puppet" do |puppet|
+    puppet.environment_path = "../../../puppet/environments"
+    puppet.environment = "workstream"
+    puppet.module_path = ["../../../puppet/modules","../../../puppet/environments/shared/modules","../../../puppet/environments/workstream/modules"]
+    puppet.options = "-t"
+  end
+end
