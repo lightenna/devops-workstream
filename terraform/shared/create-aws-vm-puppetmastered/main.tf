@@ -40,18 +40,12 @@ resource "aws_instance" "puppetted_host" {
     user = var.admin_user
   }
 
-  # create a tiny instance
+  # create an instance, based on passed IDs
   instance_type = var.host_size
-
-  # lookup the correct AMI based on the region
   ami = var.host_os_image
-
-  # the name of our SSH keypair we created
-  key_name = var.ssh_key_name
-
   vpc_security_group_ids = [var.nsg_id]
   subnet_id = var.subnet_id
-
+  key_name = var.ssh_key_name
   # assign instance profile if set
   iam_instance_profile = var.iam_instance_profile
 
@@ -78,7 +72,11 @@ resource "aws_instance" "puppetted_host" {
   # upload puppet.conf, install puppet, kick off cert_request, kick off cert_request
   provisioner "file" {
     destination = "/tmp/puppet-additions.conf"
-    content = data.template_file.puppet_conf.rendered
+    content = templatefile("../../shared/create-x-vm-shared/templates/puppet.conf.tmpl", {
+      puppet_environment: var.puppet_environment
+      puppet_master_fqdn: var.puppet_master_fqdn
+      puppet_certname: "${var.hostname}.${var.host_domain}"
+    })
   }
   provisioner "remote-exec" {
     inline = [templatefile("../../shared/create-x-vm-shared/templates/puppetmastered_certreq.sh.tmpl", {
@@ -111,16 +109,6 @@ resource "aws_instance" "puppetted_host" {
     when = destroy
   }
   # /STANDARD (puppetmastered, v1.8)
-}
-
-# render a local template file for puppet.conf
-data "template_file" "puppet_conf" {
-  template = file("${path.module}/templates/puppet.conf.tpl")
-  vars = {
-    puppet_environment = var.puppet_environment
-    puppet_master_fqdn = var.puppet_master_fqdn
-    puppet_certname = "${var.hostname}.${var.host_domain}"
-  }
 }
 
 # work out which DNS zone we're placing this DNS entry in

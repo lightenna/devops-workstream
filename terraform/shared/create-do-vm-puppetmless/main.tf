@@ -56,6 +56,9 @@ resource "digitalocean_droplet" "host" {
   ssh_keys = [data.digitalocean_ssh_key.singlet.id]
   tags = split(";", var.host_tags)
 
+  #
+  # STANDARD (puppetmless, v1.8)
+  #
   # upload facts
   provisioner "file" {
     destination = "/tmp/puppet-facts.yaml"
@@ -90,6 +93,7 @@ resource "digitalocean_droplet" "host" {
       })
     ]
   }
+  # /STANDARD (puppetmless, v1.8)
 }
 
 data "digitalocean_domain" "domain" {

@@ -115,6 +115,8 @@ variable "facts" {
   default = {}
 }
 
+variable "puppet_master_fqdn" {}
+
 ## sensible Oracle-specific defaults
 
 variable "num_instances" {

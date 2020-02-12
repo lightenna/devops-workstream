@@ -39,18 +39,12 @@ resource "aws_instance" "puppetted_host" {
     user = var.admin_user
   }
 
-  # create a tiny instance
+  # create an instance, based on passed IDs
   instance_type = var.host_size
-
-  # lookup the correct AMI based on the region
   ami = var.host_os_image
-
-  # the name of our SSH keypair we created
-  key_name = var.ssh_key_name
-
   vpc_security_group_ids = [var.nsg_id]
   subnet_id = var.subnet_id
-
+  key_name = var.ssh_key_name
   # assign instance profile if set
   iam_instance_profile = var.iam_instance_profile
 
@@ -65,6 +59,9 @@ resource "aws_instance" "puppetted_host" {
     Name = "${var.hostname}.${var.host_domain}"
   }
 
+  #
+  # STANDARD (puppetmless, v1.8)
+  #
   # upload facts
   provisioner "file" {
     destination = "/tmp/puppet-facts.yaml"
@@ -99,6 +96,7 @@ resource "aws_instance" "puppetted_host" {
       })
     ]
   }
+  # /STANDARD (puppetmless, v1.8)
 }
 
 # work out which DNS zone we're placing this DNS entry in

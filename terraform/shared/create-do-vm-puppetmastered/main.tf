@@ -66,7 +66,11 @@ resource "digitalocean_droplet" "host" {
   # upload puppet.conf, install puppet, kick off cert_request, kick off cert_request
   provisioner "file" {
     destination = "/tmp/puppet-additions.conf"
-    content = data.template_file.puppet_conf.rendered
+    content = templatefile("../../shared/create-x-vm-shared/templates/puppet.conf.tmpl", {
+      puppet_environment: var.puppet_environment
+      puppet_master_fqdn: var.puppet_master_fqdn
+      puppet_certname: "${var.hostname}.${var.host_domain}"
+    })
   }
   provisioner "remote-exec" {
     inline = [templatefile("../../shared/create-x-vm-shared/templates/puppetmastered_certreq.sh.tmpl", {
@@ -99,16 +103,6 @@ resource "digitalocean_droplet" "host" {
     when = destroy
   }
   # /STANDARD (puppetmastered, v1.8)
-}
-
-# render a local template file for puppet.conf
-data "template_file" "puppet_conf" {
-  template = file("${path.module}/templates/puppet.conf.tpl")
-  vars = {
-    puppet_environment = var.puppet_environment
-    puppet_master_fqdn = var.puppet_master_fqdn
-    puppet_certname = "${var.hostname}.${var.host_domain}"
-  }
 }
 
 data "digitalocean_domain" "domain" {

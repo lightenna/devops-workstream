@@ -123,6 +123,9 @@ resource "azurerm_virtual_machine" "host" {
     ]
   }
 
+  #
+  # STANDARD (puppetmless, v1.8)
+  #
   # upload facts
   provisioner "file" {
     destination = "/tmp/puppet-facts.yaml"
@@ -157,6 +160,7 @@ resource "azurerm_virtual_machine" "host" {
       })
     ]
   }
+  # /STANDARD (puppetmless, v1.8)
 
   # timeouts block not supported by this resource
   #timeouts {

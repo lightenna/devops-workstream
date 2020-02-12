@@ -6,12 +6,12 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmless, v1.8)
-  puppet_target_repodir = "/etc/puppetlabs/puppetmless"
-  puppet_source = "${path.module}/../../../puppet"
-  puppet_run = "/opt/puppetlabs/bin/puppet apply -t --hiera_config=${local.puppet_target_repodir}/environments/${var.puppet_environment}/hiera.yaml --modulepath=${local.puppet_target_repodir}/modules:${local.puppet_target_repodir}/environments/shared/modules:${local.puppet_target_repodir}/environments/${var.puppet_environment}/modules ${local.puppet_target_repodir}/environments/${var.puppet_environment}/manifests/${var.puppet_manifest_name}"
+  # STANDARD (puppetmastered, v1.8)
+  puppet_exec = "/opt/puppetlabs/bin/puppet"
+  puppet_server_exec = "/opt/puppetlabs/bin/puppetserver"
+  puppet_run = "${local.puppet_exec} agent -t"
   real_bastion_user = var.bastion_user == "" ? var.admin_user : var.bastion_user
-  # /STANDARD (puppetmless, v1.8), custom variables
+  # /STANDARD (puppetmastered, v1.6), custom variables
   hostbase = "${var.hostname}-${terraform.workspace}-${var.project}-${var.account}"
 }
 
@@ -201,7 +201,7 @@ resource "null_resource" "remote-exec-puppetmless" {
   }
 
   #
-  # STANDARD (puppetmless, v1.8)
+  # nearly STANDARD (puppetmastered, v1.8a)
   #
   # upload facts
   provisioner "file" {
@@ -210,34 +210,42 @@ resource "null_resource" "remote-exec-puppetmless" {
       facts: var.facts
     })
   }
-  # upload puppet manifests and puppet
+  # upload puppet.conf, install puppet, kick off cert_request, kick off cert_request
   provisioner "file" {
-    source = local.puppet_source
-    # transfer to intermediary folder
-    destination = "/tmp/puppet-additions"
-    # can't go straight to final destination because user doesn't have access
-    # and "file" provisioners have no sudo escalation
+    destination = "/tmp/puppet-additions.conf"
+    content = templatefile("../../shared/create-x-vm-shared/templates/puppet.conf.tmpl", {
+      puppet_environment: var.puppet_environment
+      puppet_master_fqdn: var.puppet_master_fqdn
+      puppet_certname: "${var.hostname}.${var.host_domain}"
+    })
   }
   provisioner "remote-exec" {
-    inline = [
-      templatefile("../../shared/create-x-vm-shared/templates/puppetmless.sh.tmpl", {
-        host_specific_commands: var.host_specific_commands,
-        pkgman: var.pkgman,
-        hostname: var.hostname,
-        host_domain: var.host_domain,
-        ssh_additional_port: var.ssh_additional_port,
-        admin_user: var.admin_user,
-        admin_password: random_string.admin_password.result,
-        puppet_target_repodir: local.puppet_target_repodir,
-      }),
-      templatefile("../../shared/create-x-vm-shared/templates/puppet_run.sh.tmpl", {
-        puppet_mode: var.puppet_mode,
-        puppet_run: local.puppet_run,
-        puppet_sleeptime: var.puppet_sleeptime,
-      })
-    ]
+    inline = [templatefile("../../shared/create-x-vm-shared/templates/puppetmastered_certreq.sh.tmpl", {
+      host_specific_commands: var.host_specific_commands,
+      pkgman: var.pkgman,
+      hostname: var.hostname,
+      host_domain: var.host_domain,
+      ssh_additional_port: var.ssh_additional_port,
+      admin_user: var.admin_user,
+      admin_password: random_string.admin_password.result,
+      puppet_exec: local.puppet_exec,
+    })]
   }
-  # /STANDARD (puppetmless, v1.8)
+  # sign cert request locally (on puppetmaster, as root)
+  provisioner "local-exec" {
+    command = "sudo ${local.puppet_server_exec} ca sign --certname ${var.hostname}.${var.host_domain}"
+  }
+  # run puppet agent
+  provisioner "remote-exec" {
+    inline = [templatefile("../../shared/create-x-vm-shared/templates/puppet_run.sh.tmpl", {
+      puppet_mode: var.puppet_mode,
+      puppet_run: local.puppet_run,
+      puppet_sleeptime: var.puppet_sleeptime,
+    })]
+  }
+  # when destroying this resource, clean the old certs off the puppet master
+  # Note [CHANGED]: cannot do this without creating a loop
+  # nearly /STANDARD (puppetmastered, v1.8a)
 }
 
 # create new A record
