@@ -4,6 +4,8 @@ devtools
 Change history
 --------------
 
+* v0.0.7
+    * Extend selftest to work with vagrant, especially for puppet-owned certs
 * v0.0.6
     * Added eyaml gem install under puppet.pp
 * v0.0.5

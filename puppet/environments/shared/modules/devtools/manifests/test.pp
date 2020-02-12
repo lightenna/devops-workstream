@@ -7,6 +7,7 @@ class devtools::test (
   $user = 'root',
   $group = 'root',
   $selftest_module_path = 'selftest',
+  $add_to_puppet_group = undef,
 
 ) {
 
@@ -43,6 +44,20 @@ class devtools::test (
       stage => 'last',
       require => [File['devtools-test-script'], Devtools::Run_ruby['devtools-test-install-gems']],
     }
+
+    # open up access to puppet certs by adding to the puppet group
+    if ($add_to_puppet_group != undef) {
+      exec { "devtools-test-empower-${add_to_puppet_group}-user-for-puppet-tests":
+        path    => '/usr/sbin',
+        # confusingly add '$group' user to puppet group, e.g. vagrant group selftest execution
+        command => "usermod -a -G puppet ${add_to_puppet_group}",
+      }
+      # if the group is defined, wait until it's been created before running the exec
+      Group <| title == 'puppet' |> {
+        before => [Exec["devtools-test-empower-${add_to_puppet_group}-user-for-puppet-tests"]],
+      }
+    }
+
   }
 
 }

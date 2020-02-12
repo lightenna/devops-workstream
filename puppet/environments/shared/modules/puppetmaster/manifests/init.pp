@@ -89,12 +89,11 @@ class puppetmaster (
     create_resources(usertools::write_keypair, $keys, $key_defaults)
   }
 
-  # define puppetmaster as local machine (for command line puppet)
+  # define puppetmaster as local machine (for command line puppet) but not FQDN
   host { 'puppetmaster-host-puppetlocal':
     name => 'puppet',
     ensure => 'present',
     ip => '127.0.0.1',
-    host_aliases => $::fqdn,
     target => '/etc/hosts',
     before => [Anchor['puppetmaster-puppet-begin']],
   }

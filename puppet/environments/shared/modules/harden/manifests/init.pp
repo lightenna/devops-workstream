@@ -4,8 +4,12 @@ class harden (
   $lock_root = true,
   $ssh_port = 22,
   $selinux_mode = 'enforcing',
+  $password_authentication = 'no',
 
 ) {
+
+  # ensure we have SSH installed
+  ensure_packages(['openssh-server'], {})
 
   # enable SELinux if available
   case $operatingsystem {
@@ -60,7 +64,15 @@ class harden (
     service { 'sshd':
       enable => true,
       ensure => running,
+      require => [Package['openssh-server']],
     }
+  }
+
+  sshd_config { 'harden-disable-password-logins':
+    key => 'PasswordAuthentication',
+    ensure => present,
+    value  => $password_authentication,
+    notify => [Service['sshd']],
   }
 
   # install rkhunter

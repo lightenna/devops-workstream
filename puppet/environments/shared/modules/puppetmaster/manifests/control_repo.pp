@@ -13,7 +13,7 @@ class puppetmaster::control_repo (
   $cache_dir_path = '/var/cache',
   $group_writeable = false,
   $update_cadence = undef,
-  $manage_control_repo = true,
+  $manage_repo = true,
   $manage_r10k_puppetfile = true,
 
 ) {
@@ -21,7 +21,7 @@ class puppetmaster::control_repo (
   # install pre-reqs if not already present
   include '::git'
 
-  if ($manage_control_repo) {
+  if ($manage_repo) {
     usertools::safe_repo { 'puppetmaster-control_repo-fetch':
       user            => $service_user,
       group           => $service_group,

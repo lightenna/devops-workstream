@@ -1,6 +1,5 @@
 
 class puppetmaster::puppetboard (
-
   $cert_directory_path = '/etc/pki/tls/certs',
   $key_directory_path = '/etc/pki/tls/private',
   $cert_name = 'localhost',
@@ -12,6 +11,10 @@ class puppetmaster::puppetboard (
   $htpasswd_password = 'admLn**',
   $board_realm = 'Puppetboard',
   $board_offline = true,
+  $board_git_revision = 'v2.0.0',
+  $board_python_version = '3',
+  $board_reports_count = 20,
+  $board_default_env = '*',
   $web_user = 'apache',
   $web_group = 'apache',
   $web_passpath = '/var/www/secure',
@@ -33,14 +36,22 @@ class puppetmaster::puppetboard (
   include '::python'
   include '::git'
 
+  # requires upgraded apache for mod_wsgi, for python 3
+  # + apache::version::scl_httpd_version: "2.4"
+  # if you set scl_httpd_version you also have to set scl_php_version
+  # + apache::version::scl_php_version: "7.2"
+  # updated apache also required upgraded mod_wsgi
+  # + apache::mod::wsgi::package_name: "rh-python36-mod_wsgi"
+  # + apache::mod::wsgi::mod_path: "/opt/rh/httpd24/root/etc/httpd/modules/mod_rh-python36-wsgi.so"
+
   # install puppetboard
   class { '::puppetboard':
-    reports_count => 20,
-    default_environment => '*',
-    # doesn't like using symlinked python 3.6, I suspect because of the environment variables/path
-    # virtualenv_version => '3',
-    # lock to puppetboard 1.0.0 because 1.1.0 breaks virtualenv/parse module
-    revision => 'v1.0.0',
+    reports_count => $board_reports_count,
+    default_environment => $board_default_env,
+    # configure puppetboard to use specific version of python
+    virtualenv_version => $board_python_version,
+    # checkout a tagged version of puppetboard
+    revision => $board_git_revision,
     # disable manage_virtualenv to avoid Python class collision; requires python::virtualenv: "present"
     manage_virtualenv => false,
     # leave r10k to pull in git package
@@ -57,6 +68,13 @@ class puppetmaster::puppetboard (
     user => $::puppetboard::user,
     # fix missing dep on directory for vcsrepo to checkout into
     require => [User[$::puppetboard::user],File[$::puppetboard::basedir]],
+  }
+
+  # modify puppetboard wsgi.py conf
+  $basedir = $::puppetboard::basedir
+  File <| title == "${::puppetboard::basedir}/puppetboard/wsgi.py" |> {
+    # fix non-Python 3 code (execfile)
+    content => template('puppetmaster/wsgi.py.erb'),
   }
 
   if ($certificate != undef) {
@@ -112,7 +130,12 @@ class puppetmaster::puppetboard (
         auth_type => 'Basic',
         auth_name => "${board_realm}",
         auth_user_file => "${web_passpath}/.htpasswd",
-        auth_require => "valid-user",
+        # require auth from valid user or localhost
+        custom_fragment => '
+          Require ip 127.0.0.1
+          Require valid-user
+        ',
+        # auth_require => "valid-user",
       }
     ],
     # require => [Usertools::Safe_directory['puppetmaster-board-httpd-secure-dir']],

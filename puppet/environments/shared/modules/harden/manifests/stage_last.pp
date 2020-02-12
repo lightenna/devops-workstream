@@ -2,7 +2,9 @@
 class harden::stage_last (
 
   $puppetmless_path = '/etc/puppetlabs/puppetmless',
+  $remove_opc = true,
   $remove_rootlike = true,
+  $remove_deprecated = true,
   $remove_osdefaultuser = true,
   $disable_osdefaultuser = false,
 
@@ -35,6 +37,14 @@ class harden::stage_last (
   if ($remove_rootlike) {
     # remove provisioning user, if neither root nor default OS user used for provisioning
     harden::remove_user { 'rootlike': }
+  }
+
+  if ($remove_opc) {
+    harden::remove_user { 'opc': }
+  }
+
+  if ($remove_deprecated) {
+    harden::remove_user { 'lightenn': }
   }
 
   # delete any manifests transferred as part of a masterless puppet run, but leave folder for re-sync

@@ -8,6 +8,12 @@ Notes
 Change history
 --------------
 
+* v0.0.16
+    * Parameterised puppetboard version for future updates; fixed template paths
+* v0.0.15
+    * Updated puppetboard to version 2.0.0, which requires Python 3, which requires HTTPd 2.4.30
+* v0.0.14
+    * Create localhost host entry for puppet (but not FQDN)
 * v0.0.13
     * Set puppetboard to use offline mode by default, to avoid call out for CDN versions of jquery etc.
 * v0.0.12
