@@ -1,6 +1,9 @@
 
 class devtools::languages::ruby (
 
+  $manage_gem_conf = false,
+  $gem_conf_path = '/etc/opt/rh/rh-ruby25',
+
 ) {
 
   # install Ruby (OS-latest)
@@ -15,7 +18,11 @@ class devtools::languages::ruby (
       ensure_resource(scl::collection, 'rh-ruby25', {
         enable => true,
         before => Anchor['devtools-languages-ruby-ready'],
+        require => [Class['scl']],
       })
+      if ($manage_gem_conf) {
+        devtools::languages::ruby::gemrcconf { "${gem_conf_path}" : }
+      }
     }
   }
 

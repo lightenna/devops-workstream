@@ -8,6 +8,12 @@ Notes
 Change history
 --------------
 
+* v0.0.19
+    * Moved to Apache 2.4 configuration <RequireAny> for Puppetboard vhost.
+* v0.0.18
+    * Added dependency on postgresql if PuppetDB database is postgres.
+* v0.0.17
+    * Only include git if managing repo
 * v0.0.16
     * Parameterised puppetboard version for future updates; fixed template paths
 * v0.0.15

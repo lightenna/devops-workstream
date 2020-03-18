@@ -130,10 +130,13 @@ class puppetmaster::puppetboard (
         auth_type => 'Basic',
         auth_name => "${board_realm}",
         auth_user_file => "${web_passpath}/.htpasswd",
-        # require auth from valid user or localhost
+        # deny by default, then allow IP (localhost) or valid user
+        auth_require => "all denied",
         custom_fragment => '
+        <RequireAny>
           Require ip 127.0.0.1
           Require valid-user
+        </RequireAny>
         ',
         # auth_require => "valid-user",
       }

@@ -18,10 +18,10 @@ class puppetmaster::control_repo (
 
 ) {
 
-  # install pre-reqs if not already present
-  include '::git'
-
   if ($manage_repo) {
+    # install pre-reqs if not already present
+    include '::git'
+
     usertools::safe_repo { 'puppetmaster-control_repo-fetch':
       user            => $service_user,
       group           => $service_group,
@@ -36,8 +36,7 @@ class puppetmaster::control_repo (
 
     if ($update_cadence != undef) {
       ensure_resource(cron, 'puppetmaster-control_repo-cron-update', $update_cadence + {
-        command => "/usr/bin/git --git-dir=${path}/${repo_name}/.git --work-tree=${path}/${repo_name}
-           pull > /dev/null 2>&1",
+        command => "/usr/bin/git --git-dir=${path}/${repo_name}/.git --work-tree=${path}/${repo_name} pull > /dev/null 2>&1",
         user    => $service_user,
         require => [Usertools::Safe_repo['puppetmaster-control_repo-fetch']],
       })

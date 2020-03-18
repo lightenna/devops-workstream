@@ -37,6 +37,11 @@ class puppetmaster (
     require => [Anchor['puppetmaster-puppet-begin'], Anchor['puppetmaster-containment-complete']],
   }
 
+  # PuppetDB runs on Postgres
+  if ($::puppetdb::database == 'postgres') {
+    Class['postgresql::server'] -> Class['puppetdb::database::postgresql']
+  }
+
   # configure the Puppet master to use Puppetdb
   class { '::puppetdb::master::config':
     strict_validation => false,

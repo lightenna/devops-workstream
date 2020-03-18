@@ -21,6 +21,13 @@ define usertools::safe_repo (
     mode  => '0644',
   })
 
+  # create managed resource for repo directory itself
+  ensure_resource(usertools::safe_directory, "${path}/${repo_name}", {
+    user => "${user}",
+    group => "${group}",
+    mode  => '0640',
+  })
+
   vcsrepo { "usertools-safe_repo-fetch-${title}":
     path => "${path}/${repo_name}",
     ensure => present,
@@ -32,7 +39,7 @@ define usertools::safe_repo (
     # set ownership of working copy
     owner => $user,
     group => $group,
-    require => [File["${path}"]],
+    require => [File["${path}"], File["${path}/${repo_name}"]],
   }
 
   if ($require_key) {

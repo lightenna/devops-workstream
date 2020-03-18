@@ -1,0 +1,3 @@
+{
+  <% if $params['bip'] { %>"bip": "<%= $params['bip'] %>"<% } %>
+}

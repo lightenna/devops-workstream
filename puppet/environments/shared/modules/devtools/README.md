@@ -4,6 +4,14 @@ devtools
 Change history
 --------------
 
+* v0.0.11
+    * Added daemon_parameters to allow for non-standard Docker subnet
+* v0.0.10
+    * Fixed missing scl requirement
+* v0.0.9
+    * Added docker::refresh_iptables to cope tell docker that iptables has changed since last start, e.g. CSF installed
+* v0.0.8
+    * Added manage_pip_conf and manage_gem_conf for templating config for eggs/gems
 * v0.0.7
     * Extend selftest to work with vagrant, especially for puppet-owned certs
 * v0.0.6

@@ -2,6 +2,8 @@
 class devtools::languages::python (
 
   $pythonenv_root = '/opt/pythonenv/default',
+  $manage_pip_conf = false,
+  $pip_conf_path = '/etc',
 
 ) {
 
@@ -17,12 +19,13 @@ class devtools::languages::python (
       ensure_resource(scl::collection, 'python3', {
         collection => 'rh-python36',
         enable => true,
+        require => [Class['scl']],
       })
       # SCL adds /opt/rh... to path, but symlink on default path (/usr/bin) to cope with legacy hardcoded refs
       ensure_resource(usertools::safe_symlink, 'rh-python', {
         target => '/opt/rh/rh-python36/root/bin/python',
         link_name => '/usr/bin/python3',
-        require => Scl::Collection['python3'],
+        require => [Scl::Collection['python3']],
         before => Anchor['devtools-languages-python-ready'],
       })
     }
@@ -32,6 +35,10 @@ class devtools::languages::python (
         before => [Class['python']],
       }
     }
+  }
+
+  if ($manage_pip_conf) {
+    devtools::languages::python::pipconf { "${pip_conf_path}" : }
   }
 
 }

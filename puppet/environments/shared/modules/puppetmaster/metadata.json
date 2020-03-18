@@ -1,8 +1,8 @@
 {
   "name": "puppet-puppetmaster",
-  "version": "0.0.16",
+  "version": "0.0.19",
   "author": "(c) Devopera",
-  "summary": "Shared puppet manifests across environments",
+  "summary": "Puppet manifests for managing puppetmasters",
   "license": "Apache-2.0",
   "source": "https://github.com/lightenna/devops-workstream",
   "project_page": "https://github.com/lightenna/devops-workstream",

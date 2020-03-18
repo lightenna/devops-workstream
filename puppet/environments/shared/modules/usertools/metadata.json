@@ -2,7 +2,7 @@
   "name": "puppet-usertools",
   "version": "0.0.13",
   "author": "(c) Devopera",
-  "summary": "Shared puppet manifests across environments",
+  "summary": "Puppet manifests for managing users",
   "license": "Apache-2.0",
   "source": "https://github.com/lightenna/devops-workstream",
   "project_page": "https://github.com/lightenna/devops-workstream",

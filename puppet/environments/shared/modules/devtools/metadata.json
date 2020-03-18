@@ -1,8 +1,8 @@
 {
   "name": "puppet-devtools",
-  "version": "0.0.7",
+  "version": "0.0.11",
   "author": "(c) Devopera",
-  "summary": "Shared puppet manifests across environments",
+  "summary": "Development tools for supporting dev environments",
   "license": "Apache-2.0",
   "source": "https://github.com/lightenna/devops-workstream",
   "project_page": "https://github.com/lightenna/devops-workstream",
