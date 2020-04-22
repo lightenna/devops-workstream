@@ -1,0 +1,23 @@
+$script = <<-SCRIPT
+  # clear cache
+  yum clean all
+  # zero out drive
+  dd if=/dev/zero of=/tmp/empty; rm -f /tmp/empty
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  # hypervisor
+  config.vm.provider "virtualbox" do |vmp|
+    vmp.memory = 1024
+    vmp.cpus = 2
+  end
+
+  # base OS
+  config.vm.box = "generic/centos7"
+
+  # machine specific
+  config.vm.hostname = "baseco7.vagrant"
+  config.vm.provision "shell", path: "../../shared/scripts/bootco7.sh"
+  config.vm.provision "shell", inline: $script
+
+end
