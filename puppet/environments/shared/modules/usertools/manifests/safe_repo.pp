@@ -5,7 +5,7 @@ define usertools::safe_repo (
   $group = 'iac-data',
   $group_writeable = false,
   $path = '/srv/git/github.com',
-  $repo_name,
+  $repo_name = $title,
   $revision = 'master',
   $source,
   $mode = '0750',

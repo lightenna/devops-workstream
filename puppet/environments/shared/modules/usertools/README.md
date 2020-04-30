@@ -4,6 +4,12 @@ usertools
 Change history
 --------------
 
+* v0.0.16
+    * Added $repos for checking out repos as this user
+* v0.0.15
+    * Added $sshconfigs to manage universal SSH configurations
+* v0.0.14
+    * Added support for loading keys into (pre-loaded) key agent
 * v0.0.13
     * Added pass-through for target in strange .each iterator
 * v0.0.12

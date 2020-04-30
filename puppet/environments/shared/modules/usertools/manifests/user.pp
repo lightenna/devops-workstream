@@ -19,10 +19,15 @@ define usertools::user (
   $groups                = [],
   $keys                  = {},
   $symlinks              = {},
+  $packages              = [],
   $directories           = {},
   $colouring             = {},
   $bashadditions         = {},
   $default_bashaddition  = {},
+  $sshconfigs            = {},
+  $sshconfig_defaults    = {},
+  $repos                 = {},
+  $repo_defaults         = {},
 
   $git_email             = undef,
   $git_name              = undef,
@@ -124,6 +129,12 @@ define usertools::user (
     })
   }
 
+  # e.g. gnome-keyring package
+  if ($ensure != 'absent' and $packages != []) {
+    # no need to ensure ordering, because bash additions run at shell exec time
+    ensure_packages($packages, { ensure => 'present', })
+  }
+
   if ($ensure != 'absent' and $managehome) {
     # initialise bash for later concats
     usertools::bashinit { "${user}":
@@ -172,8 +183,7 @@ define usertools::user (
     }
   }
 
-  # create keys if set
-  # warning: use with care, each key name must be globally unique
+  # create keys: name keys with care, each key name must be globally unique
   if ($ensure != 'absent' and $managehome_ssh and $keys != {}) {
     create_resources(usertools::userkey, $keys, {
       user    => $user,
@@ -190,6 +200,22 @@ define usertools::user (
       key    => $ssh_auth_key,
       type   => $ssh_auth_key_type,
     }
+  }
+
+  if ($ensure != 'absent' and $managehome_ssh and $sshconfigs != {}) {
+    create_resources(usertools::sshconfig, $sshconfigs, {
+      user    => $user,
+      target  => "${home_resolved}/.ssh/config",
+      require => User[$user],
+    } + $sshconfig_defaults)
+  }
+
+  if ($ensure != 'absent' and $repos != {}) {
+    create_resources(usertools::safe_repo, $repos, {
+      user    => $user,
+      group   => $group,
+      require => User[$user],
+    } + $repo_defaults)
   }
 
 }
