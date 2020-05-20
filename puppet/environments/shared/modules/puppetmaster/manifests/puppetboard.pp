@@ -11,7 +11,7 @@ class puppetmaster::puppetboard (
   $htpasswd_password = 'admLn**',
   $board_realm = 'Puppetboard',
   $board_offline = true,
-  $board_git_revision = 'v2.0.0',
+  $board_git_revision = 'v2.1.2', # was 'v2.1.2' on 6/5/2020
   $board_python_version = '3',
   $board_reports_count = 20,
   $board_default_env = '*',

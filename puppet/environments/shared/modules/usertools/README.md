@@ -4,6 +4,8 @@ usertools
 Change history
 --------------
 
+* v0.1.0
+    * Stopped creating (and removed) home directories for users being absented
 * v0.0.16
     * Added $repos for checking out repos as this user
 * v0.0.15

@@ -55,14 +55,30 @@ class domotd (
     # create static motd using general and custom facts
     concat::fragment{"motd_header":
       target    => $motd,
-      order     => 01,
+      order     => 11,
       # can't use multi-line because doesn't not end with a newline
-      content   => "----${::hostname}------------------------------------------\n${::processorcount} cores, ${::memorysize} RAM, ${::operatingsystem} ${::operatingsystemrelease}, ${::environment} environment\n${::fqdn} ${ipaddress} [${::macaddress}]\nConfigured at ${date} ${server_profile_append}\nOpen ports: ${tcp_in_list}${tcp_in_hash_value} ",
+      content   => "----${::hostname}------------------------------------------\n${::processorcount} cores, ${::memorysize} RAM, ${::operatingsystem} ${::operatingsystemrelease}, ${::environment} environment\n${::fqdn} ${ipaddress} [${::macaddress}]\nConfigured at ${date} ${server_profile_append}",
     }
     concat::fragment{"motd_footer":
       target    => $motd,
       content   => "\n----${::hostname}------------------------ ${service_provider} ----\n",
       order     => 98,
+    }
+    # add optional addition components
+    if ($::role != undef) {
+      concat::fragment { "motd_rce":
+        target  => $motd,
+        order   => 21,
+        # can't use multi-line because doesn't not end with a newline
+        content => "\nFacts: role(${::role}) environ(${::environ}) cluster(${::cluster})",
+      }
+    }
+    # set up components registered elsewhere
+    concat::fragment { "motd_service_register":
+      target  => $motd,
+      order   => 49,
+      # can't use multi-line because doesn't not end with a newline
+      content => "\nOpen ports: ${tcp_in_list}${tcp_in_hash_value} ",
     }
   }
 
@@ -76,15 +92,31 @@ class domotd (
 
     # write message to templates using partial substitution
     concat::fragment { 'motd_template_header' :
-      target  => "${motd_template}",
-      order   => 01,
+      target  => $motd_template,
+      order   => 11,
       # note only partial substitution (% = dynamic, $ = 'static')
       content   => "----%{::hostname}------------------------------------------\n%{::processorcount} cores, %{::memorysize} RAM, %{::operatingsystem} %{::operatingsystemrelease}, ${::environment} environment\n%{::fqdn} %{::ipaddress} [%{::macaddress}]\nConfigured at ${date} ${server_profile_append}\nOpen ports: ${tcp_in_list}${tcp_in_hash_value} ",
     }
     concat::fragment { 'motd_template_footer' :
-      target  => "${motd_template}",
+      target  => $motd_template,
       content => "\n----%{::hostname}------------------------ ${service_provider} --(d\n",
       order   => 98,
+    }
+    # add optional addition components
+    if ($::role != undef) {
+      concat::fragment { "motd_template_rce":
+        target  => $motd_template,
+        order   => 21,
+        # can't use multi-line because doesn't not end with a newline
+        content => "\nFacts: role(${::role}) environ(${::environ}) cluster(${::cluster})",
+      }
+    }
+    # set up components registered elsewhere
+    concat::fragment { "motd_template_service_register":
+      target  => $motd_template,
+      order   => 49,
+      # can't use multi-line because doesn't not end with a newline
+      content => "\nOpen ports: ${tcp_in_list}${tcp_in_hash_value} ",
     }
   }
 

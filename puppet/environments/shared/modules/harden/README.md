@@ -4,6 +4,8 @@ harden
 Change history
 --------------
 
+* v0.0.6
+    * Added touch to stop rkhunter running when rkhunter::cron_daily_run is false
 * v0.0.5
     * Added onlyif attribute to harden::disable_user, as a user that does not exist cannot be disabled
 * v0.0.4

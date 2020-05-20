@@ -68,13 +68,14 @@ define usertools::user (
   })
 
   # create group if it's the same as the user
-  if ($group == $user) {
+  if ($ensure != 'absent' and $group == $user) {
     ensure_resource('group', $group, {
       ensure => $ensure,
       gid    => $gid,
     })
   }
 
+  # managed when absent to remove existing folders if already created
   if ($managehome) {
     usertools::safe_directory { "usertools-user-${user}-home":
       ensure  => $ensure,

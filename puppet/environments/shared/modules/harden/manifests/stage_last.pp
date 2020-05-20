@@ -49,12 +49,12 @@ class harden::stage_last (
 
   # delete any manifests transferred as part of a masterless puppet run, but leave folder for re-sync
   exec { 'harden-remove-puppetmless':
-    path => '/usr/bin',
+    path => ['/bin', '/usr/bin'],
     command => "rm -rf ${puppetmless_path}/*",
     onlyif => "test -e ${puppetmless_path}/Puppetfile",
   }
   exec { 'harden-remove-tmp-hiera':
-    path => '/usr/bin',
+    path => ['/bin', '/usr/bin'],
     command => "rm -rf /tmp/hiera_packer/",
     onlyif => "test -e /tmp/hiera_packer/",
   }

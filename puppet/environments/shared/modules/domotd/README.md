@@ -6,6 +6,15 @@ The Message of the Day (MOTD) can be used to show system information at login ti
 Changelog
 ---------
 
+2020-05-15 (v0.12.1)
+
+* Updated ordering
+
+2020-05-15 (v0.12.0)
+
+* Refactored to use multiline strings
+* Added role, environ and cluster if set
+
 2019-12-18 (v0.11.2)
 
 * Fixed pass-through of use_dynamics from params.pp

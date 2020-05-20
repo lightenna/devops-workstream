@@ -78,6 +78,11 @@ class harden (
   # install rkhunter
   class { '::rkhunter': }
 
+  # disable runs if cron_daily_run is false
+  if ($::rkhunter::cron_daily_run == false) {
+    exec { '/usr/bin/touch /var/lock/subsys/rkhunter': }
+  }
+
   # some hardening can only happen at the end of the puppet run
   class { 'harden::stage_last':
     stage => 'last',

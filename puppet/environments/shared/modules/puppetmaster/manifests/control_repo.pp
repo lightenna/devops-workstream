@@ -80,6 +80,7 @@ class puppetmaster::control_repo (
         cwd     => "${path}/${repo_name}/${puppetfile_relative_path}",
         onlyif  => "test -e ${path}/${repo_name}/${puppetfile_relative_path}/${puppetfile_name}",
         require => [Anchor['puppetmaster-control_repo-r10k-ready']],
+        timeout => 20 * 60, # restrict run to max 20 minutes
       }
     }
   }

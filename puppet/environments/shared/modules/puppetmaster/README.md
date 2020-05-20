@@ -8,6 +8,11 @@ Notes
 Change history
 --------------
 
+* v0.2.1
+    * Updated Puppetboard to v2.1.2.
+    * Released lock on PuppetDB patched after patches to Puppetboard.
+* v0.0.20
+    * Locked PuppetDB at 6.9.0 to avoid pypuppetdb problem with 6.9.1
 * v0.0.19
     * Moved to Apache 2.4 configuration <RequireAny> for Puppetboard vhost.
 * v0.0.18

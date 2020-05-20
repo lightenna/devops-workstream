@@ -4,6 +4,10 @@ devtools
 Change history
 --------------
 
+* v0.0.13
+    * Broke docker out into its own module
+* v0.0.12
+    * Added directories parameter to create directories for storing docker volumes in
 * v0.0.11
     * Added daemon_parameters to allow for non-standard Docker subnet
 * v0.0.10

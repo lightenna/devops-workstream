@@ -1,7 +1,7 @@
 define domotd::register(
 
   $content = $name,
-  $order = 10,
+  $order = 50,
   $motd = undef,
   $motd_template = undef,
   $append = ' ',

@@ -1,6 +1,11 @@
 
 class puppetmaster::install (
+
   $master_code_dir = '/etc/puppetlabs/code',
+
+  # restrict to 6.9.0 as 6.9.1 breaks puppetboard (18/3/2020)
+  $lockversion_puppetdb = undef,
+
 ) {
 
   # install puppetserver
@@ -22,6 +27,24 @@ class puppetmaster::install (
   puppetserver::config::puppetserver { 'puppetserver.conf/jruby-puppet/master-code-dir' :
     value => $master_code_dir,
     notify => [Service[$::puppetserver::service]],
+  }
+
+  # lock puppetdb to cope with downstream dep issues
+  if ($lockversion_puppetdb != undef) {
+    class { 'puppetdb::globals':
+      version => $lockversion_puppetdb,
+    }
+    # tell yum not to update it
+    case $operatingsystem {
+      centos, redhat, oraclelinux, fedora: {
+        ensure_packages(['yum-versionlock'], { ensure => 'present' })
+        exec { 'puppetmaster-install-puppetdb-lock':
+          path    => ['/bin','/sbin','/usr/bin','/usr/sbin'],
+          command => "yum versionlock add puppetdb-${lockversion_puppetdb}",
+          require => [Package['yum-versionlock']],
+        }
+      }
+    }
   }
 
   # install puppetdb and its underlying database

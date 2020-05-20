@@ -1,6 +1,6 @@
 {
   "name": "puppet-harden",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "(c) Devopera",
   "summary": "Puppet manifests for hardening servers",
   "license": "Apache-2.0",

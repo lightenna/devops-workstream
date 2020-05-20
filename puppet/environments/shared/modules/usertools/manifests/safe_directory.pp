@@ -9,9 +9,9 @@ define usertools::safe_directory (
   $permissions = undef,
   $inherit     = true,
 ) {
-  if ($treatas == 'existing') {
+  # avoid making directories when we're trying to remove them
+  if ($ensure != 'absent' and $treatas == 'existing') {
     case $operatingsystem {
-
       centos, redhat, oraclelinux, fedora, ubuntu, debian: {
         exec { "usertools-safedir-${title}":
           path    => '/bin:/usr/bin',
@@ -98,6 +98,7 @@ define usertools::safe_directory (
       }
     }
   }
+
   if !defined(File["${path}"]) {
     # create file resource to allow other resources to require it
     file { "${path}":
