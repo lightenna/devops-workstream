@@ -12,14 +12,17 @@ mod 'darin-zypprepo'
 
 # common and deps
 mod 'ghoneycutt-common'
-mod 'ghoneycutt-vim'
-mod 'ghoneycutt-hosts'
 mod 'ghoneycutt-ntp'
 mod 'ghoneycutt-dnsclient'
 mod 'ghoneycutt-pam'
 mod 'trlinkin-nsswitch'
 mod 'puppetlabs-stdlib'
 mod 'puppetlabs-concat'
+
+# outgoing mail and deps
+mod 'camptocamp-postfix'
+mod 'puppet-alternatives'
+mod 'puppetlabs-mailalias_core'
 
 # system
 mod 'saz-sudo'
