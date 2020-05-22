@@ -1,0 +1,9 @@
+[main]
+plugins=ifupdown,keyfile
+dns=none
+
+[ifupdown]
+managed=false
+
+[device]
+wifi.scan-rand-mac-address=no
