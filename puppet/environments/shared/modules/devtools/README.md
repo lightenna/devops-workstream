@@ -4,6 +4,8 @@ devtools
 Change history
 --------------
 
+* v0.1.0
+    * Added support for multiple test sources when concatenating selftest.rb
 * v0.0.13
     * Broke docker out into its own module
 * v0.0.12

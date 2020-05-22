@@ -63,3 +63,7 @@ mod 'puppetlabs-git'
 
 # vcsrepo for git
 mod 'puppetlabs-vcsrepo'
+
+# monitoring
+mod 'pdxcat-nrpe'
+mod 'puppet-prometheus'
