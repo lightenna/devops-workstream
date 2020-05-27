@@ -30,7 +30,7 @@ class devtools::test (
     # transfer single test script, but standardise name
     if ($script_name != undef) {
       file { 'devtools-test-script':
-        path    => "${path}/selftest.rb",
+        path    => "${path}/${standardised_remote_script_name}",
         source  => "puppet:///modules/${selftest_module_path}/${script_name}",
         owner   => "${user}",
         group   => "${group}",
@@ -40,14 +40,14 @@ class devtools::test (
     }
     if ($script_names != undef) {
       # concatenate multiple test sources into one file
-      concat { "${path}/selftest.rb":
+      concat { "${path}/${standardised_remote_script_name}":
         owner => "${user}",
         group => "${group}",
         mode  => '0640',
       }
       $script_names.each |$script_names_singlet| {
         concat::fragment { "devtools-test-concat-${script_names_singlet}":
-          target  => "${path}/selftest.rb",
+          target  => "${path}/${standardised_remote_script_name}",
           source  => "puppet:///modules/${selftest_module_path}/${script_names_singlet}"
         }
       }

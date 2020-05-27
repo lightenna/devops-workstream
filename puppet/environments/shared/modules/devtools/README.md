@@ -4,6 +4,8 @@ devtools
 Change history
 --------------
 
+* v0.1.1
+    * Used standardised_remote_script_name for all selftest.rb references
 * v0.1.0
     * Added support for multiple test sources when concatenating selftest.rb
 * v0.0.13
