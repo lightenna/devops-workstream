@@ -67,3 +67,10 @@ mod 'puppetlabs-vcsrepo'
 # monitoring
 mod 'pdxcat-nrpe'
 mod 'puppet-prometheus'
+
+# hypervisors
+mod 'puppet-virtualbox'
+mod 'puppetlabs-docker'
+mod 'puppetlabs-kubernetes'
+mod 'camptocamp-kmod'
+
