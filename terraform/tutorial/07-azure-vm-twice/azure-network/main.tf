@@ -51,3 +51,10 @@ resource "azurerm_network_security_group" "nsg_public" {
   }
 }
 
+# associate subnet with NSG
+resource "azurerm_subnet_network_security_group_association" "nsgsubnet" {
+  subnet_id                 = azurerm_subnet.intnet.id
+  network_security_group_id = azurerm_network_security_group.nsg_public.id
+}
+
+

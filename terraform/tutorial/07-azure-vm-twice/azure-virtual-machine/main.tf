@@ -50,12 +50,6 @@ resource "azurerm_network_interface" "stnic" {
   }
 }
 
-# associate subnet with NSG
-resource "azurerm_subnet_network_security_group_association" "nsgsubnet" {
-  subnet_id                 = var.subnet_id
-  network_security_group_id = var.nsg_id
-}
-
 resource "azurerm_virtual_machine" "host" {
   connection {
     type = "ssh"
