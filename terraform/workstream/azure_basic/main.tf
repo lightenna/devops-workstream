@@ -45,7 +45,7 @@ resource "azurerm_subnet" "intnet" {
   name                 = "internal-subnet-${local.hostbase}${local.unique_append}"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.default.name
-  address_prefix       = "${var.subnet_prepend}.0/24"
+  address_prefixes     = [ "${var.subnet_prepend}.0/24" ]
 }
 
 resource "azurerm_network_security_group" "nsg_public" {
