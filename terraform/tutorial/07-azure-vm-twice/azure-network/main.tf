@@ -8,6 +8,10 @@ terraform {
   }
 }
 
+provider "azurerm" {
+  features {}
+}
+
 # create a virtual network, subnet and security group to define access policy
 resource "azurerm_virtual_network" "default" {
   name                = "default-network${var.unique_append}"

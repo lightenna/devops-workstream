@@ -8,6 +8,10 @@ terraform {
   }
 }
 
+provider "azurerm" {
+  features {}
+}
+
 resource "random_string" "unique_key" {
   length  = 8
   upper = false

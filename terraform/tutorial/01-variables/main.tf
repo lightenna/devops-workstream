@@ -7,6 +7,10 @@ terraform {
   }
 }
 
+provider "azurerm" {
+  features {}
+}
+
 # setup local variables, e.g. local.my_var
 locals {
   name = "world"
