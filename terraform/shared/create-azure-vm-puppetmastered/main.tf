@@ -33,7 +33,6 @@ resource "azurerm_network_interface" "stnic" {
   name = "stnic-${local.hostbase}"
   location = var.resource_group_location
   resource_group_name = var.resource_group_name
-  network_security_group_id = var.nsg_id
 
   ip_configuration {
     name = "ipcfg-stnic-${local.hostbase}"
@@ -48,6 +47,12 @@ resource "azurerm_network_interface" "stnic" {
     account = var.account
     environment = terraform.workspace
   }
+}
+
+# associate subnet with NSG
+resource "azurerm_subnet_network_security_group_association" "nsgsubnet" {
+  subnet_id                 = var.subnet_id
+  network_security_group_id = var.nsg_id
 }
 
 resource "azurerm_virtual_machine" "host" {

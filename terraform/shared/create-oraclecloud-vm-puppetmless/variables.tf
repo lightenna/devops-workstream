@@ -69,6 +69,7 @@ variable "public_key_path" {}
 variable "subnet_id" {}
 variable "nsg_id" {}
 
+# Bastion/SSH/DNS
 variable "bastion_public_ip" {
   # no explicit bastion ip, don't use a bastion
   default = ""
@@ -85,6 +86,16 @@ variable "ssh_additional_port" {
   default = "22"
 }
 
+variable "create_dns_entry" {
+  default = "no"
+}
+
+variable "dns_resource_group_name" {
+  # dns_resource_group_name required if create_dns_entry is yes
+  default = ""
+}
+
+# Puppet
 variable "puppet_mode" {
   default = "fire-and-forget"
 }
@@ -99,15 +110,6 @@ variable "puppet_environment" {
 
 variable "puppet_manifest_name" {
   # empty to evaluate the whole puppet directory
-  default = ""
-}
-
-variable "create_dns_entry" {
-  default = "no"
-}
-
-variable "dns_resource_group_name" {
-  # dns_resource_group_name required if create_dns_entry is yes
   default = ""
 }
 
