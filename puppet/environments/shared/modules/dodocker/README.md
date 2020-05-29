@@ -6,6 +6,8 @@ Puppet module to locally set up Docker firewall and maintenance scripts
 Changelog
 ---------
 
+* v0.1.2
+    * Extracted .auths from .docker/config.json to produce .dockercfg file
 * v0.1.1
     * Honed process restart for scrub script
 * v0.1.0
