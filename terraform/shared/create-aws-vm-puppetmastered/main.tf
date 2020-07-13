@@ -11,7 +11,7 @@ locals {
   puppet_server_exec = "/opt/puppetlabs/bin/puppetserver"
   puppet_run = "${local.puppet_exec} agent -t"
   real_bastion_user = var.bastion_user == "" ? var.admin_user : var.bastion_user
-  # /STANDARD (puppetmastered, v1.6), custom variables
+  # /STANDARD (puppetmastered), custom variables
   real_bastion_public_ip = var.bastion_public_ip == "" ? aws_instance.puppetted_host.public_ip : var.bastion_public_ip
   hostbase = "${var.hostname}-${terraform.workspace}-${var.project}-${var.account}"
 }

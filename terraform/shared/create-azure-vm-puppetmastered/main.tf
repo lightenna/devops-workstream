@@ -11,7 +11,7 @@ locals {
   puppet_server_exec = "/opt/puppetlabs/bin/puppetserver"
   puppet_run = "${local.puppet_exec} agent -t"
   real_bastion_user = var.bastion_user == "" ? var.admin_user : var.bastion_user
-  # /STANDARD (puppetmastered, v1.6), custom variables
+  # /STANDARD (puppetmastered), custom variables
   hostbase = "${var.hostname}-${terraform.workspace}-${var.project}-${var.account}"
   setup_log_analytics_workspace = "sudo sh onboard_agent.sh -w ${var.log_analytics_workspace_id} -s ${var.log_analytics_workspace_key}"
   setup_move_laa_files = "sudo mv /tmp/omsagent.conf /etc/opt/microsoft/omsagent/${var.log_analytics_workspace_id}/conf/omsagent.conf && sudo mv /tmp/95-omsagent.conf /etc/rsyslog.d/95-omsagent.conf"

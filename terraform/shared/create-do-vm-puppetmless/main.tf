@@ -6,14 +6,12 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmless, v1.6)
-  home_directory = var.admin_user == "root" ? "/root" : "/home/${var.admin_user}"
+  # STANDARD (puppetmless, v1.8)
   puppet_target_repodir = "/etc/puppetlabs/puppetmless"
   puppet_source = "${path.module}/../../../puppet"
   puppet_run = "/opt/puppetlabs/bin/puppet apply -t --hiera_config=${local.puppet_target_repodir}/environments/${var.puppet_environment}/hiera.yaml --modulepath=${local.puppet_target_repodir}/modules:${local.puppet_target_repodir}/environments/shared/modules:${local.puppet_target_repodir}/environments/${var.puppet_environment}/modules ${local.puppet_target_repodir}/environments/${var.puppet_environment}/manifests/${var.puppet_manifest_name}"
-  setup_ssh_additional_port = "sudo /usr/sbin/semanage port -m -t ssh_port_t -p tcp ${var.ssh_additional_port} ; sudo sed -i 's/\\#Port 22/Port 22\\nPort ${var.ssh_additional_port}/g' /etc/ssh/sshd_config ; sudo service sshd restart"
   real_bastion_user = var.bastion_user == "" ? var.admin_user : var.bastion_user
-  # /STANDARD (puppetmless, v1.6), custom variables
+  # /STANDARD (puppetmless), custom variables
   real_bastion_public_ip = var.bastion_public_ip == "" ? digitalocean_droplet.host.ipv4_address : var.bastion_public_ip
 }
 
