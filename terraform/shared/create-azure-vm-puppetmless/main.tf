@@ -6,12 +6,12 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmless, v1.8)
+  # STANDARD (puppetmless, v1.9)
   puppet_target_repodir = "/etc/puppetlabs/puppetmless"
   puppet_source = "${path.module}/../../../puppet"
   puppet_run = "/opt/puppetlabs/bin/puppet apply -t --hiera_config=${local.puppet_target_repodir}/environments/${var.puppet_environment}/hiera.yaml --modulepath=${local.puppet_target_repodir}/modules:${local.puppet_target_repodir}/environments/shared/modules:${local.puppet_target_repodir}/environments/${var.puppet_environment}/modules ${local.puppet_target_repodir}/environments/${var.puppet_environment}/manifests/${var.puppet_manifest_name}"
   real_bastion_user = var.bastion_user == "" ? var.admin_user : var.bastion_user
-  # /STANDARD (puppetmless, v1.8), custom variables
+  # /STANDARD (puppetmless, v1.9), custom variables
   hostbase = "${var.hostname}-${terraform.workspace}-${var.project}-${var.account}"
   setup_log_analytics_workspace = "sudo sh onboard_agent.sh -w ${var.log_analytics_workspace_id} -s ${var.log_analytics_workspace_key}"
   setup_move_laa_files = "sudo mv /tmp/omsagent.conf /etc/opt/microsoft/omsagent/${var.log_analytics_workspace_id}/conf/omsagent.conf && sudo mv /tmp/95-omsagent.conf /etc/rsyslog.d/95-omsagent.conf"
@@ -130,7 +130,7 @@ resource "azurerm_virtual_machine" "host" {
   }
 
   #
-  # STANDARD (puppetmless, v1.8)
+  # STANDARD (puppetmless, v1.9)
   #
   # upload facts
   provisioner "file" {
@@ -163,10 +163,11 @@ resource "azurerm_virtual_machine" "host" {
         puppet_mode: var.puppet_mode,
         puppet_run: local.puppet_run,
         puppet_sleeptime: var.puppet_sleeptime,
+        admin_user: var.admin_user,
       })
     ]
   }
-  # /STANDARD (puppetmless, v1.8)
+  # /STANDARD (puppetmless, v1.9)
 
   # timeouts block not supported by this resource
   #timeouts {

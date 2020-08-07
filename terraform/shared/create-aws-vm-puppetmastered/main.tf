@@ -6,7 +6,7 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmastered, v1.8)
+  # STANDARD (puppetmastered, v1.9)
   puppet_exec = "/opt/puppetlabs/bin/puppet"
   puppet_server_exec = "/opt/puppetlabs/bin/puppetserver"
   puppet_run = "${local.puppet_exec} agent -t"
@@ -60,7 +60,7 @@ resource "aws_instance" "puppetted_host" {
     Name = "${var.hostname}.${var.host_domain}"
   }
   #
-  # STANDARD (puppetmastered, v1.8)
+  # STANDARD (puppetmastered, v1.9)
   #
   # upload facts
   provisioner "file" {
@@ -100,6 +100,7 @@ resource "aws_instance" "puppetted_host" {
       puppet_mode: var.puppet_mode,
       puppet_run: local.puppet_run,
       puppet_sleeptime: var.puppet_sleeptime,
+      admin_user: var.admin_user,
     })]
   }
   # when destroying this resource, clean the old certs off the puppet master
@@ -108,7 +109,7 @@ resource "aws_instance" "puppetted_host" {
     on_failure = continue
     when = destroy
   }
-  # /STANDARD (puppetmastered, v1.8)
+  # /STANDARD (puppetmastered, v1.9)
 }
 
 # work out which DNS zone we're placing this DNS entry in

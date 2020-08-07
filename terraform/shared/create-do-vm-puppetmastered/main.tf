@@ -6,7 +6,7 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmastered, v1.8)
+  # STANDARD (puppetmastered, v1.9)
   puppet_exec = "/opt/puppetlabs/bin/puppet"
   puppet_server_exec = "/opt/puppetlabs/bin/puppetserver"
   puppet_run = "${local.puppet_exec} agent -t"
@@ -54,7 +54,7 @@ resource "digitalocean_droplet" "host" {
   ssh_keys = [data.digitalocean_ssh_key.singlet.id]
   tags = split(";", var.host_tags)
   #
-  # STANDARD (puppetmastered, v1.8)
+  # STANDARD (puppetmastered, v1.9)
   #
   # upload facts
   provisioner "file" {
@@ -94,6 +94,7 @@ resource "digitalocean_droplet" "host" {
       puppet_mode: var.puppet_mode,
       puppet_run: local.puppet_run,
       puppet_sleeptime: var.puppet_sleeptime,
+      admin_user: var.admin_user,
     })]
   }
   # when destroying this resource, clean the old certs off the puppet master
@@ -102,7 +103,7 @@ resource "digitalocean_droplet" "host" {
     on_failure = continue
     when = destroy
   }
-  # /STANDARD (puppetmastered, v1.8)
+  # /STANDARD (puppetmastered, v1.9)
 }
 
 data "digitalocean_domain" "domain" {

@@ -6,7 +6,7 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmless, v1.8)
+  # STANDARD (puppetmless, v1.9)
   puppet_target_repodir = "/etc/puppetlabs/puppetmless"
   puppet_source = "${path.module}/../../../puppet"
   puppet_run = "/opt/puppetlabs/bin/puppet apply -t --hiera_config=${local.puppet_target_repodir}/environments/${var.puppet_environment}/hiera.yaml --modulepath=${local.puppet_target_repodir}/modules:${local.puppet_target_repodir}/environments/shared/modules:${local.puppet_target_repodir}/environments/${var.puppet_environment}/modules ${local.puppet_target_repodir}/environments/${var.puppet_environment}/manifests/${var.puppet_manifest_name}"
@@ -60,7 +60,7 @@ resource "aws_instance" "puppetted_host" {
   }
 
   #
-  # STANDARD (puppetmless, v1.8)
+  # STANDARD (puppetmless, v1.9)
   #
   # upload facts
   provisioner "file" {
@@ -93,10 +93,11 @@ resource "aws_instance" "puppetted_host" {
         puppet_mode: var.puppet_mode,
         puppet_run: local.puppet_run,
         puppet_sleeptime: var.puppet_sleeptime,
+        admin_user: var.admin_user,
       })
     ]
   }
-  # /STANDARD (puppetmless, v1.8)
+  # /STANDARD (puppetmless, v1.9)
 }
 
 # work out which DNS zone we're placing this DNS entry in
