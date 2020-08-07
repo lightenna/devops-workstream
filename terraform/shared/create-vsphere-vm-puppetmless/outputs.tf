@@ -1,0 +1,40 @@
+# create output variables
+output "admin_user" {
+  value = var.admin_user
+}
+output "admin_password" {
+  value = random_string.admin_password.result
+}
+output "private_ip" {
+  value = var.private_ip_address
+}
+output "public_ip" {
+  value = var.private_ip_address
+}
+output "bastion_host" {
+  value = var.bastion_public_ip
+}
+output "bastion_port" {
+  value = var.bastion_ssh_port
+}
+output "bastion_user" {
+  value = local.real_bastion_user
+}
+output "host_fqdn" {
+  value = "${var.hostname}.${var.host_domain}"
+}
+output "ssh_command" {
+  # disable host checking and store the received key in /dev/null to avoid false 'man-in-the-middle' warnings
+  value = "ssh -A -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${var.admin_user}@${var.private_ip_address}"
+}
+output "ssh_additional_port" {
+  value = var.ssh_additional_port
+}
+output "repuppet_command" {
+  # note live output streamed using tail but never completes; needs Ctrl+C to exit from tail -f
+  value = "sudo bash -c '${local.puppet_run} > /root/puppet_apply.out & 2>&1 ; tail -f -n1000 /root/puppet_apply.out'"
+}
+output "resend_puppet_scripts" {
+  # include puppet/* to avoid getting hidden folders (like .tmp or .rb)
+  value = "rsync -av --delete --rsh 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' ${path.cwd}/${local.puppet_source}/* ${var.admin_user}@${var.private_ip_address}:${local.puppet_target_repodir}/"
+}
