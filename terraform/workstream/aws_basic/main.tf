@@ -23,7 +23,7 @@ locals {
 
 # set up the AWS environment
 module "aws_background" {
-  source        = "../../shared/aws_background"
+  source        = "../../modules/aws_background"
   unique_append = local.unique_append
   aws_region    = var.aws_region
   key_name      = var.key_name
@@ -61,7 +61,7 @@ output "ssh_command_puppetmless" {
 # create an ansible-managed host
 # @requires module "aws_background"
 module "ansiblelocal" {
-  source    = "../../shared/ansiblelocal"
+  source    = "../../modules/ansiblelocal"
   host_name = "ansiblelocal${local.unique_append}"
 
   # use the main playbook to define the config

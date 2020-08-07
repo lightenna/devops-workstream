@@ -23,7 +23,7 @@ locals {
 
 # set up the AWS environment
 module "aws_background" {
-  source        = "../../shared/aws_background"
+  source        = "../../modules/aws_background"
   unique_append = local.unique_append
   aws_region    = var.aws_region
   key_name      = var.key_name
@@ -36,7 +36,7 @@ module "aws_background" {
 # create an packer-managed host
 # @requires module "aws_background"
 module "packer" {
-  source     = "../../shared/packer"
+  source     = "../../modules/packer"
   host_name  = "packed${local.unique_append}"
   aws_region = var.aws_region
 
@@ -108,7 +108,7 @@ output "ssh_command_puppetmaster" {
 # create an ansible-managed host
 # @requires module "aws_background"
 module "ansiblelocal" {
-  source    = "../../shared/ansiblelocal"
+  source    = "../../modules/ansiblelocal"
   host_name = "ansiblelocal${local.unique_append}"
 
   # use the main playbook to define the config
@@ -131,7 +131,7 @@ output "ssh_command_ansiblelocal" {
 # create an ansible-managed host
 # @requires module "aws_background"
 module "ansiblecontrol" {
-  source    = "../../shared/ansiblecontrol"
+  source    = "../../modules/ansiblecontrol"
   host_name = "ansiblecontrol${local.unique_append}"
 
   # use the main playbook to define the config
@@ -158,7 +158,7 @@ output "ssh_command_ansiblecontrol" {
 # create a docker host
 # @requires module "aws_background"
 module "dockerhost" {
-  source     = "../../shared/docker"
+  source     = "../../modules/docker"
   host_name  = "dockerhost${local.unique_append}"
   aws_region = var.aws_region
 
