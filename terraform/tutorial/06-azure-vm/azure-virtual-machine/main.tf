@@ -21,32 +21,32 @@ resource "random_string" "admin_password" {
 # create public IP address
 resource "azurerm_public_ip" "pubipbst" {
   name                         = "pubip-${local.hostbase}"
-  location                     = "${var.resource_group_location}"
-  resource_group_name          = "${var.resource_group_name}"
+  location                     = var.resource_group_location
+  resource_group_name          = var.resource_group_name
   allocation_method = "Static"
   # public_ip_address_allocation now known as allocation_method
   tags = {
     name = "pubip-${local.hostbase}"
-    environment = "${terraform.workspace}"
+    environment = terraform.workspace
   }
 }
 
 # create a network interface card (NIC) for our first host
 resource "azurerm_network_interface" "stnic" {
   name = "stnic-${local.hostbase}"
-  location = "${var.resource_group_location}"
-  resource_group_name = "${var.resource_group_name}"
+  location = var.resource_group_location
+  resource_group_name = var.resource_group_name
 
   ip_configuration {
     name = "ipcfg-stnic-${local.hostbase}"
-    subnet_id = "${var.subnet_id}"
+    subnet_id = var.subnet_id
     private_ip_address = ""
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = "${azurerm_public_ip.pubipbst.id}"
+    public_ip_address_id = azurerm_public_ip.pubipbst.id
   }
   tags = {
     name = "stnic-${local.hostbase}"
-    environment = "${terraform.workspace}"
+    environment = terraform.workspace
   }
 }
 
@@ -59,15 +59,15 @@ resource "azurerm_subnet_network_security_group_association" "nsgsubnet" {
 resource "azurerm_virtual_machine" "host" {
   connection {
     type = "ssh"
-    user = "${var.admin_user}"
-    host = "${azurerm_public_ip.pubipbst.ip_address}"
+    user = var.admin_user
+    host = azurerm_public_ip.pubipbst.ip_address
   }
   name = "vm-${local.hostbase}"
-  location = "${var.resource_group_location}"
-  resource_group_name = "${var.resource_group_name}"
+  location = var.resource_group_location
+  resource_group_name = var.resource_group_name
   network_interface_ids = [
-    "${azurerm_network_interface.stnic.id}"]
-  vm_size = "${var.host_size}"
+    azurerm_network_interface.stnic.id]
+  vm_size = var.host_size
   delete_os_disk_on_termination = true
   delete_data_disks_on_termination = true
 
@@ -84,14 +84,14 @@ resource "azurerm_virtual_machine" "host" {
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name = "${var.hostname}"
-    admin_username = "${var.admin_user}"
+    computer_name = var.hostname
+    admin_username = var.admin_user
   }
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
       path = "/home/${var.admin_user}/.ssh/authorized_keys"
-      key_data = "${file(var.public_key_path)}"
+      key_data = file(var.public_key_path)
     }
   }
   # wait for cloud provider to finish install its stuff, otherwise yum/dpkg collide [standard]
@@ -100,7 +100,7 @@ resource "azurerm_virtual_machine" "host" {
   }
   # tag for testing purposes and remotely identifying
   tags = {
-    name = "${var.hostname}"
-    environment = "${terraform.workspace}"
+    name = var.hostname
+    environment = terraform.workspace
   }
 }

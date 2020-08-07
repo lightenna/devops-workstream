@@ -5,8 +5,6 @@ Ensure this keypair is added to your local SSH agent so provisioners can
 connect.
 Example: ~/.ssh/id_rsa_devops_simple_key.pub
 DESCRIPTION
-
-
   default = "~/.ssh/id_rsa_devops_simple_key.pub"
 }
 

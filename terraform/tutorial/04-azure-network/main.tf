@@ -2,16 +2,6 @@
 # Create virtual network
 # Cloud: Azure
 
-# store state locally for shared IAC to avoid bootstrapping
-terraform {
-  backend "local" {
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
 resource "random_string" "unique_key" {
   length  = 8
   upper = false
