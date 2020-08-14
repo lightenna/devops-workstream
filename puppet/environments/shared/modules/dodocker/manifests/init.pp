@@ -7,6 +7,7 @@ class dodocker (
   $daemon_parameters = undef,
   $daemon_config_path = '/etc/docker',
   $deamon_config_fileleaf = 'daemon.json',
+  $deamon_config_file_ensure = 'present',
   $mode = '0755',
   $user = 'root',
   $group = 'root',
@@ -40,6 +41,7 @@ class dodocker (
     create_resources(dodocker::userscripts, $users, $user_defaults)
   }
 
+  # set daemon parameters either using docker:: vars or daemon_parameters hash
   if ($daemon_parameters != undef) {
     # ensure directory exists
     ensure_resource(usertools::safe_directory, "dodocker-conf-path", {
@@ -50,10 +52,10 @@ class dodocker (
     })
     # write out configuration file
     file { 'dodocker-daemon-json':
+      ensure  => $deamon_config_file_ensure,
       path    => "${daemon_config_path}/${deamon_config_fileleaf}",
-      content => epp('dodocker/daemon.json.epp', {
-        params => $daemon_parameters,
-      }),
+      # convert to JSON skipping undef values
+      content => to_json_pretty($daemon_parameters, true),
       owner   => $user,
       group   => $group,
       require => [File["${daemon_config_path}"]],

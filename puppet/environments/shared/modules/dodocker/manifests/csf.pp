@@ -4,6 +4,8 @@ class dodocker::csf (
   $user           = 'root',
   $group          = 'root',
 
+  # currently using simpler post.d script with net=host
+  $postd_template = 'docker.jsherz.sh.epp',
   # template variables
   $docker_int     = 'docker0',
   $docker_network = '172.17.0.0/16',
@@ -42,7 +44,7 @@ class dodocker::csf (
   # copy in script to manage docker entries on CSF refresh
   file { 'dodocker-csf-postd-dockersh':
     path    => "${postd_path}/docker.sh",
-    content => epp('dodocker/csf/post.d/docker.sh.epp', {
+    content => epp("dodocker/csf/post.d/${postd_template}", {
       docker_int     => $docker_int,
       docker_network => $docker_network,
     }),

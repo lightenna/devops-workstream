@@ -7,24 +7,22 @@ class admintools (
     gpgcheck => true,
   },
   $packages = [],
-  $notifier_dir = '/etc/puppetlabs/puppet/tmp',
+  $notifier_dir = $admintools::params::notifier_dir,
   $github_public_key = 'AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==',
   $github_over_https = false,
 
   $machine_notes = undef,
   $machine_notes_filename = 'machine_notes.txt',
-  $admin_user = 'root',
-  $admin_group = 'root',
-  $admin_user_home = '/root',
-  $keys = {},
-  $key_defaults = {
-    user  => $admin_user,
-    group => $admin_group,
-    mode  => '0640',
-    path  => '/srv/keys',
-  },
+  $admin_user = $admintools::params::admin_user,
+  $admin_group = $admintools::params::admin_group,
+  $admin_user_home = $admintools::params::admin_user_home,
+  $filesystem_root = $admintools::params::filesystem_root,
+  $filesystem_secure_mode = $admintools::params::filesystem_secure_mode,
 
-) {
+  $keys = {},
+  $key_defaults = {},
+
+) inherits admintools::params {
 
   contain 'admintools::sshd'
 
@@ -33,6 +31,9 @@ class admintools (
 
   # manage /etc/hosts
   contain 'admintools::hosts'
+
+  # set up git SSH rules if required
+  include 'admintools::git_ssh'
 
   # process pre-run deps
   class { 'admintools::stage_first':
@@ -58,57 +59,26 @@ class admintools (
     require => [Anchor['admintools-packman-ready']],
   }
 
-  # typically installed on all machines, so minimal set of secure tools
-  include '::git'
-
-  # accept Github's key
-  sshkey { 'github.com':
-    type   => 'ssh-rsa',
-    key    => $github_public_key,
-  }
-
-  # set up SSH to go over HTTPS (443)
-  if ($github_over_https) {
-    # indirect requests to github.com via ssh.github.com
-    sshkey { 'ssh.github.com':
-      type   => 'ssh-rsa',
-      key    => $github_public_key,
-    }
-    ssh_config { "admintools-github-over-https-hostname":
-      ensure    => present,
-      host      => "github.com",
-      key       => "Hostname",
-      value     => "ssh.github.com",
-    }
-    ssh_config { "admintools-github-over-https-port":
-      ensure    => present,
-      host      => "github.com",
-      key       => "Port",
-      value     => "443",
+  case $operatingsystem {
+    centos, redhat, oraclelinux, fedora, ubuntu, debian: {
+      # typically installed on all machines, so minimal set of secure tools
+      include '::git'
+      # install basic tools
+      ensure_packages(['lynx', 'iftop', 'htop', 'iotop', 'curl', 'sysstat'], { ensure => 'present' })
     }
   }
-
-  # install basic tools
-  ensure_packages(['lynx', 'iftop', 'htop', 'curl'], { ensure => 'present' })
-
-  # install CSF deps
-  ensure_packages(['net-tools'], { ensure => 'present' })
 
   case $operatingsystem {
     centos, redhat, oraclelinux, fedora: {
       # redundant, included by postfix module
       # ensure_packages(['mailx'], { ensure => 'present' })
       ensure_packages(['perl-libwww-perl', 'perl-LWP-Protocol-https', 'perl-Time-HiRes', 'perl-Crypt-SSLeay'], { ensure => 'present' })
-      # install CSF deps
-      ensure_packages(['bind-utils'], { ensure => 'present' })
       # install serverspec test deps
       ensure_packages(['nmap-ncat'], { ensure => 'present' })
     }
     ubuntu, debian: {
       ensure_packages(['mailutils'], { ensure => 'present' })
       ensure_packages(['libwww-perl'], { ensure => 'present' })
-      # install CSF deps
-      ensure_packages(['bind9-host'], { ensure => 'present' })
       # install serverspec test deps
       ensure_packages(['netcat'], { ensure => 'present' })
     }
@@ -121,11 +91,23 @@ class admintools (
 
   # install keys if set
   if ($keys != {}) {
-    create_resources(usertools::write_keypair, $keys, $key_defaults)
+    # set fallback key_defaults here to 1) create platform-specific defaults and 2) allow hiera key_defaults
+    $fallback_key_defaults = {
+      user  => $admin_user,
+      group => $admin_group,
+      mode  => $filesystem_secure_mode,
+      path  => "${filesystem_root}srv/keys",
+    }
+    create_resources(usertools::write_keypair, $keys, $fallback_key_defaults + $key_defaults)
   }
 
   # make sure notifier directory exists
-  ensure_resource(usertools::safe_directory, "${notifier_dir}", {})
+  if ($notifier_dir != undef) {
+    ensure_resource(usertools::safe_directory, "${notifier_dir}", {
+      user => $admin_user,
+      group => $admin_group,
+    })
+  }
 
   # write out machine notes if any set
   if ($machine_notes != undef) {

@@ -4,6 +4,13 @@ usertools
 Change history
 --------------
 
+* v0.2.0
+    * Made write_keypair Windows-friendly
+    * Standardised params across usertools and admintools
+* v0.1.2
+    * Wrapped safe_directory in ensure_resource and if !defined() to avoid duplicate definition
+* v0.1.1
+    * Create resolved_group/mode even if absenting the user to avoid warnings
 * v0.1.0
     * Stopped creating (and removed) home directories for users being absented
 * v0.0.16

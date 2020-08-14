@@ -18,6 +18,7 @@ define usertools::user (
   $ensure                = 'present',
   $groups                = [],
   $keys                  = {},
+  $key_defaults          = {},
   $symlinks              = {},
   $packages              = [],
   $directories           = {},
@@ -191,7 +192,7 @@ define usertools::user (
       group   => $group,
       home    => $home_resolved,
       require => User[$user],
-    })
+    } + $key_defaults)
   }
 
   if ($ensure != 'absent' and $ssh_auth_key != '') {

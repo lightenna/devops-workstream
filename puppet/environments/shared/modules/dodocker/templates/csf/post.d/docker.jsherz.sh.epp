@@ -1,0 +1,20 @@
+#!/bin/sh
+# https://jsherz.com/docker/configserver/firewall/iptables/csf/debian/systemd/2016/05/16/configuring-configserver-firewall-for-docker.html
+export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+DOCKER_INT="<%= $docker_int %>"
+DOCKER_NETWORK="<%= $docker_network %>"
+
+iptables -N DOCKER
+
+echo "[DOCKER] masquerade outbound connections from containers"
+iptables -t nat -A POSTROUTING -s ${DOCKER_NETWORK} ! -o ${DOCKER_INT} -j MASQUERADE
+
+echo "[DOCKER] accept established connections to the docker containers"
+iptables -t filter -A FORWARD -o ${DOCKER_INT} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+echo "[DOCKER] allow docker containers to communicate with themselves and the outside world"
+iptables -t filter -A FORWARD -i ${DOCKER_INT} ! -o ${DOCKER_INT} -j ACCEPT
+iptables -t filter -A FORWARD -i ${DOCKER_INT} -o ${DOCKER_INT} -j ACCEPT
+
+echo "[DOCKER] done for ${DOCKER_NETWORK} docker network"

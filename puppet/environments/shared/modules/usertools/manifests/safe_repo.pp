@@ -1,4 +1,5 @@
 
+
 define usertools::safe_repo (
 
   $user = 'git',
@@ -15,11 +16,13 @@ define usertools::safe_repo (
 ) {
 
   # make sure target base path exists (shared by several repos)
-  ensure_resource(usertools::safe_directory, "${path}", {
-    user => "${user}",
-    group => 'root',
-    mode  => '0644',
-  })
+  if !defined(File["${path}"]) {
+    ensure_resource(usertools::safe_directory, "${path}", {
+      user  => "${user}",
+      group => 'root',
+      mode  => '0644',
+    })
+  }
 
   # create managed resource for repo directory itself
   ensure_resource(usertools::safe_directory, "${path}/${repo_name}", {

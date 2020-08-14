@@ -9,6 +9,24 @@ define usertools::safe_directory (
   $permissions = undef,
   $inherit     = true,
 ) {
+  # always set up default mode and group
+  case $operatingsystem {
+    centos, redhat, oraclelinux, fedora, ubuntu, debian: {
+      $resolved_mode = $mode
+      $resolved_group = $group ? {
+        undef   => 'root',
+        default => $group,
+      }
+    }
+    windows: {
+      # don't set mode on Windows, use ACL
+      $resolved_mode = undef
+      $resolved_group = $group ? {
+        undef   => 'Administrators',
+        default => $group,
+      }
+    }
+  }
   # avoid making directories when we're trying to remove them
   if ($ensure != 'absent' and $treatas == 'existing') {
     case $operatingsystem {
@@ -17,11 +35,6 @@ define usertools::safe_directory (
           path    => '/bin:/usr/bin',
           command => "mkdir -p ${path}",
           unless  => "test -d ${path}",
-        }
-        $resolved_mode = $mode
-        $resolved_group = $group ? {
-          undef   => 'root',
-          default => $group,
         }
         # if system uses SELinux, set fcontext
         if (str2bool($::selinux) and ($seltype != undef)) {
@@ -68,12 +81,6 @@ define usertools::safe_directory (
           command  => "mkdir ${path}",
           provider => powershell,
         }
-        # don't set mode on Windows, use ACL
-        $resolved_mode = undef
-        $resolved_group = $group ? {
-          undef   => 'Administrators',
-          default => $group,
-        }
         # allow ACL shorthand
         $resolved_permissions = $permissions ? {
           undef      => undef,
@@ -101,13 +108,13 @@ define usertools::safe_directory (
 
   if !defined(File["${path}"]) {
     # create file resource to allow other resources to require it
-    file { "${path}":
+    ensure_resource(file, "${path}", {
       ensure => $ensure,
       force  => true,
       owner  => $user,
       group  => $resolved_group,
       mode   => $resolved_mode,
-    }
+    })
   }
 
 }

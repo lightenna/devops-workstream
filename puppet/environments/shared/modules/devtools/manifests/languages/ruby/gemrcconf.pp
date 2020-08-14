@@ -20,7 +20,20 @@ define devtools::languages::ruby::gemrcconf (
     ensure  => 'present',
     path    => "${path}/${leaf}",
     content => epp('devtools/gemrc.epp', {}),
-    before => Anchor['devtools-languages-ruby-ready'],
+  }
+
+  # do gemrc config before installing gems (if anchor defined)
+  Anchor <| title == 'devtools-languages-ruby-ready' |> {
+    require => [File["${path}/${leaf}"]],
+  }
+
+  case $operatingsystem {
+    windows: {
+      # do gemrc config before running any Cygwin commands (if any defined)
+      Dowindows::Cygwin::Run <| |> {
+        require => [File["${path}/${leaf}"]],
+      }
+    }
   }
 
 }

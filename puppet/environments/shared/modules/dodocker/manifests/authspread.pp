@@ -19,6 +19,11 @@ class dodocker::authspread (
   #  notify => [Exec['dodocker-authspread-copy']],
   #}
 
+  # wait for all the registry_auths to complete before spreading
+  Docker::Registry <| |> {
+    before => [Exec['dodocker-authspread-copy']],
+  }
+
   # when source file detected, copy to target and secure
   exec { 'dodocker-authspread-copy':
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
@@ -33,8 +38,5 @@ class dodocker::authspread (
         && chmod 0640 ${kubelet_path}/${docker_settings_alternate}
         | END
   }
-
-  # scrub old file if present
-  file { '/var/lib/kubelet/.docker': ensure => absent }
 
 }

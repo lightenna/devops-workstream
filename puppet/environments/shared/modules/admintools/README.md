@@ -4,6 +4,26 @@ admintools
 Change history
 --------------
 
+* v0.3.3
+    * Added more analysis tools (iotop, sysstat) for admin support
+* v0.3.2
+    * Standardised params across usertools and admintools
+* v0.3.1
+    * Fixed admintools on Windows bug (if around file_lines)
+* v0.3.0
+    * Streamlined admintools to work better on Windows
+* v0.2.8
+    * Added Windows support for set_facts
+* v0.2.7
+    * Parameterised /etc/hosts for Windows
+* v0.2.6
+    * Removed variables that are unlikely to be overridden
+* v0.2.5
+    * Moved Prometheus Server proxying into webtools::proxyport
+* v0.2.4
+    * Added optional password protection for Prometheus server
+* v0.2.3
+    * Fixed default bug for standard_hosts
 * v0.2.2
     * Installed ncat as serverspec dependency (be_reachable tests)
 * v0.2.1

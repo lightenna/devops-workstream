@@ -6,6 +6,10 @@ The Message of the Day (MOTD) can be used to show system information at login ti
 Changelog
 ---------
 
+2020-05-20 (v0.12.2)
+
+* Correct minor typo in comment
+
 2020-05-15 (v0.12.1)
 
 * Updated ordering

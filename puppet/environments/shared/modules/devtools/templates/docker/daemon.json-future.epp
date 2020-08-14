@@ -1,7 +1,0 @@
-{
-<%- | Hash[String, String] $params | -%>
-<% include stdlib -%>
-<% $params.keys.each do |$key| { -%>
-  <% $key %>: <% $params[$key] %>
-<% } -%>
-}

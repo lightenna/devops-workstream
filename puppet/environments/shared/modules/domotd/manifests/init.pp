@@ -56,7 +56,7 @@ class domotd (
     concat::fragment{"motd_header":
       target    => $motd,
       order     => 11,
-      # can't use multi-line because doesn't not end with a newline
+      # can't use multi-line because must not end with a newline
       content   => "----${::hostname}------------------------------------------\n${::processorcount} cores, ${::memorysize} RAM, ${::operatingsystem} ${::operatingsystemrelease}, ${::environment} environment\n${::fqdn} ${ipaddress} [${::macaddress}]\nConfigured at ${date} ${server_profile_append}",
     }
     concat::fragment{"motd_footer":
@@ -69,7 +69,7 @@ class domotd (
       concat::fragment { "motd_rce":
         target  => $motd,
         order   => 21,
-        # can't use multi-line because doesn't not end with a newline
+        # can't use multi-line because must not end with a newline
         content => "\nFacts: role(${::role}) environ(${::environ}) cluster(${::cluster})",
       }
     }
@@ -77,7 +77,7 @@ class domotd (
     concat::fragment { "motd_service_register":
       target  => $motd,
       order   => 49,
-      # can't use multi-line because doesn't not end with a newline
+      # can't use multi-line string because must not end with a newline
       content => "\nOpen ports: ${tcp_in_list}${tcp_in_hash_value} ",
     }
   }
@@ -107,7 +107,7 @@ class domotd (
       concat::fragment { "motd_template_rce":
         target  => $motd_template,
         order   => 21,
-        # can't use multi-line because doesn't not end with a newline
+        # can't use multi-line string because must not end with a newline
         content => "\nFacts: role(${::role}) environ(${::environ}) cluster(${::cluster})",
       }
     }
@@ -115,7 +115,7 @@ class domotd (
     concat::fragment { "motd_template_service_register":
       target  => $motd_template,
       order   => 49,
-      # can't use multi-line because doesn't not end with a newline
+      # can't use multi-line string because must not end with a newline
       content => "\nOpen ports: ${tcp_in_list}${tcp_in_hash_value} ",
     }
   }

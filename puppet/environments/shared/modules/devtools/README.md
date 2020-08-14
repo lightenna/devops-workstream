@@ -4,6 +4,12 @@ devtools
 Change history
 --------------
 
+* v0.1.4
+    * Protected non-Windows machines from dowindows gemrc configuration
+* v0.1.3
+    * Added dependency to ensure gemrc dowindows::cygwin::run ordering
+* v0.1.2
+    * Added Windows support for gemrc file
 * v0.1.1
     * Used standardised_remote_script_name for all selftest.rb references
 * v0.1.0

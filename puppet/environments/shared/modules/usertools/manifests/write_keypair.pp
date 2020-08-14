@@ -1,8 +1,11 @@
-
+#
+# Linux/Windows compatible
+# Windows defaults set at call time (from init.pp) because cannot inherit in defined type
+#
 define usertools::write_keypair (
 
-  $user = 'root',
-  $group = 'root',
+  $user = $title,
+  $group = $title,
   $mode = '0600',
   $path = '/srv/keys',
   $key_private = undef,

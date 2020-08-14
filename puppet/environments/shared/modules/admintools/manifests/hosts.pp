@@ -1,13 +1,13 @@
 class admintools::hosts (
 
-  $target       = '/etc/hosts',
+  $target       = $admintools::params::hosts_target,
   $purge_hosts  = true,
   $host_entries = {},
   $host_entry_default = {},
   $enable_ipv4_localhost = true,
   $enable_ipv6_localhost = true,
 
-) {
+) inherits admintools::params {
 
   Host {
     target => $target,
@@ -32,6 +32,6 @@ class admintools::hosts (
   }, default => {} }
 
   # create resources in all cases to allow for standard hosts
-  create_resources(host, $host_entries + $standard_hosts4 + $standard_hosts6, $host_entry_default)
+  create_resources(host, $standard_hosts4 + $standard_hosts6 + $host_entries, $host_entry_default)
 
 }
