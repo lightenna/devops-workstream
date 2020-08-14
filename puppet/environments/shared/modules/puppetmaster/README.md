@@ -8,6 +8,9 @@ Notes
 Change history
 --------------
 
+* v0.2.2
+    * Renamed .htpasswd file to avoid potential collisions
+    * Standardised naming of the htpasswd attributes
 * v0.2.1
     * Updated Puppetboard to v2.1.2.
     * Released lock on PuppetDB patched after patches to Puppetboard.

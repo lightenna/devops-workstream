@@ -1,32 +1,32 @@
-
 class puppetmaster::puppetboard (
-  $cert_directory_path = '/etc/pki/tls/certs',
-  $key_directory_path = '/etc/pki/tls/private',
-  $cert_name = 'localhost',
-  $use_https = true,
-  $certificate = undef,
-  $key = undef,
-  $ca_bundle = undef,
-  $htpasswd_username = 'admin',
-  $htpasswd_password = 'admLn**',
-  $board_realm = 'Puppetboard',
-  $board_offline = true,
-  $board_git_revision = 'v2.1.2', # was 'v2.1.2' on 6/5/2020
+  $cert_directory_path  = '/etc/pki/tls/certs',
+  $key_directory_path   = '/etc/pki/tls/private',
+  $cert_name            = 'localhost',
+  $use_https            = true,
+  $certificate          = undef,
+  $key                  = undef,
+  $ca_bundle            = undef,
+  $htpasswd_username    = 'admin',
+  $htpasswd_password    = undef,
+  $htpasswd_realm       = 'Puppetboard',
+  $htpasswd_leafname    = '.htpasswd-pupbrd',
+  $htpasswd_path         = '/var/www/secure',
+  $board_offline        = true,
+  $board_git_revision   = 'v2.1.2', # was 'v2.1.2' on 6/5/2020
   $board_python_version = '3',
-  $board_reports_count = 20,
-  $board_default_env = '*',
-  $web_user = 'apache',
-  $web_group = 'apache',
-  $web_passpath = '/var/www/secure',
-  $web_port = 443,
+  $board_reports_count  = 20,
+  $board_default_env    = '*',
+  $web_user             = 'apache',
+  $web_group            = 'apache',
+  $web_port             = 443,
 
 ) {
 
-  anchor { 'puppetmaster-puppetboard-containment-begin' : }
+  anchor { 'puppetmaster-puppetboard-containment-begin': }
 
   if defined(Class['domotd']) {
     # register external services ()
-    @domotd::register { "Puppetboard(${web_port})" : }
+    @domotd::register { "Puppetboard(${web_port})": }
   }
 
   # install pre-reqs if not already present
@@ -46,28 +46,28 @@ class puppetmaster::puppetboard (
 
   # install puppetboard
   class { '::puppetboard':
-    reports_count => $board_reports_count,
+    reports_count       => $board_reports_count,
     default_environment => $board_default_env,
     # configure puppetboard to use specific version of python
-    virtualenv_version => $board_python_version,
+    virtualenv_version  => $board_python_version,
     # checkout a tagged version of puppetboard
-    revision => $board_git_revision,
+    revision            => $board_git_revision,
     # disable manage_virtualenv to avoid Python class collision; requires python::virtualenv: "present"
-    manage_virtualenv => false,
+    manage_virtualenv   => false,
     # leave r10k to pull in git package
-    manage_git => false,
+    manage_git          => false,
     # use in offline mode to avoid CDN call-outs
-    offline_mode => $board_offline,
+    offline_mode        => $board_offline,
     # contain
-    require => [Anchor['puppetmaster-puppetboard-containment-begin']],
-    before => [Anchor['puppetmaster-puppetboard-containment-complete']],
+    require             => [Anchor['puppetmaster-puppetboard-containment-begin']],
+    before              => [Anchor['puppetmaster-puppetboard-containment-complete']],
   }
 
   # perform checkout using named user
   Vcsrepo <| title == '/srv/puppetboard/puppetboard' |> {
-    user => $::puppetboard::user,
+    user    => $::puppetboard::user,
     # fix missing dep on directory for vcsrepo to checkout into
-    require => [User[$::puppetboard::user],File[$::puppetboard::basedir]],
+    require => [User[$::puppetboard::user], File[$::puppetboard::basedir]],
   }
 
   # modify puppetboard wsgi.py conf
@@ -88,8 +88,8 @@ class puppetmaster::puppetboard (
     }
   }
 
+  # expose Puppetboard over HTTPS on target port
   if ($use_https) {
-    # expose Puppetboard over HTTPS on target port
     $filename_certificate = "${cert_directory_path}/${cert_name}.crt"
     $filename_key = "${key_directory_path}/${cert_name}.key"
     class { 'puppetboard::apache::vhost':
@@ -119,44 +119,51 @@ class puppetmaster::puppetboard (
   }
 
   # modify vhost to require a password
-  usertools::safe_directory { 'puppetmaster-board-httpd-secure-dir' :
-    path => $web_passpath,
-    group => $web_group,
-  }
-  ::Apache::Vhost <| title == "${cert_name}" |> {
-    directories => [
-      {
-        path => '/',
-        auth_type => 'Basic',
-        auth_name => "${board_realm}",
-        auth_user_file => "${web_passpath}/.htpasswd",
-        # deny by default, then allow IP (localhost) or valid user
-        auth_require => "all denied",
-        custom_fragment => '
+  if ($htpasswd_password != undef) {
+    usertools::safe_directory { 'puppetmaster-board-httpd-secure-dir':
+      path  => $htpasswd_path,
+      group => $web_group,
+    }
+    ::Apache::Vhost <| title == "${cert_name}" |> {
+      directories => [
+        {
+          path            => '/',
+          auth_type       => 'Basic',
+          auth_name       => "${htpasswd_realm}",
+          auth_user_file  => "${htpasswd_path}/${htpasswd_leafname}",
+          # deny by default, then allow IP (localhost) or valid user
+          auth_require    => "all denied",
+          custom_fragment => '
         <RequireAny>
           Require ip 127.0.0.1
           Require valid-user
         </RequireAny>
         ',
-        # auth_require => "valid-user",
-      }
-    ],
-    # require => [Usertools::Safe_directory['puppetmaster-board-httpd-secure-dir']],
-    require => [File[$web_passpath]],
-  }
-  $template = @("PUPBRDHTPASS"/L)
+          # auth_require => "valid-user",
+        }
+      ],
+      # require => [Usertools::Safe_directory['puppetmaster-board-httpd-secure-dir']],
+      require     => [File[$htpasswd_path]],
+    }
+    $template = @("PUPBRDHTPASS"/L)
     <%= @htpasswd_username %>:<%= scope.call_function('apache_pw_hash', [@htpasswd_password]) %>
     | PUPBRDHTPASS
-  file { 'puppetmaster-board-htpasswd' :
-    path => "${web_passpath}/.htpasswd",
-    owner => 'root',
-    group => $web_group,
-    mode => '0640',
-    require => [File[$web_passpath]],
-    content => inline_template($template),
+    file { 'puppetmaster-board-htpasswd':
+      path    => "${htpasswd_path}/${htpasswd_leafname}",
+      owner   => 'root',
+      group   => $web_group,
+      mode    => '0640',
+      require => [File[$htpasswd_path]],
+      content => inline_template($template),
+    }
+    # @todo minor tidy-up only: remove after a few versions > 0.2.2
+    file { 'puppetmaster-board-htpasswd-cleanupold':
+      path   => "${htpasswd_path}/.htpasswd",
+      ensure => 'absent',
+    }
   }
 
   # use anchor pattern to ensure containment of selected resources
-  anchor { 'puppetmaster-puppetboard-containment-complete' : }
+  anchor { 'puppetmaster-puppetboard-containment-complete': }
 }
 
