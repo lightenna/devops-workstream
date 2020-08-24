@@ -8,18 +8,24 @@ Notes
 Change history
 --------------
 
+* v0.2.5
+    * Wrapped ensure_resources because getting duplicate resource errors
+* v0.2.4
+    * Standardised variable naming on write_cert
+* v0.2.3
+    * Corrected non-defined puppetboard cert_name to FQDN to match the default httpd config
 * v0.2.2
     * Renamed .htpasswd file to avoid potential collisions
     * Standardised naming of the htpasswd attributes
 * v0.2.1
     * Updated Puppetboard to v2.1.2.
-    * Released lock on PuppetDB patched after patches to Puppetboard.
+    * Released lock on PuppetDB after patches to Puppetboard.
 * v0.0.20
     * Locked PuppetDB at 6.9.0 to avoid pypuppetdb problem with 6.9.1
 * v0.0.19
-    * Moved to Apache 2.4 configuration <RequireAny> for Puppetboard vhost.
+    * Moved to Apache 2.4 configuration <RequireAny> for Puppetboard vhost
 * v0.0.18
-    * Added dependency on postgresql if PuppetDB database is postgres.
+    * Added dependency on postgresql if PuppetDB database is postgres
 * v0.0.17
     * Only include git if managing repo
 * v0.0.16

@@ -6,6 +6,16 @@ Puppet module to locally set up Docker firewall and maintenance scripts
 Changelog
 ---------
 
+* v0.1.8
+    * Added before => [] to place certs before 'docker-ready' anchor
+    * Insisted upon 'docker-ready' before starting docker service
+* v0.1.7
+    * Wrapped ensure_resources because getting duplicate resource errors
+* v0.1.6
+    * Deprecated daemon_parameters as can (and is) now done using hiera
+    * Converted use of $user/group/mode to apply, by default, to directories and certs (match with service-container user)
+* v0.1.5
+    * Added certificate writing to allow isolated containers limited access to sensitive certs
 * v0.1.4
     * Switch to jsherz CSF integration to tell docker not to automatically open ports on the external firewall
     * Switched out JSON template for to_json_pretty() stdlib function

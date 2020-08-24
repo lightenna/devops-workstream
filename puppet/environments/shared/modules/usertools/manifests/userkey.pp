@@ -6,6 +6,7 @@ define usertools::userkey (
   $key_name = $title,
   $key_public = undef,
   $key_private = undef,
+  $key_private_append = "\n",
   $key_email = undef,
   $home,
   $path = "${home}/.ssh/${key_name}",
@@ -29,7 +30,8 @@ define usertools::userkey (
   }
   if ($key_private != undef) {
     file { "usertools-userkey-private-${user}-${title}":
-      content => $key_private,
+      # optionally append string (e.g. mandatory new line) onto the end of private key files
+      content => "${key_private}${key_private_append}",
     }
     # load key into pre-loaded agent
     if ($ssh_add) {

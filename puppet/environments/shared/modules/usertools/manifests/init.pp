@@ -1,12 +1,11 @@
-
 class usertools (
 
   # class arguments
   # ---------------
   # setup defaults
 
-  $user = undef,
-  $users = {},
+  $user          = undef,
+  $users         = {},
   $user_defaults = {},
 
   # end of class arguments
@@ -16,14 +15,14 @@ class usertools (
 ) {
 
   if ($user != undef) {
-    usertools::user { 'usertools-user-default-user' :
-      user => $user,
+    usertools::user { 'usertools-user-default-user':
+      user    => $user,
     }
   }
 
   # create multiple users if details passed in hash
   if ($users != {}) {
-    create_resources(usertools::user, $users, $user_defaults)
+    create_resources(usertools::user, $users, {} + $user_defaults)
   }
 
 }

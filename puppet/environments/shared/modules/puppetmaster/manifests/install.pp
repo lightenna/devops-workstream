@@ -3,7 +3,7 @@ class puppetmaster::install (
 
   $master_code_dir = '/etc/puppetlabs/code',
 
-  # lockversion was used to restrict to 6.9.0 as 6.9.1 breaks puppetboard (18/3/2020)
+  # restrict to 6.9.0 as 6.9.1 breaks puppetboard (18/3/2020)
   $lockversion_puppetdb = undef,
 
 ) {

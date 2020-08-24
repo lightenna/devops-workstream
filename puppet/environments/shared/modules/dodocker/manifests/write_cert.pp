@@ -1,5 +1,5 @@
 
-define puppetmaster::write_cert (
+define dodocker::write_cert (
   # duplicated for dodocker::write_cert, webtools::write_cert and puppetmaster::write_cert
   $cert_name = $title,
   $cert_directory_path = '/etc/pki/tls/certs',

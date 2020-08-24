@@ -4,6 +4,12 @@ usertools
 Change history
 --------------
 
+* v0.2.3
+    * Added feature to append required new-line character onto private key files
+* v0.2.2
+    * Deprecated moveout in favour of vagrant addition to rc.local
+* v0.2.1
+    * Introduced moveout hack to make room for users attached to a key UID (e.g. 1000)
 * v0.2.0
     * Made write_keypair Windows-friendly
     * Standardised params across usertools and admintools

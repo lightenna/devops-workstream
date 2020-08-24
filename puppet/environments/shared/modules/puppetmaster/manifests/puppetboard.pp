@@ -1,7 +1,7 @@
 class puppetmaster::puppetboard (
   $cert_directory_path  = '/etc/pki/tls/certs',
   $key_directory_path   = '/etc/pki/tls/private',
-  $cert_name            = 'localhost',
+  $cert_name            = $::fqdn,
   $use_https            = true,
   $certificate          = undef,
   $key                  = undef,
@@ -155,11 +155,6 @@ class puppetmaster::puppetboard (
       mode    => '0640',
       require => [File[$htpasswd_path]],
       content => inline_template($template),
-    }
-    # @todo minor tidy-up only: remove after a few versions > 0.2.2
-    file { 'puppetmaster-board-htpasswd-cleanupold':
-      path   => "${htpasswd_path}/.htpasswd",
-      ensure => 'absent',
     }
   }
 
