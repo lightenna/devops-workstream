@@ -6,7 +6,7 @@
 ##   $3 [cluster]
 ## Write into standard directory
 std_path=/etc/puppetlabs/facter/facts.d
-fact_file=$std_path/vg-ext-facts.yaml
+fact_file=$std_path/puppet-facts.yaml
 mkdir -p $std_path
 echo "# External facts file, created by bootfacts.sh" > $fact_file
 echo "---" >> $fact_file
