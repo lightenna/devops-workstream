@@ -22,6 +22,7 @@ node /^puppetmaster/ {
 
   # user and environment setup
   class { 'local::general': }
+  include 'devtools::languages::python'
   class { 'puppetmaster': }
   class { 'puppetmaster::puppetboard':
     use_https => false,
