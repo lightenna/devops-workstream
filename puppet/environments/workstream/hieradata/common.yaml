@@ -11,7 +11,7 @@ usertools::users:
         comment: "Git autonomous user"
         home: "/home/git"
         gid: "%{lookup('common::groups.iac-data.gid')}"
-        group: "iac-data"
+        group: "www-data"
         groups:
             - "www-data"
             - "iac-data"

@@ -8,23 +8,43 @@ lookup_options:
     pam::allowed_users:
         merge: unique # array merge
 
-pam::allowed_users:
-    - vagrant
-
-# always run SSH on 22 for easy `vagrant ssh`
-harden::ssh_port: 22
-
-# display the private_network IP
-domotd::ipaddress: "%{facts.networking.interfaces.eth1.ip}"
-
 sudo::configs:
     # for <hostname>.vagrant machines, vagrant user can sudo without a password
     vagrant:
         priority: 90
         content: "vagrant ALL=(ALL) NOPASSWD: ALL\n"
 
+pam::allowed_users:
+    - vagrant
+
+# vagrant boxes have NAT'd 10.0.2.15 address by default (does not work on Windows)
+tcp::default_ip: "%{facts.networking.interfaces.eth1.ip}"
+
+# display the private_network IP
+domotd::ipaddress: "%{facts.networking.interfaces.eth1.ip}"
+
+# vagrant hosts can't rely on DNS, so create an FQDN entry
+admintools::hosts::host_entries:
+    # hash key used as full hostname, returned by `hostname -f` (cannot be vagrant.)
+    "%{::fqdn}":
+        ip: "%{alias('tcp::default_ip')}"
+        host_aliases:
+            - 'localvagrant'
+
+# leave eyaml keys in place for multiple puppet-apply runs, don't run agent
+puppetagent::harden::delete_keys: false
+
 # disable automated agent runs for local dev machines, including local puppet masters
 puppetagent::run_as_service: false
 puppetmaster::agent::run_as_service: false
+
+# allow vagrant user to run selftest directly
+devtools::test::group: "vagrant"
+
+# don't do rkhunter daily runs on vagrant infrastructure
+rkhunter::cron_daily_run: false
+
+# always run SSH on 22 for easy `vagrant ssh`
+harden::ssh_port: 22
 
 ...

@@ -7,6 +7,8 @@
 node default {
   # include a class locally defined in the environment
   class { 'example': }
+  # user and environment setup
+  class { 'local::general': }
 }
 
 # match all hosts beginning 'puppetmaster...'

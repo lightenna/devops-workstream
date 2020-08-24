@@ -6,7 +6,7 @@ unless defined? $test_execution_method
 end
 
 # base components
-describe port(15022) do
+describe port(443) do
   it { should be_listening }
 end
 describe selinux do
@@ -18,5 +18,5 @@ end
 
 # users
 describe user('git') do
-  it { should belong_to_primary_group 'iac-data' }
+  it { should belong_to_primary_group 'www-data' }
 end

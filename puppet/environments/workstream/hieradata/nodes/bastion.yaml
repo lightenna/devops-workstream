@@ -2,50 +2,9 @@
 # Host-specific, common
 #
 ---
-lookup_options:
-    usertools::users:
-        merge: # deep hash merge
-            strategy: deep
-            merge_hash_arrays: true
-    csf::config::settings:
-        merge: hash
-
-usertools::users:
-    # service users
-    #   puppet only on puppetmasters
-    puppet:
-        shell: "/bin/false"
-        comment: "Puppet autonomous user"
-        home: "/opt/puppetlabs/server/data/puppetserver"
-        # gid: "%{lookup('common::groups.iac-data.gid')}"
-        # group: "iac-data"
-        gid: "32001"
-        group: "puppet"
-        groups:
-            - "www-data"
-            - "iac-data"
-        managehome: false
-        managehome_ssh: false
-    # git on all machines, but default to iac-data on puppetmasters
-    git:
-        gid: "%{lookup('common::groups.iac-data.gid')}"
-        group: "iac-data"
-
 # run SSH on non-standard port for bastion
 harden::ssh_port: 443
 
-csf::config::settings:
-    TCP_IN:
-        # allow SSH on both 22 (during provisioning) and non-standard (during life), Puppet on 8140
-        value: "22,%{lookup('harden::ssh_port')},8140"
-
-# puppetmaster
-python::pip: "present"
-python::dev: "present"
-# puppetboard requires virtualenv
-python::virtualenv: "present"
-python::use_epel: true
-
 # enable self-test on this host
-devtools::test::script_name: "puppetmaster.rb"
+devtools::test::script_name: "bastion.rb"
 ...
