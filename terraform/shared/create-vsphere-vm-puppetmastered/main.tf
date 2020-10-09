@@ -6,7 +6,7 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmastered, v1.9)
+  # STANDARD (puppetmastered, v2.0)
   puppet_exec = "/opt/puppetlabs/bin/puppet"
   puppet_server_exec = "/opt/puppetlabs/bin/puppetserver"
   puppet_run = "${local.puppet_exec} agent -t"
@@ -58,8 +58,8 @@ resource "random_string" "admin_password" {
 #
 resource "vsphere_virtual_machine" "vm" {
   connection {
-    host = var.private_ip_address
-    user = var.admin_user
+    host = self.clone[0].customize[0].network_interface[0].ipv4_address
+    user = self.extra_config.admin_user
   }
   name             = var.hostname
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
@@ -106,8 +106,14 @@ resource "vsphere_virtual_machine" "vm" {
     }
   }
 
+  extra_config = {
+    admin_user = var.admin_user
+    puppet_exec = local.puppet_exec
+    puppet_server_exec = local.puppet_server_exec
+  }
+
   #
-  # STANDARD (puppetmastered, v1.9)
+  # STANDARD (puppetmastered, v2.0)
   #
   # upload facts
   provisioner "file" {
@@ -150,12 +156,12 @@ resource "vsphere_virtual_machine" "vm" {
       admin_user: var.admin_user,
     })]
   }
+  # /STANDARD (puppetmastered, v2.0)
   # when destroying this resource, clean the old certs off the puppet master
   provisioner "local-exec" {
-    command = "sudo ${local.puppet_server_exec} ca clean --certname ${lower(var.hostname)}.${var.host_domain}; sudo ${local.puppet_exec} node deactivate ${lower(var.hostname)}.${var.host_domain}"
+    command = "sudo ${self.extra_config.puppet_server_exec} ca clean --certname ${self.clone[0].customize[0].linux_options[0].host_name}.${self.clone[0].customize[0].linux_options[0].domain}; sudo ${self.extra_config.puppet_exec} node deactivate ${self.clone[0].customize[0].linux_options[0].host_name}.${self.clone[0].customize[0].linux_options[0].domain}"
     on_failure = continue
     when = destroy
   }
-  # /STANDARD (puppetmastered, v1.9)
 }
 

@@ -1,5 +1,5 @@
 #
-# STANDARD (puppetmless, v1.9)
+# STANDARD (puppetmless, v2.0)
 #
 # wait for cloud provider to finish install its stuff, otherwise yum/dpkg collide [standard]
 sleep 60
@@ -33,4 +33,4 @@ sudo mkdir -p ${puppet_target_repodir}/
 sudo mv /tmp/puppet-additions/* ${puppet_target_repodir}/
 # give admin user perms to allow post-terraform rsync
 sudo chown -R ${admin_user}:${admin_user} ${puppet_target_repodir}/
-# /STANDARD (puppetmless, v1.9)
+# /STANDARD (puppetmless, v2.0)

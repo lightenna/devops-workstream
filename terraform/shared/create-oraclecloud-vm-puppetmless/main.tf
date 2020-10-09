@@ -6,12 +6,12 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmless, v1.9)
+  # STANDARD (puppetmless, v2.0)
   puppet_target_repodir = "/etc/puppetlabs/puppetmless"
   puppet_source = "${path.module}/../../../puppet"
   puppet_run = "/opt/puppetlabs/bin/puppet apply -t --hiera_config=${local.puppet_target_repodir}/environments/${var.puppet_environment}/hiera.yaml --modulepath=${local.puppet_target_repodir}/modules:${local.puppet_target_repodir}/environments/shared/modules:${local.puppet_target_repodir}/environments/${var.puppet_environment}/modules ${local.puppet_target_repodir}/environments/${var.puppet_environment}/manifests/${var.puppet_manifest_name}"
   real_bastion_user = var.bastion_user == "" ? var.admin_user : var.bastion_user
-  # /STANDARD (puppetmless, v1.9), custom variables
+  # /STANDARD (puppetmless, v2.0), custom variables
   hostbase = "${var.hostname}-${terraform.workspace}-${var.project}-${var.account}"
 }
 
@@ -201,7 +201,7 @@ resource "null_resource" "remote-exec-puppetmless" {
   }
 
   #
-  # STANDARD (puppetmless, v1.9)
+  # STANDARD (puppetmless, v2.0)
   #
   # upload facts
   provisioner "file" {
@@ -223,7 +223,7 @@ resource "null_resource" "remote-exec-puppetmless" {
       templatefile("../../shared/create-x-vm-shared/templates/puppetmless.sh.tmpl", {
         host_specific_commands: var.host_specific_commands,
         pkgman: var.pkgman,
-        hostname: var.hostname,
+        hostname: lower(var.hostname),
         host_domain: var.host_domain,
         ssh_additional_port: var.ssh_additional_port,
         admin_user: var.admin_user,
@@ -238,7 +238,7 @@ resource "null_resource" "remote-exec-puppetmless" {
       })
     ]
   }
-  # /STANDARD (puppetmless, v1.9)
+  # /STANDARD (puppetmless, v2.0)
 }
 
 # create new A record

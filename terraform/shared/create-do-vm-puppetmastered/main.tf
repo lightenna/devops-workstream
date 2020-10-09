@@ -6,7 +6,7 @@
 # default provider configured in root (upstream) module
 
 locals {
-  # STANDARD (puppetmastered, v1.9)
+  # STANDARD (puppetmastered, v2.0)
   puppet_exec = "/opt/puppetlabs/bin/puppet"
   puppet_server_exec = "/opt/puppetlabs/bin/puppetserver"
   puppet_run = "${local.puppet_exec} agent -t"
@@ -54,7 +54,7 @@ resource "digitalocean_droplet" "host" {
   ssh_keys = [data.digitalocean_ssh_key.singlet.id]
   tags = split(";", var.host_tags)
   #
-  # STANDARD (puppetmastered, v1.9)
+  # STANDARD (puppetmastered, v2.0)
   #
   # upload facts
   provisioner "file" {
@@ -69,14 +69,14 @@ resource "digitalocean_droplet" "host" {
     content = templatefile("../../shared/create-x-vm-shared/templates/puppet.conf.tmpl", {
       puppet_environment: var.puppet_environment
       puppet_master_fqdn: var.puppet_master_fqdn
-      puppet_certname: "${var.hostname}.${var.host_domain}"
+      puppet_certname: "${lower(var.hostname)}.${var.host_domain}"
     })
   }
   provisioner "remote-exec" {
     inline = [templatefile("../../shared/create-x-vm-shared/templates/puppetmastered_certreq.sh.tmpl", {
       host_specific_commands: var.host_specific_commands,
       pkgman: var.pkgman,
-      hostname: var.hostname,
+      hostname: lower(var.hostname),
       host_domain: var.host_domain,
       ssh_additional_port: var.ssh_additional_port,
       admin_user: var.admin_user,
@@ -86,7 +86,7 @@ resource "digitalocean_droplet" "host" {
   }
   # sign cert request locally (on puppetmaster, as root)
   provisioner "local-exec" {
-    command = "sudo ${local.puppet_server_exec} ca sign --certname ${var.hostname}.${var.host_domain}"
+    command = "sudo ${local.puppet_server_exec} ca sign --certname ${lower(var.hostname)}.${var.host_domain}"
   }
   # run puppet agent
   provisioner "remote-exec" {
@@ -97,13 +97,7 @@ resource "digitalocean_droplet" "host" {
       admin_user: var.admin_user,
     })]
   }
-  # when destroying this resource, clean the old certs off the puppet master
-  provisioner "local-exec" {
-    command = "sudo ${local.puppet_server_exec} ca clean --certname ${var.hostname}.${var.host_domain}; sudo ${local.puppet_exec} node deactivate ${var.hostname}.${var.host_domain}"
-    on_failure = continue
-    when = destroy
-  }
-  # /STANDARD (puppetmastered, v1.9)
+  # /STANDARD (puppetmastered, v2.0)
 }
 
 data "digitalocean_domain" "domain" {

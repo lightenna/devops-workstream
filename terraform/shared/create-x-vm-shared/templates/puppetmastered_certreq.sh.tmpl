@@ -1,5 +1,5 @@
 #
-# STANDARD (puppetmastered, v1.9)
+# STANDARD (puppetmastered, v2.0)
 #
 # wait for cloud provider to finish install its stuff, otherwise yum/dpkg collide [standard]
 sleep 60
@@ -32,4 +32,4 @@ sudo mv /tmp/puppet-facts.yaml /etc/puppetlabs/facter/facts.d/
 sudo mv /tmp/puppet-additions.conf /etc/puppetlabs/puppet/puppet.conf
 # + run puppet to create (as yet) unsigned key, ignore errors
 sudo ${puppet_exec} agent -dvt > cert_req_puppet_agent.out 2>&1 || true
-# /STANDARD (puppetmastered, v1.9)
+# /STANDARD (puppetmastered, v2.0)
