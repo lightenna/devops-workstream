@@ -21,13 +21,13 @@ resource "random_string" "secvalue" {
 #
 
 resource "azurerm_key_vault_secret" "secretex" {
-  name = format("%s%s", "kv-secret-", random_id.seckey.hex)
+  name = "kv-secret-refable"
   value = random_string.secvalue.result
   key_vault_id = azurerm_key_vault.mkv.id
   depends_on = [
     azurerm_key_vault_access_policy.perm_tfsp]
   tags = {
-    name = format("%s%s", "kv-secret-", random_id.seckey.hex)
+    name = "kv-secret-refable"
     project = var.project
     environment = terraform.workspace
   }

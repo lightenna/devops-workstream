@@ -3,7 +3,8 @@ variable "project" {
 }
 
 variable "unique_id" {
-  default = ""
+  # set a default value to make these resources referencable (by default) from future tutorials
+  default = "example"
 }
 
 variable "private_key_name" {
