@@ -35,6 +35,19 @@ resource "azurerm_network_security_group" "nsg_public" {
     destination_address_prefix = "*"
   }
 
+  # allow inbound HTTP on port 80
+  security_rule {
+    name                   = "HTTP"
+    priority               = 1001
+    direction              = "Inbound"
+    access                 = "Allow"
+    protocol               = "Tcp"
+    source_port_range      = "*"
+    destination_port_range = "80"
+    source_address_prefix  = "*"
+    destination_address_prefix = "*"
+  }
+
   tags = {
     name = "nsgpub${var.unique_append}"
     environment = terraform.workspace
