@@ -104,6 +104,13 @@ We've taken the same simple approach to documentation.  It's all in markdown-for
   * [Remote provisioning [.md]](/docs/remote_provisioning.md)
 * [Complete: Provisioned environment [.md]](/docs/provisioned_environment.md) - details of all the hosts created by workstream
 
+Forking
+-------
+Should you fork from this repo, you may like to pull upstream changes, something like:
+```
+git pull git@github.com:lightenna/devops-workstream.git master
+```
+
 Version 2.0
 -------
 This project started out as a training course that I [designed and ran at the Department of Work and Pensions](https://github.com/dwp/devops-workstream).  Since leaving it's no longer being maintained.  In response to a few requests, I'll try to find time to continue to develop it open-source.  If you've got questions about the course or using it to train your team, please [get in touch](http://www.lightenna.com/contact).
