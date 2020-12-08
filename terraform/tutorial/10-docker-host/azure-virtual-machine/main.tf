@@ -1,4 +1,4 @@
-\#
+#
 # Create virtual machine
 # Cloud: Azure
 
