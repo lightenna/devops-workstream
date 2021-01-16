@@ -45,7 +45,7 @@ module "vm1" {
   source = "./azure-virtual-machine"
   unique_append = local.unique_append
   hostname = "host1"
-  host_size = "Standard_B4ms" # (£25.34/month) could upgrade to Standard_B4ms (£101.45/month)
+  host_size = "Standard_B2s" # Standard_B2s (£25.34/month) could upgrade to Standard_B4ms (£101.45/month)
   public_key_path = "~/.ssh/id_rsa_devops_simple_key.pub"
   region = var.region
   admin_user = local.admin_user
