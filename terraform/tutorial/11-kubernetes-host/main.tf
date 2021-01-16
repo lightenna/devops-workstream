@@ -50,7 +50,7 @@ module "vm1" {
   region = var.region
   admin_user = local.admin_user
   command_list = [ "sleep 60" ]
-  command_script_path_list = [ "./scripts/install_rancher_server.sh" ]
+  command_script_path_list = [ "./scripts/install_rancherd.sh" ]
 
   # pass in shared resource group
   resource_group_location = azurerm_resource_group.rg.location
