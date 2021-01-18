@@ -28,6 +28,9 @@ sudo setenforce 0
 sudo bash -c "curl -sfL https://get.rancher.io | sh -"
 sudo systemctl enable rancherd-server.service
 sudo systemctl start rancherd-server.service
-# output useful message to configure kubectl
-echo '--- Run as root'
-echo 'export KUBECONFIG=/etc/rancher/rke2/rke2.yaml PATH=$PATH:/var/lib/rancher/rke2/bin'
+sleep 60
+# allow user to read kube config
+mkdir ~/.kube
+sudo bash -c "cp /etc/rancher/rke2/rke2.yaml /home/rootlike/.kube/config && chown rootlike:rootlike /home/rootlike/.kube/config"
+# set up path
+echo 'export PATH=$PATH:/var/lib/rancher/rke2/bin' >> ~/.bashrc
