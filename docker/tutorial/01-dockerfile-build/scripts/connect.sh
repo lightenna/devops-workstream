@@ -8,5 +8,5 @@ cd $cwd
 IMAGE_NAME="testlike"
 CONTAINER_NAME="${IMAGE_NAME}"
 
-# build new image
-docker run -d --name ${CONTAINER_NAME} -p 3031:3030 ${IMAGE_NAME}:latest
+# exec into the running container
+docker exec -it ${CONTAINER_NAME} /bin/bash

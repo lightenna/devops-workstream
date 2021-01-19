@@ -8,5 +8,5 @@ cd $cwd
 IMAGE_NAME="testlike"
 CONTAINER_NAME="${IMAGE_NAME}"
 
-# build new image
-docker run -d --name ${CONTAINER_NAME} -p 3031:3030 ${IMAGE_NAME}:latest
+# stop and remove container if running
+docker rm --force ${CONTAINER_NAME}
