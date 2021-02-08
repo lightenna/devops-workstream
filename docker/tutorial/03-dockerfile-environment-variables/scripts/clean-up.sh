@@ -5,13 +5,11 @@ cwd="$(dirname $(dirname $(readlink -f "$0")))"
 cd $cwd
 
 # constants
-IMAGE_NAME="nginx_augmented"
+IMAGE_NAME="dockenvvars"
+CONTAINER_NAME="${IMAGE_NAME}"
 
 # stop and remove container if running
-docker rm --force ${IMAGE_NAME}
+docker rm --force ${CONTAINER_NAME}
 
 # scrub image if present
 docker rmi --force ${IMAGE_NAME}
-
-# build new image
-docker build -t ${IMAGE_NAME}:latest --build-arg SERVICENAME=${IMAGE_NAME} -f ./Dockerfile .

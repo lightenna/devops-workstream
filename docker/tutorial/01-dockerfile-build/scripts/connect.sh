@@ -5,7 +5,7 @@ cwd="$(dirname $(dirname $(readlink -f "$0")))"
 cd $cwd
 
 # constants
-IMAGE_NAME="testlike"
+IMAGE_NAME="basicbuild"
 CONTAINER_NAME="${IMAGE_NAME}"
 
 # exec into the running container

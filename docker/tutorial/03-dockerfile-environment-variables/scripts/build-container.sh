@@ -5,7 +5,7 @@ cwd="$(dirname $(dirname $(readlink -f "$0")))"
 cd $cwd
 
 # constants
-IMAGE_NAME="basicbuild"
+IMAGE_NAME="dockenvvars"
 
 # stop and remove container if running
 docker rm --force ${IMAGE_NAME}

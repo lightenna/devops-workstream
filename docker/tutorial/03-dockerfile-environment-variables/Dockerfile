@@ -24,8 +24,8 @@ RUN chown root:node -R ./ && chmod 0750 -R ./
 # run as node user
 USER node
 
-# tell the container where the service is hardcoded to run
-EXPOSE 3030/tcp
+# tell the service to run on named port by default
+ENV PORT=3031
 
 # run the specified command within the container.
 CMD [ "npm", "start" ]

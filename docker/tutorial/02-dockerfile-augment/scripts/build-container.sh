@@ -5,7 +5,7 @@ cwd="$(dirname $(dirname $(readlink -f "$0")))"
 cd $cwd
 
 # constants
-IMAGE_NAME="basicbuild"
+IMAGE_NAME="nginx_augmented"
 
 # stop and remove container if running
 docker rm --force ${IMAGE_NAME}
@@ -14,4 +14,4 @@ docker rm --force ${IMAGE_NAME}
 docker rmi --force ${IMAGE_NAME}
 
 # build new image
-docker build -t ${IMAGE_NAME}:latest --build-arg SERVICENAME=${IMAGE_NAME} -f ./Dockerfile .
+docker build -t ${IMAGE_NAME}:latest -f ./Dockerfile .
