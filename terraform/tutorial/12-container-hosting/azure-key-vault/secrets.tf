@@ -12,14 +12,12 @@ resource "random_string" "secvalue" {
 # create secrets
 #
 
-resource "azurerm_key_vault_secret" "adminpass" {
-  name = "admin-password"
+resource "azurerm_key_vault_secret" "temppass" {
+  name = "temp-password"
   value = random_string.secvalue.result
   key_vault_id = azurerm_key_vault.mkv.id
-  depends_on = [
-    azurerm_key_vault_access_policy.perm_tfsp]
   tags = {
-    name = "admin-password"
+    name = "temp-password"
     project = var.project
     environment = terraform.workspace
   }

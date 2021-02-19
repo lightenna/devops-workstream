@@ -3,5 +3,5 @@ output "vault_URI" {
 }
 
 output "vault_secret_adminpass" {
-  value = "${azurerm_key_vault_secret.adminpass.name} (${length(azurerm_key_vault_secret.adminpass.value)} bytes)"
+  value = "${azurerm_key_vault_secret.temppass.name} (${length(azurerm_key_vault_secret.temppass.value)} bytes)"
 }

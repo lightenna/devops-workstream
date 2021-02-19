@@ -50,64 +50,62 @@ resource "azurerm_key_vault" "mkv" {
     # grant access to starter if set up
     virtual_network_subnet_ids = []
   }
+  # inline access policies to make deleting easier
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
+    # all permissions from https://www.terraform.io/docs/providers/azurerm/r/key_vault_access_policy.html
+    key_permissions = [
+      "backup",
+      "create",
+      "decrypt",
+      "delete",
+      "encrypt",
+      "get",
+      "import",
+      "list",
+      "purge",
+      "recover",
+      "restore",
+      "sign",
+      "unwrapKey",
+      "update",
+      "verify",
+      "wrapKey"]
+    secret_permissions = [
+      "backup",
+      "delete",
+      "get",
+      "list",
+      "purge",
+      "recover",
+      "restore",
+      "set"]
+    certificate_permissions = [
+      "backup",
+      "create",
+      "delete",
+      "deleteissuers",
+      "get",
+      "getissuers",
+      "import",
+      "list",
+      "listissuers",
+      "managecontacts",
+      "manageissuers",
+      "purge",
+      "recover",
+      "restore",
+      "setissuers",
+      "update"]
+    storage_permissions = [
+      "get",
+      "list",
+      "delete"]
+  }
   tags = {
     name = "kv-${local.hostbase}"
     project = var.project
     environment = terraform.workspace
   }
-}
-
-# grant permission for Terraform user to create/delete/update keys
-resource "azurerm_key_vault_access_policy" "perm_tfsp" {
-  key_vault_id = azurerm_key_vault.mkv.id
-  tenant_id = data.azurerm_client_config.current.tenant_id
-  object_id = data.azurerm_client_config.current.object_id
-  # all permissions from https://www.terraform.io/docs/providers/azurerm/r/key_vault_access_policy.html
-  key_permissions = [
-    "backup",
-    "create",
-    "decrypt",
-    "delete",
-    "encrypt",
-    "get",
-    "import",
-    "list",
-    "purge",
-    "recover",
-    "restore",
-    "sign",
-    "unwrapKey",
-    "update",
-    "verify",
-    "wrapKey"]
-  secret_permissions = [
-    "backup",
-    "delete",
-    "get",
-    "list",
-    "purge",
-    "recover",
-    "restore",
-    "set"]
-  certificate_permissions = [
-    "backup",
-    "create",
-    "delete",
-    "deleteissuers",
-    "get",
-    "getissuers",
-    "import",
-    "list",
-    "listissuers",
-    "managecontacts",
-    "manageissuers",
-    "purge",
-    "recover",
-    "restore",
-    "setissuers",
-    "update"]
-  storage_permissions = [
-    "get",
-    "list",
-    "delete"]
 }
