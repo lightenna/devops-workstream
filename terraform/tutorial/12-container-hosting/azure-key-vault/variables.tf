@@ -2,7 +2,7 @@
 # Variables can be overridden
 
 variable "unique_id" {
-  default = ""
+  default = "dvw"
 }
 
 variable "project" {

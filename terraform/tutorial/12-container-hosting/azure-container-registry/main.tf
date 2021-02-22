@@ -4,8 +4,8 @@
 
 locals {
   # use a unique ID for all resources based on a random string unless one is specified
-  unique_append = var.unique_id == "" ? "-${random_string.unique_key.result}" : "-${var.unique_id}"
-  admin_user = "rootlike"
+  unique_append = var.unique_id == "" ? random_string.unique_key.result : var.unique_id
+  hostbase = "${var.project}-${local.unique_append}"
 }
 
 resource "random_string" "unique_key" {
@@ -20,8 +20,12 @@ resource "azurerm_resource_group" "rg" {
   location = var.region
 }
 
-# get IP address of provisioning machine
-data "http" "provisip" {
-  url = "http://ipv4.icanhazip.com"
+# ACR name can only contain alpha-numeric characters
+resource "azurerm_container_registry" "acr" {
+  name                     = "acr8conhost8${var.unique_id}"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  sku                      = "Premium"
+  admin_enabled            = true
 }
 
