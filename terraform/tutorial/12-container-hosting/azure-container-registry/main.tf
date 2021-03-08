@@ -16,7 +16,7 @@ resource "random_string" "unique_key" {
 
 # resource group name uses derived (local) unique_append, but region comes from external, default in variables.tf
 resource "azurerm_resource_group" "rg" {
-  name = "rg${local.unique_append}"
+  name = "rg-${local.hostbase}"
   location = var.region
 }
 
