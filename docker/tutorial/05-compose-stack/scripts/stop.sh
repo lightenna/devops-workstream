@@ -4,5 +4,5 @@
 cwd="$(dirname $(dirname $(readlink -f "$0")))"
 cd $cwd
 
-print "Bringing down containers"
+echo "Bringing down containers"
 docker-compose down
