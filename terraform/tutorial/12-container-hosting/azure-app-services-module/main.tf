@@ -25,7 +25,7 @@ resource "azurerm_resource_group" "rg" {
 
 # use community module to spin-up Azure App Service instance
 module "web_app_container" {
-  source = "innovationnorway/web-app-container/azurerm"
+  source = "./innovationnorway_local/web_app_container"
   name = var.project
   resource_group_name = azurerm_resource_group.rg.name
   container_type = "docker"
