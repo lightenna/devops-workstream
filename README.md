@@ -3,7 +3,7 @@ Workstream
 
 About
 -----
-This repo contains an example set of [Terraform](https://www.terraform.io/) modules, [Packer](https://www.packer.io/) templates, [Ansible](https://www.ansible.com/) Playbooks, [Chef](https://www.chef.io/chef/) Recipes and [Puppet](https://puppet.com/) manifests that provision and configure a set of machines in AWS.  It's designed to help coders get started in DevOps.
+This repo contains an example set of [Terraform](https://www.terraform.io/) modules, [Packer](https://www.packer.io/) templates, [Ansible](https://www.ansible.com/) Playbooks, [Chef](https://www.chef.io/chef/) Recipes and [Puppet](https://puppet.com/) manifests that provision and configure a set of machines in various clouds such as AWS and Azure.  It's designed to help coders get started in DevOps.
 
 Getting started
 ---------------
@@ -96,13 +96,7 @@ All hosts are built with SELinux enabled (enforcing).  While every effort has be
 Documentation
 -------------
 
-We've taken the same simple approach to documentation.  It's all in markdown-formatted .md files, linked directly from this README.md.
-
-* [Getting set up [.md]](/docs/getting_set_up.md) - guide to setting up your terraform machine (local or remote)
-  * [Pre-requisites [.md]](/docs/pre_requisites.md)
-  * [AWS permissions [.md]](/docs/aws_permissions.md)
-  * [Remote provisioning [.md]](/docs/remote_provisioning.md)
-* [Complete: Provisioned environment [.md]](/docs/provisioned_environment.md) - details of all the hosts created by workstream
+We've taken the same simple approach to documentation.  It's all in markdown-formatted .md files, linked directly from the [documentation README.md](/docs/README.md).
 
 Forking
 -------
