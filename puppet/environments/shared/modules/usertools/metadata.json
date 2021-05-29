@@ -1,6 +1,6 @@
 {
   "name": "puppet-usertools",
-  "version": "0.2.3",
+  "version": "0.4.5",
   "author": "(c) Devopera",
   "summary": "Puppet manifests for managing users",
   "license": "Apache-2.0",

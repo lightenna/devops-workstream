@@ -24,12 +24,20 @@ class dodocker::authspread (
     before => [Exec['dodocker-authspread-copy']],
   }
 
+  # ensure that the required folder exists
+  ensure_resource(usertools::safe_directory, "${kubelet_path}", {
+    user  => $user,
+    group => $group,
+    mode  => '0755',
+  })
+
   # when source file detected, copy to target and secure
   exec { 'dodocker-authspread-copy':
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     user    => $user,
     group   => $group,
     onlyif  => "test -e ${user_home}/${docker_settings_path}/${docker_settings_leaf}",
+    require => [File["${kubelet_path}"]],
     command => @("END")
         cat ${user_home}/${docker_settings_path}/${docker_settings_leaf} \
            | jq .auths \

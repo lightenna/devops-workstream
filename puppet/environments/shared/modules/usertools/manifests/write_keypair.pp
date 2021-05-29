@@ -8,6 +8,7 @@ define usertools::write_keypair (
   $group = $title,
   $mode = '0600',
   $path = '/srv/keys',
+  $ensure = 'present',
   $key_private = undef,
   $key_private_name = 'private_key.pkcs7.pem',
   $key_public = undef,
@@ -15,7 +16,7 @@ define usertools::write_keypair (
 
 ) {
 
-  ensure_resource(usertools::safe_directory, 'usertools-write_keypair-ensdir', {
+  ensure_resource(usertools::safe_directory, "usertools-write_keypair-ensdir-${title}", {
     path    => $path,
     mode    => $mode,
     user    => $user,
@@ -23,7 +24,7 @@ define usertools::write_keypair (
   })
 
   File {
-    ensure => present,
+    ensure => $ensure,
     owner => $user,
     group => $group,
     mode => $mode,

@@ -3,8 +3,19 @@ class admintools::sshd (
 
   $force_keepalives_inboard = true,
   $force_keepalives_outboard = false,
+  $max_auth_tries = 10,
 
 ) {
+
+  case $operatingsystem {
+    centos, redhat, oraclelinux, fedora, ubuntu, debian: {
+      # allow for users with multiple keys in key agent
+      sshd_config { "MaxAuthTries":
+        ensure => present,
+        value  => "${max_auth_tries}",
+      }
+    }
+  }
 
   if ($force_keepalives_inboard) {
     case $operatingsystem {

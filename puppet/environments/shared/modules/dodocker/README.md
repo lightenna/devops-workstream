@@ -6,6 +6,21 @@ Puppet module to locally set up Docker firewall and maintenance scripts
 Changelog
 ---------
 
+* v0.2.3
+    * Added prune script to ease maintenance
+* v0.2.2
+    * Added resource collector to stop Docker::System_user defined types from conflicting with usertools
+* v0.2.1
+    * Deepened clean for agent scrub to include shared directories
+* v0.2.0
+    * Added scrub_rancher_agent.sh script to selectively remove agent-related containers
+* v0.1.11
+    * Ensure /var/lib/kubelet directory exists before writing .dockerconfig to it
+* v0.1.10
+    * Modified key convert to set file ownership and mode on outputted pkcs8 key
+* v0.1.9
+    * Extended write_cert.pp to optionally create ca.crt
+    * Extended write_cert.pp to optionally convert key (after writing) to spawn new .pkcs8
 * v0.1.8
     * Added before => [] to place certs before 'docker-ready' anchor
     * Insisted upon 'docker-ready' before starting docker service

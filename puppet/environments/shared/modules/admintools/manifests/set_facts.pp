@@ -56,12 +56,47 @@ define admintools::set_facts (
       owner   => $user_resolved,
       group   => $group_resolved,
       content => @("END")
-        # External facts file, created by Puppet for non-Terraformed machines
+        # External facts file, created by Puppet
         ---
         role: "${role_resolved}"
         environ: "${environ_resolved}"
         cluster: "${cluster_resolved}"
         | END
+    }
+
+    case $::operatingsystem {
+      centos, redhat, oraclelinux, fedora, ubuntu, debian: {
+        # write out facts as globally-accessible environment variables
+        file { "admintools-facts-envvars-${title}":
+          path    => "/etc/profile.d/setfacts-${title}.sh",
+          owner   => $user_resolved,
+          group   => $group_resolved,
+          content => @("END")
+            # Export facts as environment variables, created by Puppet
+            export FACTS_ROLE="${role_resolved}"
+            export FACTS_ENVIRON="${environ_resolved}"
+            export FACTS_CLUSTER="${cluster_resolved}"
+            | END
+        }
+      }
+      windows: {
+        # create globally-accessible (system) environment variables
+        windows_env { "admintools-facts-envvars-${title}-role":
+          mergemode => 'clobber',
+          variable  => 'FACTS_ROLE',
+          value     => $role_resolved,
+        }
+        windows_env { "admintools-facts-envvars-${title}-environ":
+          mergemode => 'clobber',
+          variable  => 'FACTS_ENVIRON',
+          value     => $environ_resolved,
+        }
+        windows_env { "admintools-facts-envvars-${title}-cluster":
+          mergemode => 'clobber',
+          variable  => 'FACTS_CLUSTER',
+          value     => $cluster_resolved,
+        }
+      }
     }
   }
 

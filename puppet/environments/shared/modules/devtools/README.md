@@ -4,6 +4,10 @@ devtools
 Change history
 --------------
 
+* v0.1.6
+    * Ensure devtools::test does not try to run on Windows
+* v0.1.5
+    * Added bundler deps for Ubuntu
 * v0.1.4
     * Protected non-Windows machines from dowindows gemrc configuration
 * v0.1.3

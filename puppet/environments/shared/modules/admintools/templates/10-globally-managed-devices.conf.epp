@@ -1,0 +1,2 @@
+[keyfile]
+unmanaged-devices=*,except:type:gsm,except:type:cdma,<% if $manage_wifi_devices { %>except:type:wifi<% } %><% if $manage_ethernet_devices { %>,except:type:ethernet<% } %>

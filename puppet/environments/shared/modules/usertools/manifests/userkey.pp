@@ -3,6 +3,7 @@ define usertools::userkey (
 
   $user,
   $group,
+  $ensure = 'present',
   $key_name = $title,
   $key_public = undef,
   $key_private = undef,
@@ -15,7 +16,7 @@ define usertools::userkey (
 ) {
 
   File {
-    ensure => present,
+    ensure => $ensure,
     path => $path,
     owner => $user,
     group => $group,

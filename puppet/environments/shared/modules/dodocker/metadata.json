@@ -1,6 +1,6 @@
 {
   "name": "puppet-dodocker",
-  "version": "0.1.8",
+  "version": "0.2.3",
   "author": "(c) Devopera",
   "summary": "Docker firewall and maintenance scripts",
   "license": "Apache-2.0",

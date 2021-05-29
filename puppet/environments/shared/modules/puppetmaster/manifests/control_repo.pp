@@ -15,6 +15,7 @@ class puppetmaster::control_repo (
   $update_cadence = undef,
   $manage_repo = true,
   $manage_r10k_puppetfile = true,
+  $manage_r10k_puppetfile_install = false,
 
 ) {
 
@@ -31,15 +32,8 @@ class puppetmaster::control_repo (
       source          => $source,
       group_writeable => $group_writeable,
       require_key     => $require_key,
+      update_cadence  => $update_cadence,
       before          => [Anchor['puppetmaster-control_repo-r10k-ready']],
-    }
-
-    if ($update_cadence != undef) {
-      ensure_resource(cron, 'puppetmaster-control_repo-cron-update', $update_cadence + {
-        command => "/usr/bin/git --git-dir=${path}/${repo_name}/.git --work-tree=${path}/${repo_name} pull > /dev/null 2>&1",
-        user    => $service_user,
-        require => [Usertools::Safe_repo['puppetmaster-control_repo-fetch']],
-      })
     }
 
     anchor { 'puppetmaster-control_repo-r10k-ready': }
@@ -71,16 +65,18 @@ class puppetmaster::control_repo (
         before => [Anchor['puppetmaster-control_repo-r10k-ready']],
       }
 
-      # install puppetfile if one exists in control repo, but wipe the cache afterwards
-      exec { 'puppetmaster-control_repo-r10k-puppetfile-install':
-        path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
-        command => "r10k puppetfile install && rm -rf ${cache_dir_path}/r10k/*",
-        user    => $service_user,
-        group   => $service_group,
-        cwd     => "${path}/${repo_name}/${puppetfile_relative_path}",
-        onlyif  => "test -e ${path}/${repo_name}/${puppetfile_relative_path}/${puppetfile_name}",
-        require => [Anchor['puppetmaster-control_repo-r10k-ready']],
-        timeout => 20 * 60, # restrict run to max 20 minutes
+      if ($manage_r10k_puppetfile_install) {
+        # install puppetfile if one exists in control repo, but wipe the cache afterwards
+        exec { 'puppetmaster-control_repo-r10k-puppetfile-install':
+          path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+          command => "r10k puppetfile install && rm -rf ${cache_dir_path}/r10k/*",
+          user    => $service_user,
+          group   => $service_group,
+          cwd     => "${path}/${repo_name}/${puppetfile_relative_path}",
+          onlyif  => "test -e ${path}/${repo_name}/${puppetfile_relative_path}/${puppetfile_name}",
+          require => [Anchor['puppetmaster-control_repo-r10k-ready']],
+          timeout => 20 * 60, # restrict run to max 20 minutes
+        }
       }
     }
   }

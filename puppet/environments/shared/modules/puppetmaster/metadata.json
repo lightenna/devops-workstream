@@ -1,6 +1,6 @@
 {
   "name": "puppet-puppetmaster",
-  "version": "0.2.5",
+  "version": "0.4.0",
   "author": "(c) Devopera",
   "summary": "Puppet manifests for managing puppetmasters",
   "license": "Apache-2.0",

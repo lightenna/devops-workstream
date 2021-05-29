@@ -24,6 +24,9 @@ class devtools::languages::ruby (
         devtools::languages::ruby::gemrcconf { "${gem_conf_path}" : }
       }
     }
+    ubuntu, debian: {
+      ensure_packages(['ruby-dev', 'zlib1g-dev', 'liblzma-dev', 'ruby-bundler'], { ensure => present })
+    }
   }
 
 }

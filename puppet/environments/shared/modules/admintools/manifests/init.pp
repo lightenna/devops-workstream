@@ -1,26 +1,26 @@
-
 class admintools (
 
-  $yumrepos = {},
-  $yumrepo_defaults = {
-    enabled => 1,
+  $yumrepos               = {},
+  $yumrepo_defaults       = {
+    enabled  => 1,
     gpgcheck => true,
   },
-  $packages = [],
-  $notifier_dir = $admintools::params::notifier_dir,
-  $github_public_key = 'AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==',
-  $github_over_https = false,
+  $packages               = {},
+  $package_defaults       = {},
+  $notifier_dir           = $admintools::params::notifier_dir,
+  $known_hosts            = {},
+  $known_host_defaults    = {},
 
-  $machine_notes = undef,
+  $machine_notes          = undef,
   $machine_notes_filename = 'machine_notes.txt',
-  $admin_user = $admintools::params::admin_user,
-  $admin_group = $admintools::params::admin_group,
-  $admin_user_home = $admintools::params::admin_user_home,
-  $filesystem_root = $admintools::params::filesystem_root,
+  $admin_user             = $admintools::params::admin_user,
+  $admin_group            = $admintools::params::admin_group,
+  $admin_user_home        = $admintools::params::admin_user_home,
+  $filesystem_root        = $admintools::params::filesystem_root,
   $filesystem_secure_mode = $admintools::params::filesystem_secure_mode,
 
-  $keys = {},
-  $key_defaults = {},
+  $keys                   = {},
+  $key_defaults           = {},
 
 ) inherits admintools::params {
 
@@ -32,12 +32,24 @@ class admintools (
   # manage /etc/hosts
   contain 'admintools::hosts'
 
-  # set up git SSH rules if required
+  # automatically resize partitions/volumes if necessary
+  contain 'admintools::autoresize'
+
+  # set up git SSH rules/known hosts if required
   include 'admintools::git_ssh'
 
   # process pre-run deps
   class { 'admintools::stage_first':
     stage => 'first',
+  }
+
+  # additions by OS
+  case $::operatingsystem {
+    centos, redhat, oraclelinux, fedora: {
+    }
+    ubuntu, debian: {
+      contain 'admintools::os::ubuntu'
+    }
   }
 
   # additional repos
@@ -54,7 +66,7 @@ class admintools (
   }
 
   # common anchor for ensuring that the package manager is ready
-  anchor { 'admintools-packman-ready' : }
+  anchor { 'admintools-packman-ready': }
   Package {
     require => [Anchor['admintools-packman-ready']],
   }
@@ -64,7 +76,7 @@ class admintools (
       # typically installed on all machines, so minimal set of secure tools
       include '::git'
       # install basic tools
-      ensure_packages(['lynx', 'iftop', 'htop', 'iotop', 'curl', 'sysstat'], { ensure => 'present' })
+      ensure_packages(['lynx', 'iftop', 'htop', 'iotop', 'curl', 'sysstat', 'mlocate'], { ensure => 'present' } + $package_defaults)
     }
   }
 
@@ -72,21 +84,25 @@ class admintools (
     centos, redhat, oraclelinux, fedora: {
       # redundant, included by postfix module
       # ensure_packages(['mailx'], { ensure => 'present' })
-      ensure_packages(['perl-libwww-perl', 'perl-LWP-Protocol-https', 'perl-Time-HiRes', 'perl-Crypt-SSLeay'], { ensure => 'present' })
+      ensure_packages(['perl-libwww-perl', 'perl-LWP-Protocol-https', 'perl-Time-HiRes', 'perl-Crypt-SSLeay'], { ensure
+      => 'present' } + $package_defaults)
       # install serverspec test deps
-      ensure_packages(['nmap-ncat'], { ensure => 'present' })
+      ensure_packages(['nmap-ncat'], { ensure => 'present' } + $package_defaults)
+      # install PAM deps to remove `PAM unable to dlopen(/usr/lib64/security/pam_fprintd.so)` error
+      ensure_packages(['fprintd-pam'], { ensure => 'present' } + $package_defaults)
     }
     ubuntu, debian: {
-      ensure_packages(['mailutils'], { ensure => 'present' })
-      ensure_packages(['libwww-perl'], { ensure => 'present' })
+      ensure_packages(['mailutils', 'libwww-perl'], { ensure => 'present' } + $package_defaults)
       # install serverspec test deps
-      ensure_packages(['netcat'], { ensure => 'present' })
+      ensure_packages(['netcat'], { ensure => 'present' } + $package_defaults)
     }
   }
 
   # install named packages
-  if ($packages != []) {
-    ensure_packages($packages, { ensure => 'present' })
+  if ($packages != {}) {
+    create_resources(package, $packages, {
+      ensure => 'present'
+    } + $package_defaults)
   }
 
   # install keys if set
@@ -104,7 +120,7 @@ class admintools (
   # make sure notifier directory exists
   if ($notifier_dir != undef) {
     ensure_resource(usertools::safe_directory, "${notifier_dir}", {
-      user => $admin_user,
+      user  => $admin_user,
       group => $admin_group,
     })
   }

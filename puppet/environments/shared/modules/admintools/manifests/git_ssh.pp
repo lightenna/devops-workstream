@@ -1,24 +1,21 @@
-
 class admintools::git_ssh (
 
-  $github_over_https = $admintools::github_over_https,
-  $github_public_key = $admintools::github_public_key,
+  $github_over_https   = false,
+  $known_hosts         = $admintools::known_hosts,
+  $known_host_defaults = $admintools::known_host_defaults,
 
 ) {
 
-  # indirect requests to github.com via ssh.github.com
   case $operatingsystem {
     centos, redhat, oraclelinux, fedora, ubuntu, debian: {
-      # accept Github's key
-      sshkey { 'github.com':
-        type   => 'ssh-rsa',
-        key    => $github_public_key,
+
+      # always process known_hosts
+      if ($known_hosts != {}) {
+        create_resources(sshkey, $known_hosts, $known_host_defaults)
       }
+
       if ($github_over_https) {
-        sshkey { 'ssh.github.com':
-          type => 'ssh-rsa',
-          key  => $github_public_key,
-        }
+        # indirect requests to github.com via ssh.github.com
         ssh_config { "admintools-github-over-https-hostname":
           ensure => present,
           host   => "github.com",

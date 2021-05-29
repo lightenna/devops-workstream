@@ -8,6 +8,22 @@ Notes
 Change history
 --------------
 
+* v0.4.0
+    * Moved back to using shared webtools::write_cert
+* v0.3.6
+    * Parameterised puppetfile install
+* v0.3.5
+    * Clean up comments
+* v0.3.4
+    * Removed activate_this.py reference as now deprecated
+* v0.3.3
+    * Removed virtualenv_version as field removed from puppetboard
+* v0.3.2
+    * Refactored update_cadence into safe_repo to allow other repos to be automatically updated
+* v0.3.1
+    * Updated write_cert to cope with pkcs8 key conversion
+* v0.3.0
+    * Forced puppetboard vhost to include SSLVerifyClient ('none') and SSLCACertificateFile (bundle)
 * v0.2.5
     * Wrapped ensure_resources because getting duplicate resource errors
 * v0.2.4

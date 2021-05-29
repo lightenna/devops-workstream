@@ -18,6 +18,7 @@ class admintools::prometheus::server (
   $htpasswd_realm         = 'Prometheus',
   $htpasswd_leafname      = '.htpasswd-prom',
   $htpasswd_path          = '/var/www/secure',
+  $htpasswd_credentials   = {},
 
 ) {
 
@@ -46,13 +47,14 @@ class admintools::prometheus::server (
       user                   => $user,
       group                  => $group,
     }
-    if ($htpasswd_password != undef) {
+    if ($htpasswd_password != undef) or ($htpasswd_credentials != {}) {
       Webtools::Proxyport <| title == "admintools-prometheus-server-proxyport-${apache_port}" |> {
         htpasswd_username      => $htpasswd_username,
         htpasswd_password      => $htpasswd_password,
         htpasswd_realm         => $htpasswd_realm,
         htpasswd_leafname      => $htpasswd_leafname,
         htpasswd_path          => $htpasswd_path,
+        htpasswd_credentials   => $htpasswd_credentials,
       }
     }
   }

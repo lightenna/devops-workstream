@@ -11,7 +11,7 @@ class devtools::test (
 
 ) {
 
-  if ($script_name != undef or $script_names != undef) {
+  if ($::operatingsystem != 'windows' and ($script_name != undef or $script_names != undef)) {
     include 'devtools::languages::ruby'
     # install required gems for post-run testing
     devtools::run_ruby { 'devtools-test-install-gems':

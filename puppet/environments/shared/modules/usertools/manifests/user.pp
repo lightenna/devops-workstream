@@ -13,9 +13,11 @@ define usertools::user (
   $manage_logout         = true,
   $home                  = undef,
   $home_mode             = '0700',
+  $home_group            = $group,
   $home_dir_root         = '/home',
   $comment               = '',
   $ensure                = 'present',
+  $autologout_tmout      = 3541,
   $groups                = [],
   $keys                  = {},
   $key_defaults          = {},
@@ -29,6 +31,9 @@ define usertools::user (
   $sshconfig_defaults    = {},
   $repos                 = {},
   $repo_defaults         = {},
+  $crons                 = {},
+  $cron_defaults         = {},
+  $require_package       = undef,
 
   $git_email             = undef,
   $git_name              = undef,
@@ -66,6 +71,10 @@ define usertools::user (
     managehome => $managehome,
     home       => $home_resolved,
     comment    => $comment,
+    require    => $require_package ? {
+      undef   => undef,
+      default => [Package[$require_package]],
+    },
   })
 
   # create group if it's the same as the user
@@ -79,22 +88,22 @@ define usertools::user (
   # managed when absent to remove existing folders if already created
   if ($managehome) {
     usertools::safe_directory { "usertools-user-${user}-home":
-      ensure  => $ensure,
-      path    => $home_resolved,
-      mode    => $home_mode,
-      user    => $user,
-      group   => $group,
-      require => User[$user],
+      ensure       => $ensure,
+      path         => $home_resolved,
+      mode         => $home_mode,
+      user         => $user,
+      group        => $home_group,
+      require      => User[$user],
     }
   }
   if ($managehome_ssh) {
     usertools::safe_directory { "usertools-user-${user}-home-dotssh":
-      ensure  => $ensure,
-      path    => "${home_resolved}/.ssh",
-      mode    => $home_mode,
-      user    => $user,
-      group   => $group,
-      require => [File["${home_resolved}"]],
+      ensure       => $ensure,
+      path         => "${home_resolved}/.ssh",
+      mode         => $home_mode,
+      user         => $user,
+      group        => $group,
+      require      => [File["${home_resolved}"]],
     }
     if ($ssh_auth_key != '') {
       Ssh_authorized_key <| title == "${name}" |> {
@@ -169,7 +178,8 @@ define usertools::user (
     if ($manage_logout) {
       # add session timeout [all users]
       usertools::autologout { "${user}":
-        home => "${home_resolved}",
+        home  => "${home_resolved}",
+        tmout => $autologout_tmout,
       }
     }
   }
@@ -218,6 +228,17 @@ define usertools::user (
       group   => $group,
       require => User[$user],
     } + $repo_defaults)
+  }
+
+  # create user crons if set
+  if ($crons != {}) {
+    create_resources(cron, $crons, {
+      user    => $user,
+      ensure  => 'present',
+      weekday => '*', # default to every day
+      hour    => '*', # default to hourly
+      minute  => seeded_rand(60, "${::fqdn}"), # default to not-even-pseudo-random time in hour
+    } + $cron_defaults)
   }
 
 }

@@ -10,7 +10,7 @@ class puppetmaster::puppetboard (
   $htpasswd_password    = undef,
   $htpasswd_realm       = 'Puppetboard',
   $htpasswd_leafname    = '.htpasswd-pupbrd',
-  $htpasswd_path         = '/var/www/secure',
+  $htpasswd_path        = '/var/www/secure',
   $board_offline        = true,
   $board_git_revision   = 'v2.1.2', # was 'v2.1.2' on 6/5/2020
   $board_python_version = '3',
@@ -48,8 +48,6 @@ class puppetmaster::puppetboard (
   class { '::puppetboard':
     reports_count       => $board_reports_count,
     default_environment => $board_default_env,
-    # configure puppetboard to use specific version of python
-    virtualenv_version  => $board_python_version,
     # checkout a tagged version of puppetboard
     revision            => $board_git_revision,
     # disable manage_virtualenv to avoid Python class collision; requires python::virtualenv: "present"
@@ -79,7 +77,7 @@ class puppetmaster::puppetboard (
 
   if ($certificate != undef) {
     # write out the certs/keys
-    puppetmaster::write_cert { "${cert_name}":
+    webtools::write_cert { "${cert_name}":
       cert_directory_path => $cert_directory_path,
       key_directory_path  => $key_directory_path,
       key                 => $key,
@@ -91,6 +89,7 @@ class puppetmaster::puppetboard (
   # expose Puppetboard over HTTPS on target port
   if ($use_https) {
     $filename_certificate = "${cert_directory_path}/${cert_name}.crt"
+    $filename_ca_bundle = "${cert_directory_path}/${cert_name}.ca-bundle"
     $filename_key = "${key_directory_path}/${cert_name}.key"
     class { 'puppetboard::apache::vhost':
       vhost_name => "${cert_name}",
@@ -98,6 +97,11 @@ class puppetmaster::puppetboard (
       ssl_cert   => $filename_certificate,
       ssl_key    => $filename_key,
       port       => $web_port,
+    }
+    # add CA, even though puppetboard defined type does not support it
+    ::Apache::Vhost <| title == $cert_name |> {
+      ssl_ca            => $filename_ca_bundle,
+      ssl_verify_client => 'none', # default from https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslverifyclient
     }
   } else {
     class { 'puppetboard::apache::vhost':

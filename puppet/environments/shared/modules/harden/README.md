@@ -4,6 +4,10 @@ harden
 Change history
 --------------
 
+* v0.1.1
+    * Removed rkhunter as advice is that it's of little use these days
+* v0.1.0
+    * Parameterised sshd service name for multi OS
 * v0.0.6
     * Added touch to stop rkhunter running when rkhunter::cron_daily_run is false
 * v0.0.5

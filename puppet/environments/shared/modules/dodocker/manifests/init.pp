@@ -26,6 +26,11 @@ class dodocker (
 
   include '::docker'
 
+  # avoid create_user conflict with usertools by disabling
+  Docker::System_user <| |> {
+    create_user => false,
+  }
+
   # copy auth credentials if being set (typically hiera docker::registry_auth::registries)
   include 'dodocker::authspread'
 

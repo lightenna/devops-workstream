@@ -4,6 +4,45 @@ usertools
 Change history
 --------------
 
+* v0.4.5
+    * Added local and remote forwards to sshconfig
+* v0.4.4
+    * Added $ensure to sshconfig to allow removal of old lines
+* v0.4.3
+    * Added $additional_lines hash for putting anything into .ssh/config per host
+* v0.4.2
+    * Added $identity_file for nominating a specific key pair to use when SSHing to a named host
+* v0.4.1
+    * Brought .profile under management, depending on $manage_profile variable
+* v0.4.0
+    * Added $crons and $cron_defaults to allow user-specific scheduled tasks
+* v0.3.9
+    * Added title to usertools::write_keypair ensdir to cope with duplicate resources
+* v0.3.8
+    * Make all safe_repo cron tasks run at midnight, unless update_cadence overrides hour and/or minute
+* v0.3.7
+    * Introduced $require_package to force user (modifications) to wait for their package-based user creation
+* v0.3.6
+    * Made safe_repo files dependent upon the repo that they're checking out
+    * Added $symlinks to create external references (e.g. artifact repo)
+    * Added $ensure on safe_symlink to allow for absent
+* v0.3.5
+    * Made safe_repo resources user-safe, to allow two users to checkout the same repos
+    * Made sshconfig more flexible to support wildcard host families
+* v0.3.4
+    * Parameterised TMOUT as $autologout to allow for global/per-user configuration
+* v0.3.3
+    * Made safe_directory more Linux-Windows tolerant by resolving user 'root' to 'Administrator'
+* v0.3.2
+    * Made safe_repos removable by adding $ensure
+* v0.3.1
+    * Added $update_cadence to safe_repo
+* v0.3.0
+    * Added $manage_repos kill switch to enable file sharing for vagrant VMs
+* v0.2.5
+    * Added $ensure to userkey to allow for key removal
+* v0.2.4
+    * Added $ensure to write_keypair to allow for key removal
 * v0.2.3
     * Added feature to append required new-line character onto private key files
 * v0.2.2

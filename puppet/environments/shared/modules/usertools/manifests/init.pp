@@ -7,6 +7,7 @@ class usertools (
   $user          = undef,
   $users         = {},
   $user_defaults = {},
+  $manage_repos  = true,
 
   # end of class arguments
   # ----------------------
@@ -16,7 +17,7 @@ class usertools (
 
   if ($user != undef) {
     usertools::user { 'usertools-user-default-user':
-      user    => $user,
+      user => $user,
     }
   }
 

@@ -1,18 +1,19 @@
 define usertools::safe_directory (
-  $path        = $title,
-  $ensure      = 'directory',
-  $user        = 'root',
-  $group       = undef,
-  $mode        = '0750',
-  $seltype     = undef,
-  $treatas     = 'existing',
-  $permissions = undef,
-  $inherit     = true,
+  $path         = $title,
+  $ensure       = 'directory',
+  $user         = 'root',
+  $group        = undef,
+  $mode         = '0750',
+  $seltype      = undef,
+  $treatas      = 'existing',
+  $permissions  = undef,
+  $inherit      = true,
 ) {
   # always set up default mode and group
   case $operatingsystem {
     centos, redhat, oraclelinux, fedora, ubuntu, debian: {
       $resolved_mode = $mode
+      $resolved_user = $user
       $resolved_group = $group ? {
         undef   => 'root',
         default => $group,
@@ -21,8 +22,14 @@ define usertools::safe_directory (
     windows: {
       # don't set mode on Windows, use ACL
       $resolved_mode = undef
+      $resolved_user = $user ? {
+        undef   => 'Administrator',
+        'root'  => 'Administrator',
+        default => $user,
+      }
       $resolved_group = $group ? {
         undef   => 'Administrators',
+        'root'  => 'Administrators',
         default => $group,
       }
     }
@@ -34,6 +41,7 @@ define usertools::safe_directory (
         exec { "usertools-safedir-${title}":
           path    => '/bin:/usr/bin',
           command => "mkdir -p ${path}",
+          # unless directory already exists
           unless  => "test -d ${path}",
         }
         # if system uses SELinux, set fcontext
@@ -42,10 +50,10 @@ define usertools::safe_directory (
           selinux::fcontext { "usertools-safedir-seltype-${title}":
             seltype  => "${seltype}",
             pathspec => "${path}(/.*)?",
-          }->
+          } ->
           # then apply to files
           exec { "usertools-safedir-seltype-${title}":
-            path => ['/bin','/sbin','/usr/bin','/usr/sbin'],
+            path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
             command => "restorecon -R ${path}",
           }
         }
@@ -87,7 +95,7 @@ define usertools::safe_directory (
           'standard' => [
             { identity => $resolved_group, rights => ['full'], },
             { identity => 'NT AUTHORITY\\SYSTEM', rights => ['full'], },
-            { identity => $user, rights => ['full'], },
+            { identity => $resolved_user, rights => ['full'], },
           ],
           default    => $permissions,
         }
@@ -111,7 +119,7 @@ define usertools::safe_directory (
     ensure_resource(file, "${path}", {
       ensure => $ensure,
       force  => true,
-      owner  => $user,
+      owner  => $resolved_user,
       group  => $resolved_group,
       mode   => $resolved_mode,
     })
