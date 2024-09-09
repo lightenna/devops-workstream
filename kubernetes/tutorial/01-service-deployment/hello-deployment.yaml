@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: hello-kubernetes-first
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: hello-kubernetes-first
+    template:
+        metadata:
+            labels:
+                app: hello-kubernetes-first
+        spec:
+            containers:
+                - name: hello-kubernetes
+                  image: paulbouwer/hello-kubernetes:1.10
+                  ports:
+                      - containerPort: 8080
+                  env:
+                      - name: MESSAGE
+                        value: Hello from the first deployment!

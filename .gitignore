@@ -17,6 +17,7 @@ go/pkg/dep
 *.tfstate.*
 *.tfstate.backup
 *.tfstate.lock.info
+.terraform.lock.hcl
 terraform.tfstate.d
 
 # Ignore Terraform and Vagrant working directories
