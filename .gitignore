@@ -20,6 +20,9 @@ go/pkg/dep
 .terraform.lock.hcl
 terraform.tfstate.d
 
+# Ignore local run outputs
+.local*
+
 # Ignore Terraform and Vagrant working directories
 .vagrant
 .terraform
