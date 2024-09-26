@@ -9,5 +9,9 @@ az aks list \
 # get kubeconfig
 echo "$(terraform output kube_config)" | grep -v 'EOT' > ${fname}
 export KUBECONFIG="${fname}"
+echo
+echo "To interact with the '${kubernetes_cluster_name}' cluster, set up the KUBECONFIG environment variable:"
+echo "export KUBECONFIG=\"${fname}\""
+echo
 # list out the nodes that make up this cluster
 kubectl get nodes

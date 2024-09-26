@@ -1,4 +1,5 @@
 output "login_command" {
+  sensitive = true
   value = "docker login -u '${azurerm_key_vault_secret.adminuser.value}' --password '${azurerm_key_vault_secret.adminpass.value}' ${azurerm_container_registry.acr.login_server}"
 }
 

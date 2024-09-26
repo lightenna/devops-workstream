@@ -107,7 +107,7 @@ resource "azurerm_key_vault_access_policy" "main" {
   key_vault_id       = var.key_vault_id
   tenant_id          = azurerm_app_service.main.identity[0].tenant_id
   object_id          = azurerm_app_service.main.identity[0].principal_id
-  secret_permissions = ["get"]
+  secret_permissions = ["Get"]
 }
 
 resource "azurerm_key_vault_secret" "main" {

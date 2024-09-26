@@ -3,5 +3,6 @@ output "vault_URI" {
 }
 
 output "vault_secret_adminpass" {
+  sensitive = true
   value = "${azurerm_key_vault_secret.temppass.name} (${length(azurerm_key_vault_secret.temppass.value)} bytes)"
 }
