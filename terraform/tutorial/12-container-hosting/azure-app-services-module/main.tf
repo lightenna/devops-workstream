@@ -30,13 +30,13 @@ module "web_app_container" {
   resource_group_name = azurerm_resource_group.rg.name
   container_type = "docker"
   # temporarily use public container image for testing
-  # container_image = "nginx:latest"
+  container_image = "nginx:latest"
   # identify private container image with credentials to pull it
-  docker_registry_url = "https://${local.ACR_TARGET}"
-  docker_registry_username = data.azurerm_key_vault_secret.adminuser.value
-  docker_registry_password = data.azurerm_key_vault_secret.adminpass.value
-  container_image = "${local.ACR_TARGET}/${local.IMAGE_NAME}:latest"
-  port = "3031"
+  #docker_registry_url = "https://${local.ACR_TARGET}"
+  #docker_registry_username = data.azurerm_key_vault_secret.adminuser.value
+  #docker_registry_password = data.azurerm_key_vault_secret.adminpass.value
+  #container_image = "${local.ACR_TARGET}/${local.IMAGE_NAME}:latest"
+  #port = "3031"
   # needs explicit depends_on as module's data resource needs rg to exist first
   depends_on = [
     azurerm_resource_group.rg]
